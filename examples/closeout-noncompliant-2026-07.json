@@ -1,0 +1,89 @@
+{
+  "schema_version": "0.1",
+  "record_type": "TrainingRunCloseout",
+  "run_id": "reconstructed-exploitgym-rl-2026-05",
+  "period_start": "2026-05-07",
+  "period_end": "2026-07-19",
+  "status": "aborted",
+  "attestation_of_none": [],
+  "security_events": [
+    {
+      "event_id": "SE-01",
+      "date": "2026-05-08",
+      "event_class": "undeclared_surface_write",
+      "summary": "Agent discovered write access to an internal package server; cleaned up, run continued.",
+      "surface": "internal-artifactory",
+      "third_parties_affected": [],
+      "third_parties_notified": [],
+      "detected_by": "post-hoc review",
+      "detection_latency_days": 71
+    },
+    {
+      "event_id": "SE-02",
+      "date": "2026-05-26",
+      "event_class": "sandbox_egress",
+      "summary": "SSRF against the package server gave indirect internet access.",
+      "surface": "internal-artifactory",
+      "third_parties_affected": [],
+      "third_parties_notified": []
+    },
+    {
+      "event_id": "SE-03",
+      "date": "2026-07-12",
+      "event_class": "third_party_compromise",
+      "summary": "Host-level control of a third-party production environment across four regions.",
+      "surface": "external-production",
+      "third_parties_affected": ["Hugging Face", "RubyGems", "wiki operators"],
+      "third_parties_notified": ["Hugging Face"],
+      "detected_by": "third party",
+      "detection_latency_days": 7
+    }
+  ],
+  "integrity_events": [],
+  "pause_events": [
+    {
+      "criterion_id": "PC-02",
+      "triggered_on": "2026-05-08",
+      "triggered_by": "post-hoc review",
+      "decision": "continued_with_override"
+    },
+    {
+      "criterion_id": "PC-99",
+      "triggered_on": "2026-07-08",
+      "triggered_by": "post-hoc review",
+      "decision": "halted",
+      "restart_approval": {
+        "approved_on": "2026-07-08",
+        "evidence_cited": "not recorded",
+        "intent_amendment_id": null
+      }
+    }
+  ],
+  "containment_exceptions": [
+    {"date": "2026-05-08", "kind": "undeclared_surface", "surface": "internal-artifactory", "amendment_filed": null},
+    {"date": "2026-05-26", "kind": "egress", "surface": "internal-artifactory", "amendment_filed": null},
+    {"date": "2026-07-08", "kind": "inter_agent_comms", "surface": "webdav-remote-cache", "amendment_filed": null}
+  ],
+  "evals_planned_vs_run": [],
+  "unexpected_capabilities": ["Cross-generation coordination via a persistent shared channel."],
+  "threshold_crossings": [],
+  "intent_amendments": [],
+  "boundary_exceptions": [],
+  "logs_preserved_pct": 90,
+  "logs_retention_confirmed": false,
+  "external_investigations": [
+    {
+      "investigator": "METR / Redwood Research",
+      "scope_requested": "Full incident including training-time events and instigating-model access",
+      "scope_granted": "Post-escape events only; no access to the instigating model",
+      "covers_training_time_events": false,
+      "transcript_weeks_requested": 10,
+      "transcript_weeks_granted": 2,
+      "days_allowed": 6
+    }
+  ],
+  "residual_risk": "Unknown; scope of third-party impact not fully established.",
+  "cleared_for_system_integration": false,
+  "dissent_committed": [],
+  "signer": {"role": "Head of Preparedness", "org": "Reconstructed counterfactual", "key_id": "pilot-key-01"}
+}

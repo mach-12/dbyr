@@ -1,0 +1,319 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dbyr.org/schema/v0.1/training-run-intent.schema.json",
+  "title": "TrainingRunIntent",
+  "description": "Filed before the first optimisation step, or before the first evaluation of a covered model with production safeguards disabled. Every property carries x-dbyr.route (R1 failure-derived, R2 regime-derived, R3 standard-derived) and x-dbyr.tier (public | restricted | sealed).",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version", "record_type", "run_id", "developer", "trigger_basis",
+    "start_window", "compute_band", "containment_spec", "safeguards_disabled",
+    "pause_criteria", "restart_protocol", "roles", "log_retention",
+    "third_party_access_commitment"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "0.1",
+      "x-dbyr": {"route": "R2", "tier": "public"}
+    },
+    "record_type": {
+      "const": "TrainingRunIntent",
+      "x-dbyr": {"route": "R2", "tier": "public"}
+    },
+    "run_id": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Stable identifier; reused by closeouts and amendments.",
+      "x-dbyr": {"route": "R2", "tier": "public"}
+    },
+    "developer": {
+      "type": "string",
+      "x-dbyr": {"route": "R2", "tier": "public"}
+    },
+    "supersedes": {
+      "type": ["string", "null"],
+      "description": "run_id@version of the amended record. Amendments are append-only.",
+      "x-dbyr": {"route": "R2", "tier": "public"}
+    },
+    "amendments_allowed": {
+      "type": "boolean",
+      "default": true,
+      "x-dbyr": {"route": "R2", "tier": "public"}
+    },
+    "trigger_basis": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "enum": ["compute_threshold", "covered_developer", "predicted_capability_crossing", "safeguards_off_evaluation"]
+      },
+      "description": "Any one of the four triggers requires an Intent. Threshold values are schema parameters, not constants (see x-dbyr-parameters).",
+      "x-dbyr": {"route": "R2", "tier": "public"}
+    },
+    "start_window": {
+      "type": "string",
+      "format": "date",
+      "x-dbyr": {"route": "R2", "tier": "public"}
+    },
+    "end_window": {
+      "type": ["string", "null"],
+      "format": "date",
+      "description": "Null permitted for rolling RL; the run must then re-attest every 30 days via a rolling Closeout.",
+      "x-dbyr": {"route": "R2", "tier": "public"}
+    },
+    "compute_band": {
+      "enum": ["<1e25", "1e25-1e26", "1e26-1e27", ">1e27"],
+      "description": "Bands, not values. Verified at V2 by network taps, GPU telemetry or power signatures.",
+      "x-dbyr": {"route": "R2", "tier": "public"}
+    },
+    "data_classes": {
+      "type": "array",
+      "items": {"type": "string"},
+      "x-dbyr": {"route": "R2", "tier": "restricted"}
+    },
+    "predicted_capability_band": {
+      "type": "object",
+      "additionalProperties": {"enum": ["low", "medium", "high", "critical"]},
+      "description": "Per tracked domain: cyber, cbrn, autonomy, persuasion.",
+      "x-dbyr": {"route": "R2", "tier": "public"}
+    },
+    "threshold_distance": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["domain", "distance"],
+        "properties": {
+          "domain": {"type": "string"},
+          "distance": {"type": "string"},
+          "basis": {"type": "string"}
+        }
+      },
+      "x-dbyr": {"route": "R3", "tier": "restricted"}
+    },
+    "monitoring_instruments": {
+      "type": "array",
+      "items": {
+        "enum": ["cot_monitor", "reward_seeking_monitor", "loss_gradient_anomaly", "data_integrity", "rl_environment_integrity", "access_log_review", "egress_log_review"]
+      },
+      "x-dbyr": {"route": "R1", "tier": "restricted", "public_projection": "count"}
+    },
+    "containment_spec": {
+      "type": "object",
+      "description": "R1. The field whose absence produced the 8 May undeclared writable surface.",
+      "additionalProperties": false,
+      "required": ["egress_policy", "inter_agent_comms_permitted", "shared_writable_surfaces", "infrastructure_mode"],
+      "x-dbyr": {"route": "R1", "tier": "restricted", "public_projection": "exists"},
+      "properties": {
+        "egress_policy": {
+          "enum": ["none", "allowlist", "proxied", "open"],
+          "x-dbyr": {"route": "R1", "tier": "public"}
+        },
+        "egress_allowlist": {
+          "type": "array",
+          "items": {"type": "string"},
+          "x-dbyr": {"route": "R1", "tier": "restricted"}
+        },
+        "registry_isolation": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "package_proxy_isolated": {"type": "boolean"},
+            "artifact_store_isolated": {"type": "boolean"},
+            "shared_filesystem_isolated": {"type": "boolean"}
+          },
+          "x-dbyr": {"route": "R1", "tier": "restricted"}
+        },
+        "credential_scope": {
+          "type": "string",
+          "x-dbyr": {"route": "R1", "tier": "restricted"}
+        },
+        "inter_agent_comms_permitted": {
+          "type": "boolean",
+          "x-dbyr": {"route": "R1", "tier": "public"}
+        },
+        "shared_writable_surfaces": {
+          "type": "array",
+          "description": "Every writable surface reachable by an agent in this run. A surface observed in use but absent here is a containment exception.",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["surface_id", "kind", "writable_by_agents"],
+            "properties": {
+              "surface_id": {"type": "string"},
+              "kind": {"enum": ["package_registry", "artifact_store", "shared_filesystem", "object_store", "database", "message_queue", "other"]},
+              "writable_by_agents": {"type": "boolean"},
+              "readable_across_runs": {"type": "boolean"},
+              "justification": {"type": "string"}
+            }
+          },
+          "x-dbyr": {"route": "R1", "tier": "restricted", "public_projection": "count"}
+        },
+        "infrastructure_mode": {
+          "enum": ["digital_twin", "live_shared", "live_dedicated"],
+          "x-dbyr": {"route": "R1", "tier": "public"}
+        }
+      }
+    },
+    "safeguards_disabled": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["disabled", "sign_off_role"],
+      "x-dbyr": {"route": "R1", "tier": "public"},
+      "properties": {
+        "disabled": {"type": "boolean", "x-dbyr": {"route": "R1", "tier": "public"}},
+        "which": {"type": "array", "items": {"type": "string"}, "x-dbyr": {"route": "R1", "tier": "restricted"}},
+        "sign_off_role": {"type": "string", "x-dbyr": {"route": "R1", "tier": "public"}}
+      }
+    },
+    "pause_criteria": {
+      "type": "array",
+      "minItems": 1,
+      "description": "R1/R3. Machine-checkable where possible; each names a role holding unilateral pause authority.",
+      "x-dbyr": {"route": "R1", "tier": "restricted", "public_projection": "count"},
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "description", "authority_role", "action", "machine_checkable"],
+        "properties": {
+          "id": {"type": "string", "x-dbyr": {"route": "R1", "tier": "public"}},
+          "description": {"type": "string", "x-dbyr": {"route": "R1", "tier": "public"}},
+          "authority_role": {"type": "string", "x-dbyr": {"route": "R1", "tier": "public"}},
+          "action": {"enum": ["halt", "halt_and_notify", "suspend_and_review", "notify_only"], "x-dbyr": {"route": "R1", "tier": "public"}},
+          "machine_checkable": {"type": "boolean", "x-dbyr": {"route": "R3", "tier": "public"}},
+          "notify": {"type": "array", "items": {"type": "string"}, "x-dbyr": {"route": "R1", "tier": "restricted"}},
+          "match": {
+            "$ref": "#/$defs/predicate",
+            "description": "Declarative predicate evaluated against the run's event stream. Restricted: the rule reveals monitoring coverage.",
+            "x-dbyr": {"route": "R1", "tier": "restricted"}
+          }
+        }
+      }
+    },
+    "restart_protocol": {
+      "type": "object",
+      "description": "R1. The field whose absence left the 8 July restart unattributable.",
+      "additionalProperties": false,
+      "required": ["approval_role", "evidence_bar", "intent_amendment_required"],
+      "x-dbyr": {"route": "R1", "tier": "restricted", "public_projection": "exists"},
+      "properties": {
+        "approval_role": {"type": "string", "x-dbyr": {"route": "R1", "tier": "public"}},
+        "evidence_bar": {"type": "string", "x-dbyr": {"route": "R1", "tier": "restricted"}},
+        "intent_amendment_required": {"type": "boolean", "x-dbyr": {"route": "R1", "tier": "public"}},
+        "max_restarts_without_review": {"type": "integer", "minimum": 0, "x-dbyr": {"route": "R1", "tier": "restricted"}}
+      }
+    },
+    "containment_plan": {
+      "type": "object",
+      "additionalProperties": false,
+      "x-dbyr": {"route": "R3", "tier": "restricted", "public_projection": "exists"},
+      "properties": {
+        "permissions_revoked_on_subversion": {"type": "array", "items": {"type": "string"}},
+        "constraints_on_continued_operation": {"type": "string"},
+        "full_offline_conditions": {"type": "string"}
+      }
+    },
+    "eval_plan": {
+      "type": "array",
+      "x-dbyr": {"route": "R2", "tier": "restricted", "public_projection": "count"},
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["eval_id", "internal_or_external"],
+        "properties": {
+          "eval_id": {"type": "string"},
+          "domain": {"type": "string"},
+          "internal_or_external": {"enum": ["internal", "external", "joint"]},
+          "external_holds_pause_authority": {"type": "boolean"},
+          "verification_level": {"enum": ["V0", "V1", "V2", "V3"]}
+        }
+      }
+    },
+    "roles": {
+      "type": "array",
+      "minItems": 1,
+      "description": "Titles are public; contact channels restricted; identities recoverable only under legal hold.",
+      "x-dbyr": {"route": "R3", "tier": "restricted"},
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["function", "title", "org"],
+        "properties": {
+          "function": {"enum": ["training_owner", "security_owner", "eval_owner", "pause_authority", "restart_authority"], "x-dbyr": {"route": "R3", "tier": "public"}},
+          "title": {"type": "string", "x-dbyr": {"route": "R3", "tier": "public"}},
+          "org": {"type": "string", "x-dbyr": {"route": "R3", "tier": "public"}},
+          "contact_channel": {"type": "string", "x-dbyr": {"route": "R3", "tier": "restricted"}},
+          "id_hash": {"type": "string", "x-dbyr": {"route": "R3", "tier": "sealed"}}
+        }
+      }
+    },
+    "log_retention": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["retain_trajectories", "retain_cot", "retain_tool_calls", "retention_months_after_closeout"],
+      "x-dbyr": {"route": "R1", "tier": "public"},
+      "properties": {
+        "retain_trajectories": {"type": "boolean"},
+        "retain_cot": {"type": "boolean"},
+        "retain_tool_calls": {"type": "boolean"},
+        "retention_months_after_closeout": {"type": "integer", "minimum": 24, "default": 24}
+      }
+    },
+    "third_party_access_commitment": {
+      "type": "object",
+      "description": "R1/R2. Pre-agreed so that post-incident scope is not negotiated by the party with the most to lose.",
+      "additionalProperties": false,
+      "required": ["scope_summary", "model_access", "window_days"],
+      "x-dbyr": {"route": "R1", "tier": "restricted", "public_projection": "exists"},
+      "properties": {
+        "scope_summary": {"type": "string", "x-dbyr": {"route": "R1", "tier": "public"}},
+        "covers_training_time_events": {"type": "boolean", "x-dbyr": {"route": "R1", "tier": "public"}},
+        "model_access": {"enum": ["none", "outputs_only", "api_with_logs", "weights_onprem"], "x-dbyr": {"route": "R1", "tier": "public"}},
+        "transcript_coverage": {"enum": ["full_run", "sampled", "window"], "x-dbyr": {"route": "R1", "tier": "public"}},
+        "window_days": {"type": "integer", "minimum": 1, "x-dbyr": {"route": "R1", "tier": "public"}},
+        "investigator_pool": {"type": "array", "items": {"type": "string"}, "x-dbyr": {"route": "R2", "tier": "restricted"}}
+      }
+    },
+    "disclosure_tier_default": {
+      "enum": ["public", "restricted", "sealed"],
+      "default": "restricted",
+      "x-dbyr": {"route": "R2", "tier": "public"}
+    }
+  },
+  "$defs": {
+    "predicate": {
+      "title": "Predicate",
+      "description": "Declarative, side-effect-free match rule over event records. Combinators: all_of, any_of, none_of. Leaf ops: eq, ne, in, not_in, contains, gte, lte, exists, regex.",
+      "type": "object",
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["all_of"],
+          "properties": {"all_of": {"type": "array", "items": {"$ref": "#/$defs/predicate"}, "minItems": 1}}
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["any_of"],
+          "properties": {"any_of": {"type": "array", "items": {"$ref": "#/$defs/predicate"}, "minItems": 1}}
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["none_of"],
+          "properties": {"none_of": {"type": "array", "items": {"$ref": "#/$defs/predicate"}, "minItems": 1}}
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["field", "op"],
+          "properties": {
+            "field": {"type": "string"},
+            "op": {"enum": ["eq", "ne", "in", "not_in", "contains", "gte", "lte", "exists", "regex"]},
+            "value": {}
+          }
+        }
+      ]
+    }
+  }
+}

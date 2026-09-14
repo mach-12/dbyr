@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://mach-12.github.io/dbyr/sitemap.xml

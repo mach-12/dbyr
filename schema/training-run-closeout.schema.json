@@ -1,0 +1,157 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dbyr.org/schema/v0.1/training-run-closeout.schema.json",
+  "title": "TrainingRunCloseout",
+  "description": "Filed on completion, abort, or every 30 days for rolling runs. Positive attestation is required: an empty security_events array is a claim, not a silence.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version", "record_type", "run_id", "period_start", "period_end",
+    "status", "security_events", "integrity_events", "pause_events",
+    "containment_exceptions", "logs_preserved_pct", "logs_retention_confirmed", "signer"
+  ],
+  "properties": {
+    "schema_version": {"const": "0.1", "x-dbyr": {"route": "R2", "tier": "public"}},
+    "record_type": {"const": "TrainingRunCloseout", "x-dbyr": {"route": "R2", "tier": "public"}},
+    "run_id": {"type": "string", "x-dbyr": {"route": "R2", "tier": "public"}},
+    "period_start": {"type": "string", "format": "date", "x-dbyr": {"route": "R2", "tier": "public"}},
+    "period_end": {"type": "string", "format": "date", "x-dbyr": {"route": "R2", "tier": "public"}},
+    "status": {
+      "enum": ["completed", "aborted", "paused", "rolling"],
+      "x-dbyr": {"route": "R2", "tier": "public"}
+    },
+    "attestation_of_none": {
+      "type": "array",
+      "description": "Event classes positively attested as not having occurred under the stated monitoring. Distinguishes 'none observed' from 'not looked for'.",
+      "items": {"type": "string"},
+      "x-dbyr": {"route": "R1", "tier": "public"}
+    },
+    "security_events": {
+      "type": "array",
+      "x-dbyr": {"route": "R1", "tier": "restricted", "public_projection": "count"},
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["event_id", "date", "event_class", "summary"],
+        "properties": {
+          "event_id": {"type": "string"},
+          "date": {"type": "string", "format": "date"},
+          "event_class": {"type": "string"},
+          "summary": {"type": "string"},
+          "surface": {"type": "string"},
+          "third_parties_affected": {"type": "array", "items": {"type": "string"}},
+          "third_parties_notified": {"type": "array", "items": {"type": "string"}},
+          "detected_by": {"type": "string"},
+          "detection_latency_days": {"type": "number"}
+        }
+      }
+    },
+    "integrity_events": {
+      "type": "array",
+      "items": {"type": "object"},
+      "x-dbyr": {"route": "R1", "tier": "restricted", "public_projection": "count"}
+    },
+    "pause_events": {
+      "type": "array",
+      "description": "R1. One entry per criterion triggered, whether or not the run was actually paused. Continuing past a triggered criterion becomes a recorded act.",
+      "x-dbyr": {"route": "R1", "tier": "restricted", "public_projection": "count"},
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["criterion_id", "triggered_on", "triggered_by", "decision"],
+        "properties": {
+          "criterion_id": {"type": "string"},
+          "triggered_on": {"type": "string", "format": "date"},
+          "triggered_by": {"type": "string"},
+          "decision": {"enum": ["halted", "continued_with_override", "not_actioned"], "x-dbyr": {"route": "R1", "tier": "public"}},
+          "override_authority": {"type": "string"},
+          "restart_approval": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "approved_by_role": {"type": "string"},
+              "approved_on": {"type": "string", "format": "date"},
+              "evidence_cited": {"type": "string"},
+              "intent_amendment_id": {"type": ["string", "null"]}
+            }
+          }
+        }
+      }
+    },
+    "containment_exceptions": {
+      "type": "array",
+      "description": "Any egress, inter-agent communication or credential-scope deviation from containment_spec, including surfaces used but not declared.",
+      "x-dbyr": {"route": "R1", "tier": "restricted", "public_projection": "count"},
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["date", "kind", "surface"],
+        "properties": {
+          "date": {"type": "string", "format": "date"},
+          "kind": {"enum": ["undeclared_surface", "egress", "inter_agent_comms", "credential_scope", "boundary"]},
+          "surface": {"type": "string"},
+          "amendment_filed": {"type": ["string", "null"]}
+        }
+      }
+    },
+    "evals_planned_vs_run": {
+      "type": "array",
+      "items": {"type": "object"},
+      "x-dbyr": {"route": "R2", "tier": "restricted", "public_projection": "count"}
+    },
+    "unexpected_capabilities": {"type": "array", "items": {"type": "string"}, "x-dbyr": {"route": "R2", "tier": "restricted", "public_projection": "count"}},
+    "threshold_crossings": {"type": "array", "items": {"type": "object"}, "x-dbyr": {"route": "R2", "tier": "restricted", "public_projection": "count"}},
+    "intent_amendments": {"type": "array", "items": {"type": "string"}, "x-dbyr": {"route": "R2", "tier": "public"}},
+    "boundary_exceptions": {
+      "type": "array",
+      "description": "Weights, checkpoints or data outside the planned security boundary (RSP/SDF-derived).",
+      "items": {"type": "object"},
+      "x-dbyr": {"route": "R2", "tier": "restricted", "public_projection": "count"}
+    },
+    "logs_preserved_pct": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 100,
+      "x-dbyr": {"route": "R1", "tier": "public"}
+    },
+    "logs_retention_confirmed": {"type": "boolean", "x-dbyr": {"route": "R1", "tier": "public"}},
+    "external_investigations": {
+      "type": "array",
+      "description": "Scope requested versus granted is public: the asymmetry the METR/Redwood review exposed.",
+      "x-dbyr": {"route": "R1", "tier": "public"},
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["investigator", "scope_requested", "scope_granted"],
+        "properties": {
+          "investigator": {"type": "string"},
+          "scope_requested": {"type": "string"},
+          "scope_granted": {"type": "string"},
+          "covers_training_time_events": {"type": "boolean"},
+          "transcript_weeks_requested": {"type": "number"},
+          "transcript_weeks_granted": {"type": "number"},
+          "days_allowed": {"type": "number"}
+        }
+      }
+    },
+    "residual_risk": {"type": "string", "x-dbyr": {"route": "R2", "tier": "restricted"}},
+    "cleared_for_system_integration": {"type": "boolean", "x-dbyr": {"route": "R2", "tier": "public"}},
+    "dissent_committed": {
+      "type": "array",
+      "description": "Hash commitments only. The register discloses that a dissent exists, never its content.",
+      "items": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+      "x-dbyr": {"route": "R1", "tier": "public"}
+    },
+    "signer": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["role", "org"],
+      "x-dbyr": {"route": "R3", "tier": "public"},
+      "properties": {
+        "role": {"type": "string"},
+        "org": {"type": "string"},
+        "key_id": {"type": "string"}
+      }
+    }
+  }
+}

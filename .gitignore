@@ -1,0 +1,7 @@
+.DS_Store
+__pycache__/
+*.pyc
+
+# working notes, not for the public repo
+timeline.md
+(temp) Apart AI Incident Response Sprint_ Planning.md

@@ -1,0 +1,67 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dbyr.org/schema/v0.1/system-runtime-record.schema.json",
+  "title": "SystemRuntimeRecord",
+  "description": "Filed before internal deployment at scale or external exposure. Internal deployment is a first-class filing event (Toner 2026).",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "record_type", "system_id", "base_run_ids", "deployment_context", "inter_agent_comms_permitted", "signer"],
+  "properties": {
+    "schema_version": {"const": "0.1", "x-dbyr": {"route": "R2", "tier": "public"}},
+    "record_type": {"const": "SystemRuntimeRecord", "x-dbyr": {"route": "R2", "tier": "public"}},
+    "system_id": {"type": "string", "x-dbyr": {"route": "R2", "tier": "public"}},
+    "base_run_ids": {
+      "type": "array",
+      "minItems": 1,
+      "items": {"type": "string"},
+      "description": "Links the system to the Intents and Closeouts of the runs that produced it.",
+      "x-dbyr": {"route": "R2", "tier": "public"}
+    },
+    "deployment_context": {
+      "enum": ["internal_research", "internal_production", "external"],
+      "x-dbyr": {"route": "R1", "tier": "public"}
+    },
+    "tools_and_scaffolding": {
+      "type": "array",
+      "items": {"type": "string"},
+      "x-dbyr": {"route": "R1", "tier": "restricted", "public_projection": "count"}
+    },
+    "inference_scaling": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "max_parallel_agents": {"type": "integer"},
+        "max_horizon_hours": {"type": "number"},
+        "best_of_n": {"type": "integer"}
+      },
+      "x-dbyr": {"route": "R1", "tier": "restricted", "public_projection": "exists"}
+    },
+    "inter_agent_comms_permitted": {"type": "boolean", "x-dbyr": {"route": "R1", "tier": "public"}},
+    "user_exposure": {"enum": ["none", "internal_staff", "limited_external", "general"], "x-dbyr": {"route": "R2", "tier": "public"}},
+    "oversight_mode": {"enum": ["human_in_loop", "human_on_loop", "automated_monitor", "none"], "x-dbyr": {"route": "R2", "tier": "public"}},
+    "monitoring": {"type": "array", "items": {"type": "string"}, "x-dbyr": {"route": "R2", "tier": "restricted"}},
+    "incident_channel": {"type": "string", "x-dbyr": {"route": "R2", "tier": "restricted"}},
+    "recurring_eval_cadence": {
+      "type": "string",
+      "description": "Release-suite evaluations on best internal models; quarterly default.",
+      "x-dbyr": {"route": "R3", "tier": "public"}
+    },
+    "containment_plan": {
+      "type": "object",
+      "description": "Inherits from the Intent; may tighten, never loosen.",
+      "additionalProperties": true,
+      "x-dbyr": {"route": "R3", "tier": "restricted", "public_projection": "exists"}
+    },
+    "signer": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["role", "org"],
+      "properties": {
+        "role": {"type": "string"},
+        "org": {"type": "string"},
+        "key_id": {"type": "string"}
+      },
+      "x-dbyr": {"route": "R3", "tier": "public"}
+    }
+  }
+}

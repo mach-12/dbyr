@@ -1,0 +1,3 @@
+jsonschema>=4.20
+cryptography>=42.0   # optional: Ed25519 envelope signing
+pytest>=8.0          # tests only

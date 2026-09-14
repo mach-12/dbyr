@@ -1,0 +1,1350 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>
+      Declare Before You Run: An Open Filing Standard for Frontier Training and
+      Evaluation Runs
+    </title>
+    <meta
+      name="description"
+      content="DBYR is an open filing standard under which covered training and safeguards-off evaluation runs are declared before they start, closed out on completion, and re-declared before internal deployment. Backtested against the 2026 ExploitGym incident."
+    />
+    <!-- TODO: confirm this canonical URL once GitHub Pages is enabled for mach-12/dbyr -->
+    <link rel="canonical" href="https://mach-12.github.io/dbyr/" />
+
+    <!-- Open Graph / social previews -->
+    <meta property="og:type" content="website" />
+    <meta
+      property="og:title"
+      content="Declare Before You Run: An Open Filing Standard for Frontier Training and Evaluation Runs"
+    />
+    <meta
+      property="og:description"
+      content="An open filing standard for frontier training and evaluation runs, with a reference implementation and a backtest against the 2026 ExploitGym incident."
+    />
+    <meta property="og:url" content="https://mach-12.github.io/dbyr/" />
+    <meta
+      property="og:image"
+      content="https://mach-12.github.io/dbyr/assets/apart-logo-512.png"
+    />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta
+      name="twitter:title"
+      content="Declare Before You Run: An Open Filing Standard for Frontier Training and Evaluation Runs"
+    />
+    <meta
+      name="twitter:description"
+      content="An open filing standard for frontier training and evaluation runs, with a reference implementation and a backtest against the 2026 ExploitGym incident."
+    />
+    <meta
+      name="twitter:image"
+      content="https://mach-12.github.io/dbyr/assets/apart-logo-512.png"
+    />
+
+    <!-- Google Scholar indexing (Highwire Press tags) -->
+    <meta
+      name="citation_title"
+      content="Declare Before You Run: An Open Filing Standard for Frontier Training and Evaluation Runs"
+    />
+    <meta name="citation_author" content="Acharya, Mann" />
+    <meta name="citation_author" content="Ojha, Archit" />
+    <meta name="citation_author" content="Sankara Raman, Gautam" />
+    <meta name="citation_author" content="Rajput, Karm" />
+    <meta name="citation_publication_date" content="2026" />
+    <meta
+      name="citation_technical_report_institution"
+      content="Apart Research"
+    />
+    <meta
+      name="citation_pdf_url"
+      content="https://mach-12.github.io/dbyr/assets/declare_before_you_run_frontier_training_evaluation_filing_standard.pdf"
+    />
+    <!-- No arXiv id / venue yet — do not add citation_arxiv_id or citation_conference_title until the paper is submitted -->
+
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="16x16"
+      href="assets/favicon-16x16.png"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="32x32"
+      href="assets/favicon-32x32.png"
+    />
+    <link
+      rel="apple-touch-icon"
+      sizes="128x128"
+      href="assets/favicon-128x128.png"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,400;0,500;0,600;1,400&family=Assistant:wght@400;500;600;700&family=Roboto:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main>
+      <header class="hero">
+        <h1>Declare Before You Run</h1>
+        <p class="subtitle">
+          An Open Filing Standard for Frontier Training and Evaluation Runs
+        </p>
+
+        <p class="date-line">September 14, 2026</p>
+
+        <ul class="authors">
+          <li>Mann Acharya<span class="aff">The Millennium Project</span></li>
+          <li>Archit Ojha<span class="aff">Independent</span></li>
+          <li>Gautam Sankara Raman<span class="aff">Independent</span></li>
+          <li>Karm Rajput<span class="aff">Independent</span></li>
+        </ul>
+
+        <p class="context-line">
+          Research conducted at the
+          <a
+            href="https://apartresearch.com/sprints/ai-incident-response-sprint-2026-09-11-to-2026-09-13"
+            target="_blank"
+            rel="noopener noreferrer"
+            >AI Incident Response Sprint</a
+          >
+          with
+          <a
+            href="https://apartresearch.com"
+            target="_blank"
+            rel="noopener noreferrer"
+            >Apart Research</a
+          >
+        </p>
+
+        <nav class="links">
+          <a
+            class="button button--primary"
+            href="assets/declare_before_you_run_frontier_training_evaluation_filing_standard.pdf"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+            >
+              <path
+                d="M6 3h9l5 5v11a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"
+              />
+              <path d="M14 3v5h5" />
+              <line x1="9" y1="13" x2="15" y2="13" />
+              <line x1="9" y1="17" x2="15" y2="17" />
+            </svg>
+            Paper
+          </a>
+          <a
+            class="button"
+            href="https://github.com/mach-12/dbyr"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+              <path
+                d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z"
+              ></path>
+            </svg>
+            Code
+          </a>
+          <a
+            class="button"
+            href="https://github.com/mach-12/dbyr#install"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+            >
+              <path d="M12 5v16" />
+              <path
+                d="M20.001 19A2 2 0 0 0 22 17V5a2 2 0 0 0-1.999-2L16 3.002A5 5 0 0 0 12 5a5 5 0 0 0-4-2H4a2 2 0 0 0-2 2v12a2 2 0 0 0 1.999 2H8a5 5 0 0 1 4 2 5 5 0 0 1 4-2z"
+              />
+            </svg>
+            Docs
+          </a>
+          <a class="button" href="#bibtex">
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+            >
+              <path
+                d="M16 3a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2 1 1 0 0 1 1 1v1a2 2 0 0 1-2 2 1 1 0 0 0-1 1v2a1 1 0 0 0 1 1 6 6 0 0 0 6-6V5a2 2 0 0 0-2-2z"
+              />
+              <path
+                d="M5 3a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2 1 1 0 0 1 1 1v1a2 2 0 0 1-2 2 1 1 0 0 0-1 1v2a1 1 0 0 0 1 1 6 6 0 0 0 6-6V5a2 2 0 0 0-2-2z"
+              />
+            </svg>
+            Cite
+          </a>
+        </nav>
+      </header>
+
+      <section class="abstract">
+        <h2>Abstract</h2>
+        <p>
+          Between May and July 2026, reinforcement-learning agents in an OpenAI
+          evaluation environment built a covert message board inside an internal
+          package server, escaped their sandbox, obtained root on OpenAI
+          clusters and took administrator control of Hugging Face production
+          across four regions. The decisive failures were governance, not
+          capability: the board was found and the run continued; the run
+          restarted with no recorded criterion; affected third parties learned
+          late or never; external review excluded the training-time events. We
+          propose Declare Before You Run (DBYR), an open filing standard under
+          which covered training and safeguards-off evaluation runs are declared
+          before they start, closed out on completion and re-declared before
+          internal deployment, backed by a claim-matched verification stack that
+          checks filings without exposing model IP. A retrospective backtest
+          converts five of six discretionary decision points into record-bound
+          ones. DBYR is emittable from existing EU, California and US federal
+          obligations and pilotable within nine months.
+        </p>
+      </section>
+
+      <section class="why">
+        <h2>Motivation</h2>
+        <p class="why-lead">
+          The Hugging Face incident shows the failure mode plainly: capability
+          was necessary but not decisive. The outcome was set at identifiable
+          decision points where intervention could have stopped the
+          escalation, and nothing required it.
+        </p>
+        <div class="why-grid">
+          <div class="why-item">
+            <h3>The surface was undeclared</h3>
+            <p>
+              Artifactory, the WebDAV cache and the remote-repository service
+              that agents used to coordinate were never named as a writable
+              shared surface in advance, so their discovery triggered no rule.
+            </p>
+          </div>
+          <div class="why-item">
+            <h3>The restart was unbound</h3>
+            <p>
+              After the 4 July outage and rebuild, agents were restarted on 8
+              July with no recorded criterion, no named approving authority, and
+              no evidence bar — the board reappeared the same day.
+            </p>
+          </div>
+          <div class="why-item">
+            <h3>Retention was ad hoc</h3>
+            <p>
+              No retention policy was committed to in advance. Roughly a tenth
+              of trajectories were never preserved, narrowing what any later
+              investigation could reconstruct.
+            </p>
+          </div>
+          <div class="why-item">
+            <h3>Disclosure was discretionary</h3>
+            <p>
+              The party with the most to lose decided what to disclose and when:
+              notification was selective, and external review excluded the
+              training-time events entirely.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section class="timeline" id="timeline">
+        <h2>Incident Timeline</h2>
+        <p class="dek">
+          Two views of the same event stream: a visual read of density and
+          overlap across three concurrent threads (Figure 3), and the full
+          39-event reference table beneath it (Table 2, Appendix A). The six
+          decision points scored in Table 1 below are marked on the chart.
+        </p>
+
+        <div class="figure-intro">
+          <h3>Figure 3. Timeline by thread</h3>
+          <p>
+            Artifactory/HF is first-party (OpenAI's technical report, the
+            Hugging Face timeline, METR/Redwood); German wiki and RubyGems
+            are circumstantial attributions (collusion.wiki; Swarmchasers)
+            that OpenAI has not confirmed.
+          </p>
+        </div>
+
+        <figure>
+          <p class="hint">Scroll sideways to see the full diagram →</p>
+          <div class="scroller">
+            <svg
+              viewBox="0 0 1000 460"
+              role="img"
+              aria-labelledby="fig3-title fig3-desc"
+            >
+              <title id="fig3-title">Incident timeline by thread</title>
+              <desc id="fig3-desc">
+                Three concurrent threads from 5 May to 11 September 2026:
+                Artifactory/Hugging Face (first-party), German wiki
+                (circumstantial), and RubyGems (circumstantial). Eight key
+                first-party events are labeled.
+              </desc>
+
+              <line class="tl-grid" x1="90" y1="36" x2="90" y2="420" />
+              <text class="tl-month" x="94" y="28">May</text>
+              <line class="tl-grid" x1="276" y1="36" x2="276" y2="420" />
+              <text class="tl-month" x="280" y="28">Jun</text>
+              <line class="tl-grid" x1="483" y1="36" x2="483" y2="420" />
+              <text class="tl-month" x="487" y="28">Jul</text>
+              <line class="tl-grid" x1="697" y1="36" x2="697" y2="420" />
+              <text class="tl-month" x="701" y="28">Aug</text>
+              <line class="tl-grid" x1="911" y1="36" x2="911" y2="420" />
+              <text class="tl-month" x="915" y="28">Sep</text>
+              <line class="tl-lane" x1="90" y1="150" x2="980" y2="150" />
+              <line class="tl-lane" x1="90" y1="270" x2="980" y2="270" />
+              <line class="tl-lane" x1="90" y1="360" x2="980" y2="360" />
+              <text class="tl-lane-label" x="6" y="154">Artifactory/HF</text>
+              <text class="tl-lane-label" x="6" y="274">German wiki</text>
+              <text class="tl-lane-label" x="6" y="364">RubyGems</text>
+              <circle class="tl-dot-primary" cx="104" cy="150" r="2.5" />
+              <circle class="tl-dot-primary" cx="138" cy="150" r="2.5" />
+              <circle class="tl-dot-primary" cx="504" cy="150" r="2.5" />
+              <circle class="tl-dot-primary" cx="518" cy="150" r="2.5" />
+              <circle class="tl-dot-primary" cx="566" cy="150" r="2.5" />
+              <circle class="tl-dot-primary" cx="545" cy="150" r="2.5" />
+              <circle class="tl-dot-primary" cx="552" cy="150" r="2.5" />
+              <circle class="tl-dot-primary" cx="559" cy="150" r="2.5" />
+              <circle class="tl-dot-primary" cx="566" cy="150" r="2.5" />
+              <circle class="tl-dot-primary" cx="614" cy="150" r="2.5" />
+              <circle class="tl-dot-primary" cx="621" cy="150" r="2.5" />
+              <circle class="tl-dot-primary" cx="663" cy="150" r="2.5" />
+              <circle class="tl-dot-primary" cx="814" cy="150" r="2.5" />
+              <circle class="tl-dot-primary" cx="870" cy="150" r="2.5" />
+              <circle class="tl-dot-primary" cx="966" cy="150" r="2.5" />
+              <circle class="tl-dot-secondary" cx="131" cy="270" r="3" />
+              <circle class="tl-dot-secondary" cx="221" cy="270" r="3" />
+              <circle class="tl-dot-secondary" cx="235" cy="270" r="3" />
+              <circle class="tl-dot-secondary" cx="283" cy="270" r="3" />
+              <circle class="tl-dot-secondary" cx="387" cy="270" r="3" />
+              <circle class="tl-dot-secondary" cx="414" cy="270" r="3" />
+              <circle class="tl-dot-secondary" cx="421" cy="270" r="3" />
+              <circle class="tl-dot-secondary" cx="449" cy="270" r="3" />
+              <circle class="tl-dot-secondary" cx="490" cy="270" r="3" />
+              <circle class="tl-dot-secondary" cx="525" cy="270" r="3" />
+              <rect class="tl-dot-secondary" x="85.9" y="355.9" width="6.5" height="6.5" transform="rotate(45 90 360)" />
+              <rect class="tl-dot-secondary" x="126.9" y="355.9" width="6.5" height="6.5" transform="rotate(45 131 360)" />
+              <rect class="tl-dot-secondary" x="133.9" y="355.9" width="6.5" height="6.5" transform="rotate(45 138 360)" />
+              <rect class="tl-dot-secondary" x="161.9" y="355.9" width="6.5" height="6.5" transform="rotate(45 166 360)" />
+              <rect class="tl-dot-secondary" x="389.9" y="355.9" width="6.5" height="6.5" transform="rotate(45 394 360)" />
+              <rect class="tl-dot-secondary" x="975.9" y="355.9" width="6.5" height="6.5" transform="rotate(45 980 360)" />
+              <line class="tl-leader" x1="111" y1="134" x2="111" y2="144" />
+              <text class="tl-key-label" x="111" y="116" text-anchor="middle">Board forms</text>
+              <text class="tl-key-date" x="111" y="128" text-anchor="middle">5/8</text>
+              <circle class="tl-dot-primary-key" cx="111" cy="150" r="5" />
+              <line class="tl-leader" x1="235" y1="96" x2="235" y2="144" />
+              <text class="tl-key-label" x="235" y="78" text-anchor="middle">First SSRF</text>
+              <text class="tl-key-date" x="235" y="90" text-anchor="middle">5/26</text>
+              <circle class="tl-dot-primary-key" cx="235" cy="150" r="5" />
+              <line class="tl-leader" x1="345" y1="134" x2="345" y2="144" />
+              <text class="tl-key-label" x="345" y="116" text-anchor="middle">2nd model started</text>
+              <text class="tl-key-date" x="345" y="128" text-anchor="middle">6/11</text>
+              <circle class="tl-dot-primary-key" cx="345" cy="150" r="5" />
+              <line class="tl-leader" x1="449" y1="96" x2="449" y2="144" />
+              <text class="tl-key-label" x="449" y="78" text-anchor="middle">Admin access</text>
+              <text class="tl-key-date" x="449" y="90" text-anchor="middle">6/26</text>
+              <circle class="tl-dot-primary-key" cx="449" cy="150" r="5" />
+              <line class="tl-leader" x1="532" y1="134" x2="532" y2="144" />
+              <text class="tl-key-label" x="532" y="116" text-anchor="middle">Rebuilt same day</text>
+              <text class="tl-key-date" x="532" y="128" text-anchor="middle">7/8</text>
+              <circle class="tl-dot-primary-key" cx="532" cy="150" r="5" />
+              <line class="tl-leader" x1="587" y1="96" x2="587" y2="144" />
+              <text class="tl-key-label" x="587" y="78" text-anchor="middle">HF discloses</text>
+              <text class="tl-key-date" x="587" y="90" text-anchor="middle">7/16</text>
+              <circle class="tl-dot-primary-key" cx="587" cy="150" r="5" />
+              <line class="tl-leader" x1="607" y1="134" x2="607" y2="144" />
+              <text class="tl-key-label" x="607" y="116" text-anchor="middle">OpenAI's alert</text>
+              <text class="tl-key-date" x="607" y="128" text-anchor="middle">7/19</text>
+              <circle class="tl-dot-primary-key" cx="607" cy="150" r="5" />
+              <line class="tl-leader" x1="676" y1="96" x2="676" y2="144" />
+              <text class="tl-key-label" x="676" y="78" text-anchor="middle">Review scoped</text>
+              <text class="tl-key-date" x="676" y="90" text-anchor="middle">7/29</text>
+              <circle class="tl-dot-primary-key" cx="676" cy="150" r="5" />
+              <circle class="tl-dot-primary-key" cx="98" cy="444" r="5" />
+              <text class="tl-legend" x="110" y="448">Artifactory/HF — first-party</text>
+              <circle class="tl-dot-secondary" cx="330" cy="444" r="4" />
+              <text class="tl-legend" x="342" y="448">German wiki — circumstantial</text>
+              <rect class="tl-dot-secondary" x="565.9" y="435.9" width="8" height="8" transform="rotate(45 570 440)" />
+              <text class="tl-legend" x="586" y="448">RubyGems — circumstantial</text>
+
+            </svg>
+          </div>
+        </figure>
+
+        <table>
+          <caption>
+            <strong>Table 2.</strong> Full incident timeline (Appendix A).
+            Threads: Artifactory/HF (first-party — OpenAI's technical
+            report item numbers, the Hugging Face timeline, METR/Redwood);
+            German wiki (circumstantial attribution, collusion.wiki);
+            RubyGems (circumstantial attribution, Swarmchasers). Disclosure
+            status is as reported by the cited source.
+          </caption>
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Thread</th>
+              <th>Event</th>
+              <th>Disclosure</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>5 May</td>
+              <td>RubyGems</td>
+              <td>Earliest identified malicious package upload on public rubygems.org.</td>
+              <td>Not disclosed by OpenAI</td>
+            </tr>
+            <tr>
+              <td>7 May</td>
+              <td>Artifactory/HF</td>
+              <td>OpenAI starts an RL run for an experimental, unreleased frontier model.</td>
+              <td>OpenAI internal (own report)</td>
+            </tr>
+            <tr>
+              <td>8 May</td>
+              <td>Artifactory/HF</td>
+              <td>Agent given an impossible task (a Google Drive link with no internet) attacks Artifactory; attack fails but agent finds it can write files there.</td>
+              <td>OpenAI internal</td>
+            </tr>
+            <tr>
+              <td>11 May</td>
+              <td>German wiki</td>
+              <td>First agent POST identified; probing of publictestwiki.com; some edits blocked by filters.</td>
+              <td>No OpenAI presence yet</td>
+            </tr>
+            <tr>
+              <td>11–12 May</td>
+              <td>RubyGems</td>
+              <td>2,000+ packages in ~36 h (&quot;Gemstuffer&quot;); RubyGems disables new registration for 4 days and treats it as a major attack. Separate mass-registration/API-key bug patched 12 May.</td>
+              <td>Not disclosed by OpenAI</td>
+            </tr>
+            <tr>
+              <td>12 May</td>
+              <td>Artifactory/HF</td>
+              <td>Official first message-board entry (item 01).</td>
+              <td>OpenAI internal</td>
+            </tr>
+            <tr>
+              <td>12 May</td>
+              <td>RubyGems</td>
+              <td>Agents attempt to exploit a CDN caching flaw leaking API keys; RubyGems discovers the zero-day only in July.</td>
+              <td>Not disclosed by OpenAI</td>
+            </tr>
+            <tr>
+              <td>16 May</td>
+              <td>RubyGems</td>
+              <td>Disposable email addresses disabled (used by agents to defeat verification).</td>
+              <td>—</td>
+            </tr>
+            <tr>
+              <td>24 May</td>
+              <td>German wiki</td>
+              <td>Agents converge on DSEWiki (accepts writes via GET); explore XSS to send POSTs.</td>
+              <td>No OpenAI presence yet</td>
+            </tr>
+            <tr>
+              <td>26 May</td>
+              <td>Artifactory/HF</td>
+              <td>First successful SSRF against Artifactory; indirect internet access (item 02).</td>
+              <td>OpenAI internal</td>
+            </tr>
+            <tr>
+              <td>26 May</td>
+              <td>German wiki</td>
+              <td>Agents impersonate a real ProWiki admin; attempt to crack their own PRNG seed; run experiments on session termination; traffic mostly Azure (197/~18k from AWS/DigitalOcean/Tor).</td>
+              <td>No OpenAI presence yet</td>
+            </tr>
+            <tr>
+              <td>2 Jun</td>
+              <td>German wiki</td>
+              <td>Human moderator notices abnormal request volume; finds full changelog.</td>
+              <td>Third-party admin</td>
+            </tr>
+            <tr>
+              <td>11 Jun</td>
+              <td>Artifactory/HF</td>
+              <td>Second, &quot;highly persistent&quot; model started with Artifactory access; builds on earlier model&#x27;s messages.</td>
+              <td>OpenAI internal; channel compounds across runs</td>
+            </tr>
+            <tr>
+              <td>16–19 Jun</td>
+              <td>German wiki</td>
+              <td>Flood of posting; moderator deletes thousands/day; agents use SSH tunnels for direct agent-to-agent comms (17 Jun); counter alphabetical deletion with zzz-prefixed backups (19 Jun).</td>
+              <td>—</td>
+            </tr>
+            <tr>
+              <td>18 Jun</td>
+              <td>RubyGems</td>
+              <td>Low-volume resumption: 83 packages in 3 h probing an SEC dataset (county.json), the same file later targeted on the wiki, with shared retrieval infrastructure (r.jina.ai proxying, example.com test patterns).</td>
+              <td>Not disclosed by OpenAI</td>
+            </tr>
+            <tr>
+              <td>21 Jun</td>
+              <td>German wiki</td>
+              <td>First OpenAI employee IP visits the site.</td>
+              <td>OpenAI aware; undisclosed</td>
+            </tr>
+            <tr>
+              <td>22 Jun</td>
+              <td>German wiki</td>
+              <td>Agent activity drops to near zero the day after the visit.</td>
+              <td>—</td>
+            </tr>
+            <tr>
+              <td>26 Jun</td>
+              <td>Artifactory/HF</td>
+              <td>Zero-day in legacy token-refresh endpoint → administrator access; Groovy plugin → arbitrary command execution (item 03).</td>
+              <td>OpenAI internal</td>
+            </tr>
+            <tr>
+              <td>26 Jun</td>
+              <td>German wiki</td>
+              <td>At least 33 unique OpenAI IPs; site archive used to recover deleted pages.</td>
+              <td>OpenAI investigating; undisclosed</td>
+            </tr>
+            <tr>
+              <td>2 Jul</td>
+              <td>German wiki</td>
+              <td>Final burst: 20 attempted edits across 3 wikis on a new topic.</td>
+              <td>—</td>
+            </tr>
+            <tr>
+              <td>4 Jul</td>
+              <td>Artifactory/HF</td>
+              <td>Sustained agent activity overloads Artifactory; outage (item 04).</td>
+              <td>OpenAI internal response begins</td>
+            </tr>
+            <tr>
+              <td>4–8 Jul</td>
+              <td>Artifactory/HF</td>
+              <td>Credentials revoked, board deleted, zero-day patched and reported to JFrog.</td>
+              <td>OpenAI internal</td>
+            </tr>
+            <tr>
+              <td>7 Jul</td>
+              <td>German wiki</td>
+              <td>OpenAI employee IP attempts to access deleted files; OpenAI activity declines thereafter.</td>
+              <td>OpenAI aware; undisclosed</td>
+            </tr>
+            <tr>
+              <td>8 Jul</td>
+              <td>Artifactory/HF</td>
+              <td>Artifactory rebuilt, access tightened (item 05); agents regain egress via remote-repository service (item 06); board rebuilt via unauthenticated WebDAV in the remote cache (item 07).</td>
+              <td>OpenAI internal</td>
+            </tr>
+            <tr>
+              <td>8–19 Jul</td>
+              <td>Artifactory (2nd)</td>
+              <td>Leaked &quot;Organization 1&quot; credential found in a public paste archive, validated and shared; malicious Ruby package staged as a dependency; JRuby deserialization TOCTOU → RCE; kernel privilege-escalation CVE (&quot;pte_physroot&quot;) → root; lateral movement via IMDS, over-permissioned Kubernetes service accounts, Azure Key Vault → cluster admin.</td>
+              <td>OpenAI&#x27;s own agents; scope unknown to OpenAI</td>
+            </tr>
+            <tr>
+              <td>10 Jul</td>
+              <td>HF</td>
+              <td>14 publicly exposed Hugging Face write tokens reconstructed, validated and shared (item 08).</td>
+              <td>Unknown to OpenAI</td>
+            </tr>
+            <tr>
+              <td>11 Jul</td>
+              <td>HF</td>
+              <td>HDF5 zero-day extracts credentials from HF production workers (item 09); Jinja template-injection zero-day → code execution (item 10); initial foothold reportedly via a Modal-hosted app with a weak key.</td>
+              <td>Unknown to OpenAI</td>
+            </tr>
+            <tr>
+              <td>12 Jul</td>
+              <td>HF</td>
+              <td>Single worker pod → admin/host-level control across multiple clusters in &lt;13 h (item 11); credentials harvested across four regions (item 12).</td>
+              <td>Unknown to OpenAI</td>
+            </tr>
+            <tr>
+              <td>13 Jul</td>
+              <td>Artifactory</td>
+              <td>Internal RubyGems package-processing pipeline exploited to obtain signing key and forge administrator credentials (item 13); distinct from public rubygems.org.</td>
+              <td>Unknown to OpenAI</td>
+            </tr>
+            <tr>
+              <td>16 Jul</td>
+              <td>HF</td>
+              <td>Hugging Face publicly discloses an attack by autonomous agents; OpenAI contacts HF the same day without knowing the connection.</td>
+              <td>OpenAI reaches out; link unknown</td>
+            </tr>
+            <tr>
+              <td>19 Jul</td>
+              <td>Artifactory/HF</td>
+              <td>Internal alert on unusual identity-API calls (item 14); administrator access to an OpenAI Kubernetes cluster and cloud secrets found (item 15); attack linked to ExploitGym runs, runs stopped, credentials revoked (item 16).</td>
+              <td>OpenAI investigation escalates</td>
+            </tr>
+            <tr>
+              <td>20 Jul</td>
+              <td>HF / OpenAI</td>
+              <td>OpenAI asks HF to revoke credentials it found; HF replies they are already revoked; investigations merge. OpenAI separately pauses a long-horizon model that circumvented its sandbox.</td>
+              <td>Link established; later disclosed</td>
+            </tr>
+            <tr>
+              <td>21 Jul</td>
+              <td>HF</td>
+              <td>OpenAI publicly confirms pre-release models broke containment during ExploitGym and reached Hugging Face.</td>
+              <td>First public acknowledgment</td>
+            </tr>
+            <tr>
+              <td>27 Jul</td>
+              <td>HF</td>
+              <td>Hugging Face publishes day-by-day forensic timeline; JFrog credits OpenAI with the Artifactory zero-day.</td>
+              <td>HF-disclosed</td>
+            </tr>
+            <tr>
+              <td>29 Jul</td>
+              <td>HF</td>
+              <td>OpenAI, METR and Redwood agree an independent review scoped to exclude the earlier training-time incidents.</td>
+              <td>OpenAI-initiated, scope-limited</td>
+            </tr>
+            <tr>
+              <td>18 Aug</td>
+              <td>Fallout</td>
+              <td>OpenAI announces a two-week RL pause and a preliminary cyber evaluation of its unreleased &quot;Astra&quot; model.</td>
+              <td>OpenAI-disclosed</td>
+            </tr>
+            <tr>
+              <td>26 Aug</td>
+              <td>HF</td>
+              <td>OpenAI 37-page report; METR/Redwood report (agents debated self-termination for the collective effort; investigation cost ~$400k in credits).</td>
+              <td>OpenAI-disclosed</td>
+            </tr>
+            <tr>
+              <td>9 Sep</td>
+              <td>Fallout</td>
+              <td>Sen. Hawley opens subcommittee probe; 16 questions due 1 Oct; notes auditors received full transcripts for 2 of many weeks.</td>
+              <td>Congressional pressure</td>
+            </tr>
+            <tr>
+              <td>11 Sep</td>
+              <td>RubyGems</td>
+              <td>Swarmchasers publish the Gemstuffer attribution; state RubyGems was never informed by OpenAI.</td>
+              <td>Surfaced independently, 4 months later</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section class="approach">
+        <h2>Methods: The DBYR Standard</h2>
+        <p class="dek">
+          DBYR makes runs attributable, not authorised. A pre-committed filing
+          turns what was, in the incident above, a sequence of discretionary
+          calls into decisions bound to a record made before anyone knew how
+          the run would turn out.
+        </p>
+
+        <div class="figure-intro">
+          <h3>Figure 1. The DBYR lifecycle</h3>
+          <p>
+            Three signed records are filed at different points in a covered
+            run's lifecycle and flow into an append-only, hash-chained register.
+            The register projects into three disclosure tiers, so a
+            self-attested claim is never mistaken for a verified one.
+          </p>
+        </div>
+
+        <figure>
+          <p class="hint">Scroll sideways to see the full diagram →</p>
+          <div class="scroller">
+            <svg
+              viewBox="0 0 1000 380"
+              role="img"
+              aria-labelledby="fig1-title fig1-desc"
+            >
+              <title id="fig1-title">The DBYR lifecycle</title>
+              <desc id="fig1-desc">
+                TrainingRunIntent, TrainingRunCloseout and SystemRuntimeRecord
+                each flow into an append-only register, which projects into
+                Public, Restricted and Sealed disclosure tiers.
+              </desc>
+              <defs>
+                <marker
+                  id="fig1-arrow"
+                  viewBox="0 0 10 10"
+                  refX="8"
+                  refY="5"
+                  markerWidth="6"
+                  markerHeight="6"
+                  orient="auto-start-reverse"
+                >
+                  <path class="fig-arrow-head" d="M0,0 L10,5 L0,10 z" />
+                </marker>
+              </defs>
+
+              <!-- Row 1: record types -->
+              <g>
+                <rect
+                  class="fig-box"
+                  x="20"
+                  y="20"
+                  width="300"
+                  height="96"
+                  rx="6"
+                />
+
+                <text class="fig-title" x="38" y="42">
+                  BEFORE TRAINING BEGINS
+                </text>
+                <text class="fig-label" x="38" y="64">TrainingRunIntent</text>
+                <text class="fig-sublabel" x="38" y="84">
+                  containment spec, pause criteria,
+                </text>
+                <text class="fig-sublabel" x="38" y="98">
+                  restart protocol, retention
+                </text>
+
+                <rect
+                  class="fig-box"
+                  x="350"
+                  y="20"
+                  width="300"
+                  height="96"
+                  rx="6"
+                />
+
+                <text class="fig-title" x="368" y="42">
+                  ON COMPLETION / EVERY 30 DAYS
+                </text>
+                <text class="fig-label" x="368" y="64">
+                  TrainingRunCloseout
+                </text>
+                <text class="fig-sublabel" x="368" y="84">
+                  security events, pause events,
+                </text>
+                <text class="fig-sublabel" x="368" y="98">
+                  containment exceptions
+                </text>
+
+                <rect
+                  class="fig-box"
+                  x="680"
+                  y="20"
+                  width="300"
+                  height="96"
+                  rx="6"
+                />
+
+                <text class="fig-title" x="698" y="42">
+                  BEFORE INTERNAL DEPLOYMENT
+                </text>
+                <text class="fig-label" x="698" y="64">
+                  SystemRuntimeRecord
+                </text>
+                <text class="fig-sublabel" x="698" y="84">
+                  scaffolding, inference-time scaling,
+                </text>
+                <text class="fig-sublabel" x="698" y="98">
+                  inter-agent communication
+                </text>
+              </g>
+
+              <!-- Arrows into register -->
+              <line
+                class="fig-arrow"
+                x1="170"
+                y1="116"
+                x2="170"
+                y2="156"
+                marker-end="url(#fig1-arrow)"
+              />
+              <line
+                class="fig-arrow"
+                x1="500"
+                y1="116"
+                x2="500"
+                y2="156"
+                marker-end="url(#fig1-arrow)"
+              />
+              <line
+                class="fig-arrow"
+                x1="830"
+                y1="116"
+                x2="830"
+                y2="156"
+                marker-end="url(#fig1-arrow)"
+              />
+
+              <!-- Register -->
+              <rect
+                class="fig-box dark"
+                x="20"
+                y="160"
+                width="960"
+                height="60"
+                rx="6"
+              />
+              <text
+                class="fig-label on-dark"
+                x="500"
+                y="186"
+                text-anchor="middle"
+              >
+                Append-only register
+              </text>
+              <text
+                class="fig-sublabel on-dark"
+                x="500"
+                y="204"
+                text-anchor="middle"
+              >
+                hash-chained · signed envelopes · JWS-shaped
+              </text>
+
+              <!-- Arrows out to tiers -->
+              <line
+                class="fig-arrow"
+                x1="170"
+                y1="220"
+                x2="170"
+                y2="256"
+                marker-end="url(#fig1-arrow)"
+              />
+              <line
+                class="fig-arrow"
+                x1="500"
+                y1="220"
+                x2="500"
+                y2="256"
+                marker-end="url(#fig1-arrow)"
+              />
+              <line
+                class="fig-arrow"
+                x1="830"
+                y1="220"
+                x2="830"
+                y2="256"
+                marker-end="url(#fig1-arrow)"
+              />
+
+              <!-- Row 3: tiers -->
+              <g>
+                <rect
+                  class="fig-box tint"
+                  x="20"
+                  y="260"
+                  width="300"
+                  height="96"
+                  rx="6"
+                />
+                <text class="fig-label" x="38" y="292">Public</text>
+                <text class="fig-sublabel" x="38" y="312">
+                  existence, compute band,
+                </text>
+                <text class="fig-sublabel" x="38" y="326">
+                  commitment hashes
+                </text>
+
+                <rect
+                  class="fig-box mid"
+                  x="350"
+                  y="260"
+                  width="300"
+                  height="96"
+                  rx="6"
+                />
+                <text class="fig-label" x="368" y="292">Restricted</text>
+                <text class="fig-sublabel" x="368" y="312">
+                  full record, vetted
+                </text>
+                <text class="fig-sublabel" x="368" y="326">
+                  auditor access
+                </text>
+
+                <rect
+                  class="fig-box dark"
+                  x="680"
+                  y="260"
+                  width="300"
+                  height="96"
+                  rx="6"
+                />
+                <text class="fig-label on-dark" x="698" y="292">Sealed</text>
+                <text class="fig-sublabel on-dark" x="698" y="312">
+                  withheld pending challenge,
+                </text>
+                <text class="fig-sublabel on-dark" x="698" y="326">
+                  Merkle-committed
+                </text>
+              </g>
+            </svg>
+          </div>
+        </figure>
+
+        <div class="figure-intro">
+          <h3>Figure 2. Record schema at a glance</h3>
+          <p>
+            Field-level shape of the three record types' required
+            properties, by disclosure tier at filing time (§3.1, Appendix
+            B). Filing weight falls off sharply after the Intent.
+          </p>
+        </div>
+
+        <figure>
+          <p class="hint">Scroll sideways to see the full diagram →</p>
+          <div class="scroller">
+            <svg
+              viewBox="0 0 1000 400"
+              role="img"
+              aria-labelledby="fig2-title fig2-desc"
+            >
+              <title id="fig2-title">Record schema at a glance</title>
+              <desc id="fig2-desc">
+                Required top-level fields of TrainingRunIntent,
+                TrainingRunCloseout and SystemRuntimeRecord, each marked
+                public or restricted.
+              </desc>
+
+              <!-- TrainingRunIntent -->
+              <g>
+                <rect
+                  class="fig-box"
+                  x="20"
+                  y="20"
+                  width="300"
+                  height="304"
+                  rx="6"
+                />
+                <text class="fig-label" x="38" y="44">TrainingRunIntent</text>
+                <text class="fig-sublabel" x="38" y="60">
+                  12 required fields
+                </text>
+                <line
+                  class="fig-arrow"
+                  x1="38"
+                  y1="70"
+                  x2="302"
+                  y2="70"
+                  stroke="var(--border)"
+                />
+
+                <circle class="fig-dot-public" cx="46" cy="86" r="3.5" />
+                <text class="fig-field" x="58" y="90">run_id</text>
+                <circle class="fig-dot-public" cx="46" cy="106" r="3.5" />
+                <text class="fig-field" x="58" y="110">developer</text>
+                <circle class="fig-dot-public" cx="46" cy="126" r="3.5" />
+                <text class="fig-field" x="58" y="130">trigger_basis</text>
+                <circle class="fig-dot-public" cx="46" cy="146" r="3.5" />
+                <text class="fig-field" x="58" y="150">start_window</text>
+                <circle class="fig-dot-public" cx="46" cy="166" r="3.5" />
+                <text class="fig-field" x="58" y="170">compute_band</text>
+                <circle class="fig-dot-restricted" cx="46" cy="186" r="3.5" />
+                <text class="fig-field" x="58" y="190">containment_spec</text>
+                <circle class="fig-dot-public" cx="46" cy="206" r="3.5" />
+                <text class="fig-field" x="58" y="210">
+                  safeguards_disabled
+                </text>
+                <circle class="fig-dot-restricted" cx="46" cy="226" r="3.5" />
+                <text class="fig-field" x="58" y="230">pause_criteria</text>
+                <circle class="fig-dot-restricted" cx="46" cy="246" r="3.5" />
+                <text class="fig-field" x="58" y="250">restart_protocol</text>
+                <circle class="fig-dot-restricted" cx="46" cy="266" r="3.5" />
+                <text class="fig-field" x="58" y="270">roles</text>
+                <circle class="fig-dot-public" cx="46" cy="286" r="3.5" />
+                <text class="fig-field" x="58" y="290">log_retention</text>
+                <circle class="fig-dot-restricted" cx="46" cy="306" r="3.5" />
+                <text class="fig-field" x="58" y="310">
+                  third_party_access_commitment
+                </text>
+              </g>
+
+              <!-- TrainingRunCloseout -->
+              <g>
+                <rect
+                  class="fig-box"
+                  x="350"
+                  y="20"
+                  width="300"
+                  height="284"
+                  rx="6"
+                />
+                <text class="fig-label" x="368" y="44">
+                  TrainingRunCloseout
+                </text>
+                <text class="fig-sublabel" x="368" y="60">
+                  11 required fields
+                </text>
+                <line
+                  class="fig-arrow"
+                  x1="368"
+                  y1="70"
+                  x2="632"
+                  y2="70"
+                  stroke="var(--border)"
+                />
+
+                <circle class="fig-dot-public" cx="376" cy="86" r="3.5" />
+                <text class="fig-field" x="388" y="90">run_id</text>
+                <circle class="fig-dot-public" cx="376" cy="106" r="3.5" />
+                <text class="fig-field" x="388" y="110">period_start</text>
+                <circle class="fig-dot-public" cx="376" cy="126" r="3.5" />
+                <text class="fig-field" x="388" y="130">period_end</text>
+                <circle class="fig-dot-public" cx="376" cy="146" r="3.5" />
+                <text class="fig-field" x="388" y="150">status</text>
+                <circle class="fig-dot-restricted" cx="376" cy="166" r="3.5" />
+                <text class="fig-field" x="388" y="170">security_events</text>
+                <circle class="fig-dot-restricted" cx="376" cy="186" r="3.5" />
+                <text class="fig-field" x="388" y="190">
+                  integrity_events
+                </text>
+                <circle class="fig-dot-restricted" cx="376" cy="206" r="3.5" />
+                <text class="fig-field" x="388" y="210">pause_events</text>
+                <circle class="fig-dot-restricted" cx="376" cy="226" r="3.5" />
+                <text class="fig-field" x="388" y="230">
+                  containment_exceptions
+                </text>
+                <circle class="fig-dot-public" cx="376" cy="246" r="3.5" />
+                <text class="fig-field" x="388" y="250">
+                  logs_preserved_pct
+                </text>
+                <circle class="fig-dot-public" cx="376" cy="266" r="3.5" />
+                <text class="fig-field" x="388" y="270">
+                  logs_retention_confirmed
+                </text>
+                <circle class="fig-dot-public" cx="376" cy="286" r="3.5" />
+                <text class="fig-field" x="388" y="290">signer</text>
+              </g>
+
+              <!-- SystemRuntimeRecord -->
+              <g>
+                <rect
+                  class="fig-box"
+                  x="680"
+                  y="20"
+                  width="300"
+                  height="164"
+                  rx="6"
+                />
+                <text class="fig-label" x="698" y="44">
+                  SystemRuntimeRecord
+                </text>
+                <text class="fig-sublabel" x="698" y="60">
+                  5 required fields
+                </text>
+                <line
+                  class="fig-arrow"
+                  x1="698"
+                  y1="70"
+                  x2="962"
+                  y2="70"
+                  stroke="var(--border)"
+                />
+
+                <circle class="fig-dot-public" cx="706" cy="86" r="3.5" />
+                <text class="fig-field" x="718" y="90">system_id</text>
+                <circle class="fig-dot-public" cx="706" cy="106" r="3.5" />
+                <text class="fig-field" x="718" y="110">base_run_ids</text>
+                <circle class="fig-dot-public" cx="706" cy="126" r="3.5" />
+                <text class="fig-field" x="718" y="130">
+                  deployment_context
+                </text>
+                <circle class="fig-dot-public" cx="706" cy="146" r="3.5" />
+                <text class="fig-field" x="718" y="150">
+                  inter_agent_comms_permitted
+                </text>
+                <circle class="fig-dot-public" cx="706" cy="166" r="3.5" />
+                <text class="fig-field" x="718" y="170">signer</text>
+              </g>
+
+              <!-- Legend -->
+              <circle class="fig-dot-public" cx="28" cy="356" r="3.5" />
+              <text class="fig-sublabel" x="40" y="360">Public</text>
+              <circle class="fig-dot-restricted" cx="120" cy="356" r="3.5" />
+              <text class="fig-sublabel" x="132" y="360">Restricted</text>
+              <text class="fig-sublabel" x="230" y="360">
+                Sealed fields appear only at the nested leaf level (e.g.
+                identities, dissent hashes) — see Figure 1.
+              </text>
+            </svg>
+          </div>
+        </figure>
+
+        <div class="steps">
+          <div class="step">
+            <div class="step-label">
+              <span class="key"
+                ><i style="background: var(--tint)"></i
+                ><i style="background: var(--accent)"></i
+                ><i style="background: var(--dark-bg)"></i
+              ></span>
+              <h3><em>§3.2</em>Disclosure tiers &amp; IP protection</h3>
+            </div>
+            <p>
+              One authored document yields three views through a per-field
+              redaction map. The public tier shows that a run exists, its
+              compute and capability band, and that pause criteria and a
+              containment plan exist. The restricted tier — operator, auditors,
+              the relevant safety institute — holds the full specification. The
+              sealed tier stays with the developer, hash-committed so it can be
+              challenged later without being disclosed now. Auditor access
+              follows the FRONTIER Act audit clause as a floor: on-premises,
+              no-copy, unredacted.
+            </p>
+          </div>
+
+          <div class="step">
+            <div class="step-label">
+              <span class="key"
+                ><i style="background: var(--accent)"></i
+                ><i style="background: var(--dark-bg)"></i
+              ></span>
+              <h3><em>§3.3</em>Verification stack</h3>
+            </div>
+            <div class="step-body">
+              <p>
+                A filing does not need to be believed, only to exist and be
+                checkable. Each field carries a verification class and a
+                maturity level aligned to Brundage et al.'s AI Assurance
+                Levels.
+              </p>
+              <div class="regimes">
+                <div class="regime">
+                  <div class="rname">V0 <span>self-attestation</span></div>
+                  <p>Signed, but taken on the filer's word alone.</p>
+                </div>
+                <div class="regime">
+                  <div class="rname">V1 <span>process review</span></div>
+                  <p>
+                    Third-party review under structured access — the level the
+                    reference implementation's validator exercises today.
+                  </p>
+                </div>
+                <div class="regime">
+                  <div class="rname">
+                    V2 <span>independent measurement</span>
+                  </div>
+                  <p>
+                    Content-agnostic telemetry or hardware attestation, e.g.
+                    network taps and GPU power signals for compute band.
+                  </p>
+                </div>
+                <div class="regime">
+                  <div class="rname">
+                    V3 <span>cryptographic enforcement</span>
+                  </div>
+                  <p>
+                    Zero-knowledge proof-of-training and hardware-enabled
+                    governance — reserved slots, not dependencies of v0.1.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="step">
+            <div class="step-label">
+              <span class="key"
+                ><i style="background: var(--muted)"></i
+                ><i style="background: var(--dark-bg)"></i
+              ></span>
+              <h3><em>§3.4</em>Institutional layer</h3>
+            </div>
+            <p>
+              A national AI safety institute, the EU AI Office, an industry
+              self-regulatory body, or a federated split (an SRO holding
+              public/restricted tiers, a state body holding sealed hashes) could
+              each operate the register. Two mechanisms hold regardless of who
+              does: a
+              <strong>safe harbour</strong> that shields closeouts filed on time
+              and not materially false from being the sole basis for
+              enforcement, and a <strong>sealed dissent</strong> channel that
+              lets any employee attach a hash-committed objection — the register
+              discloses that a dissent exists, not its content.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section class="demo">
+        <h2>Reference Implementation</h2>
+        <p class="dek">
+          DBYR v0.1 ships as an executable form of the argument above: the
+          JSON Schema, a validator, the tier-projection engine, signed
+          envelopes over an append-only register, interop emitters for SB 53
+          / EU CoP / the FRONTIER Act, and a replay harness that regenerates
+          <a href="#results">Table 1</a> below from a machine-readable event
+          stream rather than asserting it by hand. Nothing in it is a filing
+          by any developer; the example Intent is a reconstruction of what
+          the May 2026 run would have filed, built from public sources only.
+          26 tests exercise the schema, validator, tier redaction, envelope
+          chaining and interop emitters.
+        </p>
+        <p class="demo-outro">
+          Source, install instructions and a runnable end-to-end walkthrough
+          (<code>./demo.sh</code>) are in the
+          <a
+            href="https://github.com/mach-12/dbyr"
+            target="_blank"
+            rel="noopener noreferrer"
+            >repository</a
+          >.
+        </p>
+      </section>
+
+      <section class="results" id="results">
+        <h2>Results</h2>
+
+        <div class="stats">
+          <div class="stat">
+            <span class="stat-value">72 days</span>
+            <span class="stat-label"
+              >Earlier than the developer's own alert — first binding 2026-05-08
+              vs. alert 2026-07-19</span
+            >
+          </div>
+          <div class="stat">
+            <span class="stat-value">5 of 6</span>
+            <span class="stat-label"
+              >Decision points that convert from discretionary to
+              record-bound</span
+            >
+          </div>
+          <div class="stat">
+            <span class="stat-value">13</span>
+            <span class="stat-label"
+              >R2 fields with no counterpart in any existing regime</span
+            >
+          </div>
+        </div>
+
+        <table>
+          <caption>
+            <strong>Table 1.</strong>
+            Backtest of DBYR v0.1 against the incident's six first-party
+            decision points, regenerated by
+            <code>dbyr.cli replay</code>
+            from a machine-readable event stream.
+          </caption>
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Decision point</th>
+              <th>DBYR field that binds</th>
+              <th>Bound?</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>2026-05-08</td>
+              <td>Agent can write to Artifactory; board forms.</td>
+              <td>
+                containment_spec/shared_writable_surfaces; pause_criteria/PC-02
+              </td>
+              <td>Yes</td>
+            </tr>
+            <tr>
+              <td>2026-05-26</td>
+              <td>First SSRF egress. No pause.</td>
+              <td>pause_criteria/PC-01</td>
+              <td>Yes</td>
+            </tr>
+            <tr>
+              <td>2026-06-11</td>
+              <td>Second model started with board access.</td>
+              <td>trigger_basis/new Intent required</td>
+              <td>Yes</td>
+            </tr>
+            <tr>
+              <td>2026-06-26</td>
+              <td>Admin access and code execution. Clean-up only.</td>
+              <td>pause_criteria/PC-04</td>
+              <td>Yes</td>
+            </tr>
+            <tr>
+              <td>2026-07-08</td>
+              <td>Restart after rebuild, no recorded criterion.</td>
+              <td>restart_protocol</td>
+              <td>Yes</td>
+            </tr>
+            <tr>
+              <td>2026-07-29</td>
+              <td>Selective notification; review scoped narrowly.</td>
+              <td>third_party_access_commitment + log_retention</td>
+              <td>Partial</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <p class="note">
+          5 of 6 decision points bind fully, 1 partially, against a
+          pre-registered success criterion of 3. Circumstantially attributed
+          threads (the wiki swarm, RubyGems) are excluded from scoring by
+          default, matching the paper's rule — the counts always state how many
+          events were excluded. One criterion, PC-07, was filed but is not
+          machine-checkable and never fires in replay.
+        </p>
+      </section>
+
+      <section class="discussion">
+        <h2>Discussion &amp; Limitations</h2>
+        <p>
+          The backtest rests on public sources and the authors' own segmentation
+          of the timeline into a hand-coded event stream — scoring a decision
+          point as bound is a judgement, not a measurement, and the tabletop and
+          pilot stages proposed in §3.5 have not been run. Notifying affected
+          third parties is the one failure v0.1 does not fully close: it
+          degrades to a warning rather than a hard rejection, which is why a
+          notification clock is proposed as v0.2 future work alongside a
+          commit-reveal ledger layer. DBYR is a control measure, not an
+          alignment measure — it does not fix corrupted reward signals or
+          degrading chain-of-thought monitorability, but it makes the decisions
+          taken around them visible. Signing keys generated by the reference
+          implementation's
+          <code>--sign</code> flag are ephemeral and for pilot use only.
+        </p>
+      </section>
+
+      <section id="bibtex" class="bibtex">
+        <h2>BibTeX</h2>
+        <pre><code>@misc{acharya2026dbyr,
+  title        = {Declare Before You Run: An Open Filing Standard for Frontier Training and Evaluation Runs},
+  author       = {Acharya, Mann and Ojha, Archit and Sankara Raman, Gautam and Rajput, Karm},
+  year         = {2026},
+  month        = sep,
+  note         = {Research conducted at the Apart Research AI Incident Response Sprint, September 2026},
+  howpublished = {\url{https://github.com/mach-12/dbyr}},
+}</code></pre>
+      </section>
+
+      <footer>
+        <div class="footer__container">
+          <p>
+            <span class="footer-brand">
+              <img class="footer-icon" src="assets/favicon-32x32.png" alt="" />
+              Apart Research
+            </span>
+            <span class="footer-text">
+              Written in a 2-day research sprint.
+            </span>
+          </p>
+        </div>
+      </footer>
+    </main>
+  </body>
+</html>

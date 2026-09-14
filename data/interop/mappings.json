@@ -1,0 +1,42 @@
+{
+  "version": "0.1",
+  "note": "R2 fields map one-to-one onto an existing obligation, so a DBYR filing can be emitted as an artefact those regimes already accept. R1 and R3 fields have no counterpart and are marked as such: these are the fields the incident shows are missing from current instruments.",
+  "regimes": {
+    "eu_cop": "EU GPAI Code of Practice, Safety & Security chapter; AI Act Art. 53-55",
+    "sb53": "California SB 53 (2025), incl. 22757.12 critical-incident definition",
+    "frontier_act": "H.R. 9925 FRONTIER Act (2026), (c) audit-report contents",
+    "guidelight": "Guidelight Transparency Standard v1.0 / Control Standard v1.0",
+    "eu_training_template": "EU public summary of training content template"
+  },
+  "fields": [
+    {"path": "developer", "route": "R2", "eu_cop": "model documentation: provider identity", "sb53": "covered developer identity", "frontier_act": "audit report: developer", "guidelight": "T1 identity"},
+    {"path": "compute_band", "route": "R2", "eu_cop": "systemic-risk presumption at 1e25 FLOP", "sb53": "1e26 FLOP covered-model threshold", "frontier_act": "covered model definition", "guidelight": "T2 scale"},
+    {"path": "data_classes", "route": "R2", "eu_training_template": "training-content public summary", "guidelight": "T3 data provenance"},
+    {"path": "predicted_capability_band", "route": "R2", "eu_cop": "systemic-risk assessment", "sb53": "published framework: capability thresholds", "guidelight": "T4 capability claims"},
+    {"path": "eval_plan", "route": "R2", "eu_cop": "model evaluation commitments", "sb53": "framework: evaluation practice", "frontier_act": "audit report: evaluation evidence"},
+    {"path": "monitoring_instruments", "route": "R1", "eu_cop": null, "sb53": null, "frontier_act": null, "gap": "no instrument requires pre-declared monitoring coverage for a run"},
+    {"path": "containment_spec", "route": "R1", "eu_cop": null, "sb53": null, "frontier_act": null, "gap": "no instrument requires enumeration of shared writable surfaces before a run"},
+    {"path": "containment_spec.inter_agent_comms_permitted", "route": "R1", "gap": "the specific undeclared affordance that produced the message board"},
+    {"path": "safeguards_disabled", "route": "R1", "eu_cop": "partial: safety-mitigation description", "gap": "no filing event attaches to disabling safeguards for an evaluation"},
+    {"path": "pause_criteria", "route": "R1", "eu_cop": "partial: framework commitments to stop rules", "sb53": "published framework may describe thresholds", "gap": "no requirement that a criterion name a role with unilateral pause authority"},
+    {"path": "restart_protocol", "route": "R1", "gap": "no instrument governs resumption after a contained incident"},
+    {"path": "containment_plan", "route": "R3", "guidelight": "Control Standard v1.0 C4-C6"},
+    {"path": "roles", "route": "R3", "guidelight": "T6 accountable persons", "frontier_act": "audit report: responsible officials"},
+    {"path": "log_retention", "route": "R1", "frontier_act": "partial: auditor access presumes records exist", "gap": "no retention floor for trajectories or chain-of-thought"},
+    {"path": "third_party_access_commitment", "route": "R1", "frontier_act": "(c) auditor access: on-premises, no-copy, unredacted", "gap": "access is not pre-agreed, so scope is negotiated after the incident"},
+    {"path": "security_events", "route": "R2", "eu_cop": "serious-incident reporting", "sb53": "22757.12 critical safety incident", "frontier_act": "audit report: incident record"},
+    {"path": "pause_events", "route": "R1", "gap": "no instrument records a criterion that fired and was overridden"},
+    {"path": "containment_exceptions", "route": "R1", "gap": "no instrument records deviation from a containment plan"},
+    {"path": "boundary_exceptions", "route": "R2", "eu_cop": "security of model weights", "sb53": "framework: security controls"},
+    {"path": "threshold_crossings", "route": "R2", "eu_cop": "systemic-risk re-assessment trigger", "sb53": "framework: threshold crossing response"},
+    {"path": "logs_preserved_pct", "route": "R1", "gap": "retention completeness is not currently reportable"},
+    {"path": "external_investigations", "route": "R1", "frontier_act": "partial: auditor access", "gap": "scope requested versus granted is not disclosed anywhere"},
+    {"path": "deployment_context", "route": "R1", "gap": "internal deployment is outside every current instrument (Toner 2026)"},
+    {"path": "recurring_eval_cadence", "route": "R3", "guidelight": "T8 ongoing assurance"}
+  ],
+  "emitters": {
+    "sb53_incident": "TrainingRunCloseout.security_events -> SB 53 critical-incident report",
+    "eu_cop_incident": "TrainingRunCloseout.security_events + containment_exceptions -> EU CoP serious-incident notification",
+    "frontier_audit_index": "TrainingRunIntent + TrainingRunCloseout -> FRONTIER Act (c) audit-report index"
+  }
+}
