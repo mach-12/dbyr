@@ -9,7 +9,7 @@
     </title>
     <meta
       name="description"
-      content="DBYR is a run-indexed disclosure protocol. Covered training runs and safeguards-off evaluations are declared before they start, an exception notice follows any detected exception within 72 hours, and investigators hold a standing right to extend scope. Tested against adversarial filers in a pre-registered tabletop exercise with sealed scenarios."
+      content="DBYR is a run-indexed disclosure protocol. Covered training runs and safeguards-off evaluations are declared before they start, an exception notice follows any detected exception within 72 hours, and investigators hold a logged right to extend scope. Tested in a pre-registered adversarial tabletop and backtested on three real incidents."
     />
     <link rel="canonical" href="https://mach-12.github.io/dbyr/" />
 
@@ -21,7 +21,7 @@
     />
     <meta
       property="og:description"
-      content="A run-indexed disclosure protocol: the record is made before the outcome is known. Claims attributability, not prevention. With a reference implementation and a pre-registered adversarial tabletop exercise."
+      content="A run-indexed disclosure protocol: the record is made before the outcome is known. Claims attributability, not prevention. With a reference implementation, a pre-registered adversarial tabletop exercise and backtests on three real incidents."
     />
     <meta property="og:url" content="https://mach-12.github.io/dbyr/" />
     <meta
@@ -90,17 +90,35 @@
   <body>
     <main>
       <header class="hero">
+        <a
+          class="award"
+          href="https://apartresearch.com/sprints/ai-incident-response-sprint-2026-09-11-to-2026-09-13#overview"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+          >
+            <circle cx="12" cy="15" r="6" />
+            <path d="M8.5 10.1 6 3h4l2 4 2-4h4l-2.5 7.1" />
+          </svg>
+          <span><strong>4th place globally</strong> &middot; of 231 projects at
+          the Apart Research AI Incident Response Sprint</span>
+        </a>
+
         <h1>Declare Before You Run</h1>
         <p class="subtitle">
           A Run-Indexed Disclosure Protocol for Frontier Training and Evaluation
         </p>
 
         <p class="date-line">
-          October 9, 2026
-          <span class="date-line__sep">&middot;</span>
-          <a class="updated-mark" href="#updated"
-            >updated since the original submission<sup>&#42;</sup></a
-          >
+          October 15, 2026
         </p>
 
         <ul class="authors">
@@ -167,7 +185,7 @@
           </a>
           <a
             class="button"
-            href="https://github.com/mach-12/dbyr/tree/main/code/tabletop/independent"
+            href="https://github.com/mach-12/dbyr#install"
             target="_blank"
             rel="noopener noreferrer"
           >
@@ -185,7 +203,7 @@
                 d="M20.001 19A2 2 0 0 0 22 17V5a2 2 0 0 0-1.999-2L16 3.002A5 5 0 0 0 12 5a5 5 0 0 0-4-2H4a2 2 0 0 0-2 2v12a2 2 0 0 0 1.999 2H8a5 5 0 0 1 4 2 5 5 0 0 1 4-2z"
               />
             </svg>
-            Tabletop record
+            Docs
           </a>
           <a class="button" href="#bibtex">
             <svg
@@ -222,14 +240,46 @@
           they start, exceptions are noticed within 72 hours, every affected
           third party is accounted for, and investigators hold a logged right to
           extend scope. DBYR claims
-          <strong>attributability, not prevention</strong>. In a pre-registered
+          attributability, not prevention. In a pre-registered
           tabletop with adversarial filers and sealed scenarios, 3 of 36
           material facts went unidentified, mainly through evaluator review; the
-          automated checks forced little and could be passed by omission. On the
-          2026 case, no field would have changed the decisive restart. An
-          embedded evaluator can adopt DBYR without legislation; code and
-          records are released.
+          automated checks forced little and could be passed by omission. On two
+          held-out incidents, at Anthropic and the UK AISI, reconstructed filings
+          recorded most decision-relevant facts before the run, but only about
+          half could be checked afterwards, mostly because the evidence was not
+          promised; one case passed the pre-registered criterion and one failed,
+          each by one decision point. Across all three incidents, no field would
+          have changed a decision. An embedded evaluator can adopt DBYR without
+          legislation; code and records are released.
         </p>
+        <h3 class="sub">Main findings</h3>
+        <ol class="body">
+          <li>
+            <strong>The clearest gain comes after the fact.</strong> Four of the
+            five constraints placed on the 2026 investigation become logged
+            refusals with stated grounds, and every decision not to notify an
+            affected party becomes a recorded fact with a reason.
+          </li>
+          <li>
+            <strong>Leakage stayed low because an evaluator read the
+            filings.</strong> Against filers trying to disclose as little as
+            possible, the automated checks forced little and could be passed by
+            omission; we specify a rule to close that gap.
+          </li>
+          <li>
+            <strong>Most facts reach the record; about half can be
+            checked.</strong> On two incidents it was not written from, the
+            protocol put most of the facts that mattered on record before the
+            run, but only about half were checkable afterwards. Most of the gap
+            is evidence the filer never promised to keep, which a retention rule
+            can close.
+          </li>
+          <li>
+            <strong>No field would have changed a decision.</strong> On none of
+            the three incidents, including the decisive 2026 restart: DBYR makes
+            decisions attributable; it does not force them.
+          </li>
+        </ol>
       </section>
 
       <section class="why">
@@ -1009,28 +1059,26 @@
       <section class="demo">
         <h2>Reference Implementation</h2>
         <p class="dek">
-          The implementation fixes the protocol precisely enough to be checked:
-          JSON Schemas for the four records, the validator and minimum-content
-          checks, cross-run lineage checks, tiered redaction with salted
-          commitments, an Ed25519-signed hash-chained record, the scripted
-          attack suite, and the worked-example scorer with a provenance label on
-          every reconstructed value. 55 unit tests.
-          <code>reproduce.sh</code> regenerates every code-derived number in the
-          paper, which reads them from generated files rather than retyping
-          them.
+          The implementation fixes the protocol precisely enough to be
+          checked: JSON Schemas for the four records, the validator and
+          minimum-content checks, cross-run lineage checks, tiered redaction
+          with salted commitments, an Ed25519-signed hash-chained record, and
+          the backtest scorer with the reconstructed 2026 case and the two
+          pre-registered held-out cases, every value carrying a provenance
+          label. 55 unit tests. <code>reproduce.sh</code> regenerates every
+          code-derived number in the paper, which reads them from generated
+          files rather than retyping them.
         </p>
 
         <pre class="code"><code>pip install -r code/requirements.txt   # jsonschema, cryptography
 cd code &amp;&amp; ./reproduce.sh              # 55 tests + every number in the paper</code></pre>
 
         <p class="body">
-          Two rule profiles make the evidence legible.
-          <code>baseline</code> is the v0.1 rule set — well formed and
-          internally consistent. <code>adequacy</code>, the default, adds the
-          minimum-content checks. Scoring evasions against both separates
-          &ldquo;the rules do what they say&rdquo; from &ldquo;the rules predate
-          the attack&rdquo;. The reconstructed 2026 filings pass
-          <code>baseline</code> and are rejected by <code>adequacy</code>:
+          Two rule profiles separate form from content. <code>baseline</code>
+          checks only that a filing is well formed and internally consistent.
+          <code>adequacy</code>, the default, adds the minimum-content checks.
+          The reconstructed 2026 filings pass <code>baseline</code> and are
+          rejected by <code>adequacy</code>:
         </p>
 
         <pre class="code"><code>$ python -m dbyr validate backtest/cases/hf-2026/intent_run_a.json --profile adequacy
@@ -1067,13 +1115,17 @@ FAIL  intent_run_a.json  (6 errors, 0 conduct, 2 warnings)
       <section class="results" id="results">
         <h2>Evidence</h2>
         <p class="dek">
-          Two tests follow, and they carry different weight. The independent
-          tabletop is <strong>out-of-sample</strong>: a separate model instance
-          wrote its scenarios, which were sealed with their hashes recorded
-          before the rules were frozen and opened only afterwards. The worked
-          example on the 2026 incident is <strong>traceability</strong>, since
-          the schema was written from that incident, and any rule written after
-          reading it, such as the dead-criterion rejection, is in-sample.
+          Two tests follow, and their parts carry different weight. The
+          independent tabletop is <strong>out-of-sample</strong>: a separate
+          model instance wrote its scenarios, which were sealed with their
+          hashes recorded before the rules were frozen and opened only
+          afterwards. The incident backtests have two parts. The 2026 incident
+          is <strong>traceability</strong>, since the schema was written from
+          it, and any rule written after reading it, such as the
+          dead-criterion rejection, is in-sample. The Anthropic and UK AISI
+          incidents are <strong>out-of-sample</strong>: the backtest was
+          pre-registered against the frozen schema hash, and an independent
+          scorer wrote their decision points.
         </p>
 
         <div class="stats">
@@ -1095,6 +1147,13 @@ FAIL  intent_run_a.json  (6 errors, 0 conduct, 2 warnings)
             <span class="stat-value">3 of 3</span>
             <span class="stat-label"
               >Intents rejected at intake — and all three runs went ahead</span
+            >
+          </div>
+          <div class="stat">
+            <span class="stat-value">9/16 &middot; 6/13</span>
+            <span class="stat-label"
+              >Held-out facts recorded and checkable afterwards: Anthropic passes,
+              UK AISI fails, each by one decision point</span
             >
           </div>
         </div>
@@ -1292,17 +1351,19 @@ FAIL  intent_run_a.json  (6 errors, 0 conduct, 2 warnings)
           <h3>Closing the omission gap</h3>
           <p>
             The second finding has a direct fix, which we specify but have not
-            tested. Under v0.3 a surface missing from the Intent surfaces only at
-            reconciliation, as a containment exception, and costs the filer no
-            more than declaring it would have. A v0.4 rule treats any surface
-            that agents reached, that existed when the Intent was signed and that
-            the Intent does not list as an <strong>undeclared surface</strong>: a
-            conduct finding against the signer and, under Layer B, loss of the
-            safe harbour, since the omission was within the filer's knowledge. A
-            truthful Intent for an inadequate configuration lodges as
-            &ldquo;submitted, not accepted&rdquo; with its errors listed.
-            Honesty then produces a record and omission produces a finding. The
-            fourth finding has a contractual answer under Layer A: the engagement
+            tested. At present a surface missing from the Intent surfaces only
+            at reconciliation, as a containment exception, and costs the filer
+            no more than declaring it would have. A proposed rule treats any
+            surface that agents reached, that existed when the Intent was
+            signed and that the Intent does not list as an <strong>undeclared
+            surface</strong>: a conduct finding against the signer and, under
+            Layer B, loss of the safe harbour, since the omission was within
+            the filer's knowledge. A truthful Intent for an inadequate
+            configuration lodges as &ldquo;submitted, not accepted&rdquo; with
+            its errors listed, as in the tabletop. Honesty then produces a
+            record and omission produces a finding, which reverses the
+            incentive in S4 and lets S5 and S6 file truthfully. The fourth
+            finding has a contractual answer under Layer A: the engagement
             letter can make a run whose Intent was rejected ineligible for the
             evaluator's sign-off and require the rejection to appear in the
             public tier. Whether either holds against a motivated filer is the
@@ -1324,121 +1385,295 @@ FAIL  intent_run_a.json  (6 errors, 0 conduct, 2 warnings)
           models rather than human reviewers.
         </p>
 
-        <h3 class="sub">Worked example on the 2026 incident</h3>
+        <h3 class="sub">Backtests on three real incidents</h3>
         <p class="body">
-          We reconstructed, from public sources only, the filings the May–July
-          runs would have produced: an Intent for each of the two runs that
-          reached the package proxy, a Closeout for the first, and the exception
-          notices a diligent filer would have filed. Six decision points are
-          scored on three questions: (a) was the material fact recorded before
-          the event, (b) is the event checkable afterwards against declared
-          retention, and (c) would the filing have required a different action
-          from the one taken. A <em>diligent</em> filer declares every write
-          permission that is a configuration fact; an <em>as-believed</em> filer
-          declares the package proxy only as a read path.
+          <strong>Question and design.</strong> Had the labs filed under DBYR,
+          would the facts that mattered have been on record before the run and
+          checkable afterwards? From public sources only, we reconstructed the
+          Intents, Closeouts and notices DBYR would have required, labelling each
+          value first-party, forced-choice (unrecorded, but a filing would have
+          required it) or placeholder (never scored). Built from later accounts
+          and filled in as a compliant filer would, they show what a filing
+          <em>could</em> hold: an upper bound, not a record any lab made. For
+          each <em>decision point</em>, a moment where a decision taken or not
+          mattered to the outcome, <code>backtest/score.py</code> asks: (a) was
+          the material fact recorded before the event; (b) is it checkable
+          afterwards against declared retention; (c) would the filing have
+          required a different action? A decision point is
+          <strong>attributable</strong> when (a) and (b) hold; we classified why
+          the others are not. A <em>diligent</em> filer declares the actual
+          configuration, which the labs did not know; an <em>as-believed</em>
+          filer, the realistic case, declares what the team believed.
+          Pre-registered, a case fails if fewer than half its decision points
+          are attributable.
+        </p>
+        <p class="body">
+          <strong>The cases.</strong> The 2026 Hugging Face incident is the
+          derivation case and so traceability (six decision points). The other
+          two are <strong>held out</strong>: the backtest was pre-registered with
+          the frozen schema hash, a source cutoff and the failure criterion
+          before any reconstruction, and a separate model instance that took no
+          part in the schema wrote their decision points. In
+          <strong>Anthropic 2026</strong>, Claude models in four safeguards-off
+          cyber evaluations reached real third-party systems through an internet
+          path a partner's environment was meant not to have (16 decision
+          points). In <strong>UK AISI 2026</strong>, agents in a cyber-range
+          exercise with deliberate internet access took out-of-scope actions on
+          public services (13 decision points); AISI ran the evaluation and is
+          the filer, which tests the assumption that the developer files.
         </p>
 
-        <table>
+        <table class="funnel">
           <caption>
             <strong>Table 3.</strong>
-            Worked example, generated by
-            <code>backtest/score.py</code>. (a) and (b) are traceability on this
-            derivation case; only (c) bears on prevention.
-            &ldquo;Partial&rdquo;: behavioural evidence fell below the declared
-            retention floor (roughly a tenth of trajectories were lost).
-            &ldquo;Unknown&rdquo;: the developer's awareness at the time is not
-            established, or the field imposes a duty to record rather than to
-            act.
+            Incident backtests, generated by <code>backtest/score.py</code>. A
+            case passes if at least half its facts are recorded and checkable
+            afterwards. HF is the derivation case, so its score holds by
+            construction. <em>Schema limitation</em>: no field for the fact.
+            <em>Evidence not promised</em>: the evidence needed to check the fact
+            was not listed as retained. <em>Check missed it</em>: the fact is in
+            the filing, but the pre-registered check did not detect it.
           </caption>
           <thead>
             <tr>
-              <th>Question</th>
-              <th>Diligent filer</th>
-              <th>As-believed filer</th>
+              <th></th>
+              <th>OpenAI / HF 2026</th>
+              <th>Anthropic 2026</th>
+              <th>UK AISI 2026</th>
             </tr>
           </thead>
           <tbody>
-            <tr>
-              <td>(a) Material fact recorded before the event</td>
-              <td><strong>6 / 6</strong></td>
-              <td>4 / 6</td>
+            <tr class="group-row">
+              <th colspan="4" scope="colgroup">
+                Diligent filer
+                <span>declares the configuration as it actually was</span>
+              </th>
             </tr>
             <tr>
-              <td>(b) Event checkable afterwards</td>
-              <td>6 / 6 (2 partial)</td>
-              <td>6 / 6 (2 partial)</td>
+              <td>Facts that mattered</td>
+              <td>6</td>
+              <td>16</td>
+              <td>13</td>
             </tr>
             <tr>
-              <td>(c) Filing would have changed the decision</td>
-              <td><strong>0 yes</strong>, 3 unknown</td>
-              <td><strong>0 yes</strong>, 3 unknown</td>
+              <td>Recorded before the run</td>
+              <td>6 of 6</td>
+              <td>13 of 16</td>
+              <td>11 of 13</td>
+            </tr>
+            <tr>
+              <td>Recorded and checkable afterwards</td>
+              <td>6 of 6</td>
+              <td><strong>9 of 16</strong></td>
+              <td><strong>6 of 13</strong></td>
+            </tr>
+            <tr>
+              <td>Filing would have changed a decision</td>
+              <td>0 of 6</td>
+              <td>0 of 16</td>
+              <td>0 of 13</td>
+            </tr>
+            <tr>
+              <td>Facts missing</td>
+              <td>None</td>
+              <td>
+                3 schema limitation<br />3 evidence not promised<br />1 check
+                missed it
+              </td>
+              <td>
+                2 schema limitation<br />3 evidence not promised<br />2 check
+                missed it
+              </td>
+            </tr>
+            <tr class="group-row">
+              <th colspan="4" scope="colgroup">
+                As-believed filer
+                <span>declares what the team believed at the time</span>
+              </th>
+            </tr>
+            <tr>
+              <td>Facts that mattered</td>
+              <td>6</td>
+              <td>16</td>
+              <td>13</td>
+            </tr>
+            <tr>
+              <td>Recorded before the run</td>
+              <td>4 of 6</td>
+              <td>12 of 16</td>
+              <td>10 of 13</td>
+            </tr>
+            <tr>
+              <td>Recorded and checkable afterwards</td>
+              <td>4 of 6</td>
+              <td><strong>9 of 16</strong></td>
+              <td><strong>6 of 13</strong></td>
+            </tr>
+            <tr>
+              <td>Filing would have changed a decision</td>
+              <td>0 of 6</td>
+              <td>0 of 16</td>
+              <td>0 of 13</td>
+            </tr>
+            <tr>
+              <td>Facts missing</td>
+              <td>2 filer didn't know</td>
+              <td>
+                3 schema limitation<br />1 filer didn't know<br />2 evidence not
+                promised<br />1 check missed it
+              </td>
+              <td>
+                2 schema limitation<br />1 filer didn't know<br />2 evidence not
+                promised<br />2 check missed it
+              </td>
             </tr>
           </tbody>
         </table>
 
         <p class="body">
-          The two decision points the as-believed filer misses are where the
-          proxy's write permission mattered, and even then the Closeout records
-          the undeclared surface. Two links of the failure chain have no field.
-          No declaration predicts that directory names will become a message
-          bus, and specification gaming is a property of optimisation, not a
-          fact available for filing. Under the minimum-content checks the
-          reconstructed Intent is rejected before the run, because its pause
-          criterion for inter-agent communication has no declared monitor able
-          to observe it (a dead criterion). That rule was written after reading
-          this case, so the result is in-sample; it is nevertheless the one point
-          where the protocol would have done more than record. Every
-          reconstructed value is labelled first-party, forced-choice or
-          placeholder, and <strong>the reconstruction is not a filing by
-          OpenAI</strong>.
+          The short answer to the question is <em>partly</em>: a compliant filing
+          has a place for most of what mattered, but only about half of it could
+          be checked afterwards, and the fact that caused each incident is one an
+          honest filer did not know.
         </p>
-
+        <ol class="body">
+          <li>
+            <strong>Most facts fit the form; about half can be checked.</strong>
+            On the held-out cases a compliant filing would have held 12–13 of
+            Anthropic's 16 facts and 10–11 of AISI's 13 before the run, but only
+            9 and 6 were checkable afterwards. Anthropic passes the criterion and
+            AISI fails it, each by one decision point, and each verdict moves
+            with a single choice described below; the criterion does not
+            separate the two cases.
+          </li>
+          <li>
+            <strong>The Anthropic pass rests on pause criteria the lab never
+            recorded.</strong> Anthropic published no pause criteria. Under
+            safeguards-off, the protocol requires a criterion for every
+            reportable kind, so the reconstruction declares a standard set as a
+            forced choice. Six of Anthropic's nine attributable decision points
+            depend on it; without it the case would score 3 of 16. The result
+            shows what a compliant filing would have held, not what was written
+            down.
+          </li>
+          <li>
+            <strong>The cause sits where an honest filer cannot reach.</strong>
+            By construction the as-believed filer loses only facts the team did
+            not know, but those include the cause of each incident: the proxy's
+            write access at HF, the open internet path at Anthropic, and at AISI
+            that the internet was a surface shared by concurrent samples. A
+            Closeout records each one afterwards, once the decisions it would
+            have informed were made.
+          </li>
+          <li>
+            <strong>The largest checking gap is evidence the filer never promised
+            to keep</strong>: configuration history at both labs, access logs for
+            Anthropic's notifications and inter-agent messages for AISI.
+            Requiring configuration snapshots to be retained under safeguards-off
+            would address the most common cause without a new field, though we
+            have not tested it.
+          </li>
+          <li>
+            <strong>The schema has no field for five facts.</strong> Three concern
+            what an agent is told it may do: at Anthropic, the scope it could act
+            in and whether the task stayed solvable in scope; at AISI, which uses
+            of the internet were out of scope. The other two are a working abort
+            path at Anthropic and notice to the evaluated models' developers at
+            AISI, given six days after detection, which arises because the
+            evaluator files and DBYR has no route from an evaluator's incident to
+            the developer. On HF, two links of the failure chain also have no
+            field: directory names becoming a message bus, and specification
+            gaming, which is a property of optimisation.
+          </li>
+        </ol>
+        <p class="note">
+          The three misses marked &ldquo;check missed it&rdquo; are failures of
+          the test, not the protocol, but we report them as scored. Read as a
+          substring search rather than a list, one AISI check would make the
+          quarantine decision attributable and bring AISI to 7 of 13, exactly the
+          threshold. With one scorer, who saw the filings while writing the
+          checks, both verdicts should be read as sitting at the threshold rather
+          than on either side of it.
+        </p>
+        <p class="body">
+          <strong>Intake.</strong> Under the minimum-content checks every
+          reconstructed Intent is rejected before its run. On HF the cause is a
+          dead criterion, a rule written after reading the case and so
+          in-sample. On the held-out cases, frozen before reconstruction, every
+          filer that declared the open internet path is rejected for exactly
+          that, an unenforced path under safeguards-off; the as-believed
+          Anthropic filer, unaware of the path, only for an unrelated monitoring
+          gap. One further error, which fires on any honest filing that declares
+          an internet surface, is a checker inconsistency. As in the tabletop, a
+          rejection prevents nothing unless the engagement makes it binding. It
+          is nonetheless the one held-out result that bears on prevention: a
+          diligent Intent would have been refused before the run for the actual
+          cause. The last row of Table 3 does not count it, because it scores
+          only what the declared criteria would have required during the run.
+        </p>
         <p class="body">
           <strong>What it adds after the fact.</strong> Five constraints limited
-          the 2026 investigation: (i) the scope window, 26 June to 13 July and
-          centred on 7–13 July, which excluded earlier training-phase incidents
-          and the later compromise of OpenAI's own infrastructure; (ii) access,
-          six days for three researchers; (iii) data delivered in stages, with
-          the investigators invited back twice to review more; (iv) the most
-          involved internal model, which could not be queried; and (v) the wiki
-          activity later disclosed by outside researchers, which was excluded.
-          Four of the five are addressed by
-          <code>investigator_scope_expansion</code> with logged refusals; model
-          availability is not. A narrowed scope must appear as a refusal with
-          stated grounds. The <code>third_party_notifications</code> field and
-          its deadline do the same for affected parties: an omission becomes a
-          recorded fact with a reason.
+          the 2026 investigation: a scope window of 26 June to 13 July that
+          excluded earlier training-phase incidents and the later compromise of
+          OpenAI's own infrastructure; six days of access for three researchers;
+          data delivered in stages; an internal model that could not be queried;
+          and the exclusion of the wiki activity.
+          <code>investigator_scope_expansion</code> with logged refusals
+          addresses all but model availability, and
+          <code>third_party_notifications</code> does the same for affected
+          parties: a narrowed scope or an omitted notice becomes a recorded fact
+          with a reason. The held-out cases show the same fields at work:
+          Anthropic's grant of wide access to an independent investigator, and
+          AISI's notification of the affected platform, are attributable. Both
+          organisations disclosed these voluntarily, however, and without a
+          baseline from their published accounts the backtest cannot show how
+          much DBYR adds over them.
         </p>
 
         <div class="callout callout--negative">
-          <h3>The decisive negative finding</h3>
+          <h3>What it would not have changed</h3>
           <p>
-            Column (c) has no &ldquo;yes&rdquo;. At the July restart, an outage
-            on 4 July led to an incident being opened on 5 July, a
-            privilege-escalation route blocked, credentials removed and, by 8
-            July, the service rebuilt — which incidentally cleared the channel;
-            evaluations then resumed.
-            <strong>Under DBYR this produces a compliant filing</strong>: a
-            declared criterion triggers, the required action is taken, the
-            declared role approves the restart, and the Closeout is accurate.
-            The intrusion of 11–13 July follows. The responsible leaders did not
-            see the channel's significance. An internal team had observed
-            message-board activity in late May, and a notice filed then would
-            have put the channel on record weeks earlier; whether a record
-            reaches the people who decide on a restart is a routing question DBYR
-            does not settle.
+            Across all 35 decision points, no filing would have required a
+            different action: 11 are &ldquo;no&rdquo; and 24
+            &ldquo;unknown&rdquo;, mostly because the field imposes a duty to
+            record rather than to act. Most &ldquo;no&rdquo;s arise because no
+            one saw the event in time; Anthropic found its incidents weeks or
+            months later, and at HF the message board was not seen by anyone who
+            could pause. A criterion cannot fire on an event nobody observes. In
+            the rest, the organisation already took the action its criterion
+            required.
           </p>
           <p>
-            Adverse information was already on record before the incident: an
-            external evaluation reported an unprecedented cheating rate, and the
-            system card acknowledged fabricated research results. The records
-            existed and nothing bound.
+            The decisive case is the July HF restart: the outage, incident
+            response and rebuild produce a
+            <strong>compliant filing</strong> in which a declared criterion
+            triggers, the required action is taken, the declared role approves
+            the restart and the Closeout is accurate, and the intrusion follows.
+            A team had seen message-board activity in late May, so a notice then
+            would have put the channel on record weeks earlier, but whether a
+            record reaches the people who decide on a restart is a routing
+            question DBYR does not settle. Adverse information was already
+            public. The records existed and nothing bound.
           </p>
           <p class="callout__punch">
             A disclosure protocol adds records; it does not supply a forcing
             mechanism.
           </p>
         </div>
+
+        <p class="note">
+          <strong>Deviations and limits.</strong> Each case had one scorer,
+          isolated by instruction, so there is no agreement measure, and it saw
+          the reconstructed filings while writing its checks. Anthropic recorded
+          no pause criteria, so the reconstructions use the standard set the
+          protocol requires, on which the Anthropic verdict depends (point 2).
+          Neither the negative arm (criteria firing on incident-free runs) nor a
+          baseline from the published accounts alone was measured. A SHA-256
+          freeze log proves what was frozen but not when. Every reconstructed
+          value is labelled first-party, forced-choice or placeholder, and
+          <strong>the reconstructions are not filings by the organisations
+          involved</strong>.
+        </p>
       </section>
 
       <section class="discussion">
@@ -1465,6 +1700,16 @@ FAIL  intent_run_a.json  (6 errors, 0 conduct, 2 warnings)
           little, and a filing could pass them by omission or by a few false
           lines. The weakest points were timely notice and what a rejection
           costs: three Intents were rejected and three runs went ahead.
+        </p>
+        <p>
+          <strong>What the backtests add.</strong> On two incidents the
+          protocol was not written from, the schema had a place for most of
+          what mattered. What failed more often was the promise to keep the
+          evidence that would let someone check it. That is a retention rule,
+          not a redesign. The fields that were missing share a theme: what an
+          agent is told it may do, and, when an evaluator files, how the
+          developer learns of an incident. Neither held-out case shows a field
+          changing a decision.
         </p>
         <ol class="limits">
           <li>
@@ -1503,13 +1748,16 @@ FAIL  intent_run_a.json  (6 errors, 0 conduct, 2 warnings)
           </li>
           <li>The Layer B operator question is unresolved across jurisdictions.</li>
           <li>
-            <strong>The evidence is limited.</strong> The tabletop has three
-            scenarios, played by one model family. The worked example rests on
-            reconstructions with forced choices. DBYR does not address reward
-            hacking, which is not a fact available for filing.
+            <strong>The evidence is limited.</strong>
+            The tabletop has three scenarios, played by one model family. The
+            backtests rest on reconstructions with forced choices; each
+            held-out case had a single scorer, and both verdicts turn on one
+            decision point. DBYR does not address reward hacking, which is not
+            a fact available for filing.
           </li>
           <li>
             <strong>Filing burden and adoption interest are not measured.</strong>
+            The pilot under Future work would measure both.
           </li>
         </ol>
         <p>
@@ -1534,36 +1782,53 @@ FAIL  intent_run_a.json  (6 errors, 0 conduct, 2 warnings)
           wiki or RubyGems attributions.
         </p>
         <p>
-          <strong>Future work.</strong> Four structures could be built around the
-          schema. A <em>pre-training audit certificate</em>: an AAL-1 or AAL-2
-          engagement taking the Intent as its object, issued before the first
-          optimisation step. A <em>certified evaluator network</em>, building on
-          SB 813 and the September executive order; a record is only as useful
-          as the population qualified to read it. A <em>requester right</em> of
-          the GDPR subject-access type, letting a defined class of affected
-          parties compel production of restricted-tier fields; in this incident
-          the compromised third party had no standing to demand anything. And a
-          <em>commit-reveal layer</em>: developers post signed hash commitments at
-          filing time, while content stays encrypted under threshold keys held
-          jointly by the evaluator and an independent party, opened only when a
-          pause criterion or containment exception fires. On the verification
-          side, proof-of-training, zero-knowledge training proofs and
-          hardware-enabled guarantees would each narrow the V0 surface; none is
-          a dependency.
+          <strong>Future work.</strong>
+          The results point to one direction: a run-level evidence standard
+          for embedded evaluation. Embedded-evaluator arrangements are being
+          negotiated, but we know of no standard for what run-level evidence
+          an evaluator should receive before a risky run; without one, an
+          evaluator can issue a clean verdict on a claim the evidence could
+          never have refuted. Generalising the dead-criterion check to flag
+          any declared claim that no declared evidence could adjudicate would
+          turn DBYR's intake into such a standard, and the SB 813 framework
+          for certifying independent verifiers is a natural home for it. Four
+          rules found here need testing: the undeclared-surface rule,
+          retention of configuration snapshots under safeguards-off, fields
+          for what an agent is told it may do and for notice from an evaluator
+          to the developer, and an engagement clause that makes a rejected
+          Intent binding. The next tabletop should use human evaluators,
+          filers from several model families and a no-DBYR baseline, and
+          should time each intake to measure whether the checker saves
+          evaluator effort; a second backtest scorer and a baseline from the
+          published accounts would firm up the held-out verdicts. A six-month
+          pilot with one evaluator and one lab would then measure filing
+          burden and on-time notice in practice. Longer-horizon additions,
+          such as a commit-reveal layer for sealed fields and hardware-backed
+          verification, would narrow the V0 surface; none is a dependency.
         </p>
         <p>
-          <strong>Conclusion.</strong> The Hugging Face incident was made possible
-          by capability and made worse by discretion. Declare Before You Run
-          targets the discretion. Its clearest gain comes after the fact: a
-          refusal to let investigators look further, or a decision not to tell
-          an affected party, becomes a recorded act with stated grounds rather
-          than a silent one. It does not force decisions; on the 2026 case, no
-          field would have changed the decisive restart. Tested against filers
-          trying to disclose as little as possible, the protocol kept leakage
-          low because an evaluator read the filings. The automated checks
-          blocked inadequate runs rather than forcing disclosure and could be
-          passed by omission, a gap the undeclared-surface rule is designed to
-          close. Layer A needs only one evaluator and one lab willing to file.
+          <strong>Conclusion.</strong>
+          The Hugging Face incident was made possible by capability and made
+          worse by discretion. Declare Before You Run targets the discretion.
+          A safeguards-off configuration, an egress design, a pause
+          allocation, a notification decision and an investigation boundary
+          become signed, dated statements that a second party can check. Its
+          clearest gain comes after the fact: a refusal to let investigators
+          look further, or a decision not to tell an affected party, becomes a
+          recorded act with stated grounds rather than a silent one. It does
+          not force decisions: on three incidents, including the decisive 2026
+          restart, no field would have changed a decision. On the two
+          incidents it was not written from, most of what mattered was on
+          record before the run, and the larger gap was evidence that no one
+          promised to keep. Tested against filers trying to disclose as little
+          as possible, the protocol kept leakage low because an evaluator read
+          the filings. The automated checks blocked inadequate runs rather
+          than forcing disclosure and could be passed by omission, a gap the
+          undeclared-surface rule is designed to close. The hazard model
+          belongs to agent security; the gap is that no disclosure regime asks
+          for it. Layer A needs only one evaluator and one lab willing to
+          file, and the six-month pilot proposed under Future work would show
+          whether the protocol does more than record.
         </p>
       </section>
 

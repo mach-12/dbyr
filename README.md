@@ -4,6 +4,10 @@
 
 ### An Open Filing Standard for Frontier Training and Evaluation Runs
 
+[![🏅 4th Place · Apart Research AI Incident Response Sprint](https://img.shields.io/badge/%F0%9F%8F%85%204th%20Place-Apart%20Research%20AI%20Incident%20Response%20Sprint-gold?style=for-the-badge)](https://apartresearch.com/sprints/ai-incident-response-sprint-2026-09-11-to-2026-09-13#overview)
+
+**🏅 Placed 4th globally out of 231 projects (971 sign-ups) at the [Apart Research AI Incident Response Sprint](https://apartresearch.com/sprints/ai-incident-response-sprint-2026-09-11-to-2026-09-13#entries), September 2026.**
+
 **Mann Acharya** · **Archit Ojha** · **Gautam Sankara Raman** · **Karm Rajput**
 
 *with [Apart Research](https://apartresearch.com)*
@@ -27,7 +31,7 @@ The [live site](https://mach-12.github.io/dbyr/) walks through the standard end 
 - **Gautam Sankara Raman** — Independent. Conducted the incident timeline reconstruction; collected and analyzed public responses.
 - **Karm Rajput** — Independent. Background research on the cybersecurity aspects of the project.
 
-Research conducted at the [AI Incident Response Sprint](https://apartresearch.com/sprints/ai-incident-response-sprint-2026-09-11-to-2026-09-13), with Apart Research, September 2026.
+Research conducted at the [AI Incident Response Sprint](https://apartresearch.com/sprints/ai-incident-response-sprint-2026-09-11-to-2026-09-13), with Apart Research, September 2026, where it placed 4th of 231 submitted projects.
 
 ---
 

@@ -1,6 +1,6 @@
 # DBYR landing page
 
-Static HTML/CSS paper page for the v0.3 protocol. No build step, no JavaScript.
+Static HTML/CSS paper page for the DBYR protocol. No build step, no JavaScript.
 
 ## Preview locally
 
