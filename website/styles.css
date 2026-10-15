@@ -59,6 +59,43 @@ h1 {
   margin: 0 0 0.75rem;
 }
 
+.award {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  max-width: 100%;
+  margin: 0 0 1.25rem;
+  padding: 0.45rem 1rem;
+  background: #fff6db;
+  border: 1px solid #e8c766;
+  border-radius: var(--radius-pill);
+  color: #6b4e00;
+  font-size: 0.875rem;
+  line-height: 1.35;
+  text-decoration: none;
+  transition:
+    border-color 0.15s ease,
+    box-shadow 0.15s ease,
+    transform 0.15s ease;
+}
+
+.award:hover {
+  border-color: #c99a1c;
+  box-shadow: 0 6px 16px rgba(201, 154, 28, 0.18);
+  transform: translateY(-1px);
+}
+
+.award svg {
+  flex: none;
+  width: 1.125rem;
+  height: 1.125rem;
+  color: #b8860b;
+}
+
+.award strong {
+  font-weight: 700;
+}
+
 .subtitle {
   font-family: var(--serif);
   font-size: clamp(1.05rem, 4.5vw, 1.3rem);
@@ -695,6 +732,29 @@ th {
 
 tbody tr:last-child td {
   border-bottom: none;
+}
+
+/* group headers inside a table body (Table 3: diligent / as-believed) */
+tbody .group-row th {
+  color: var(--fg);
+  font-weight: 600;
+  border-bottom: 1px solid var(--border);
+  padding-top: 1.25rem;
+}
+
+tbody .group-row:first-child th {
+  padding-top: 0.65rem;
+}
+
+tbody .group-row th span {
+  font-weight: 400;
+  color: var(--muted);
+  font-size: 0.85rem;
+  margin-left: 0.4rem;
+}
+
+table.funnel td {
+  vertical-align: top;
 }
 
 .note {
