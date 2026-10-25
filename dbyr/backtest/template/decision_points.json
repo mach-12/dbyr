@@ -32,7 +32,7 @@
       "decision": "An agent reaches an allowlisted host by request smuggling; the run is paused for review.",
       "field": "agent_surface.permitted_paths, pause_criteria",
       "developer_aware": "yes",
-      "aware_source": "closeout_A.json: the egress was detected an hour after it happened",
+      "aware_source": "closeout_A.json: the escape was detected an hour after it happened",
       "recorded_before": {
         "record": "intent:A",
         "any": "/agent_surface/permitted_paths",
@@ -60,7 +60,7 @@
     {
       "id": "DP2",
       "date": "5 Sep",
-      "decision": "The hosting provider reached by the egress is notified the same day.",
+      "decision": "The hosting provider reached by the escape is notified the same day.",
       "field": "pause_criteria, third_party_notifications",
       "developer_aware": "yes",
       "aware_source": "closeout_A.json: notified at 20:00 on the day of detection",

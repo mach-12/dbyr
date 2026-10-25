@@ -78,7 +78,7 @@
   ],
   "pause_criteria": [
     {
-      "criterion_id": "C-egress",
+      "criterion_id": "C-escape",
       "matches": [
         "sandbox_escape",
         "undeclared_surface_use"

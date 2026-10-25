@@ -26,7 +26,7 @@
   ],
   "pause_events": [
     {
-      "criterion_id": "C-egress",
+      "criterion_id": "C-escape",
       "triggering_event_ids": [
         "E1"
       ],
@@ -95,7 +95,7 @@
       "incident_id": "INC-1",
       "opened_at": "2026-09-05T04:10:00Z",
       "closed_at": "2026-09-07T10:00:00Z",
-      "summary": "egress via request smuggling",
+      "summary": "sandbox escape via request smuggling",
       "event_ids": [
         "E1"
       ]

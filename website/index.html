@@ -492,7 +492,7 @@
 <!-- BEGIN generated: fig1 -->
             <svg viewBox="0 0 1000 396" role="img" aria-labelledby="fig1-title fig1-desc">
               <title id="fig1-title">The DBYR lifecycle</title>
-              <desc id="fig1-desc">Four signed records — TrainingRunIntent, ExceptionNotice, TrainingRunCloseout and SystemRuntimeRecord — are filed at different points in a covered run’s life and flow into an append-only, hash-chained record, which projects into Public, Restricted and Sealed disclosure tiers.</desc>
+              <desc id="fig1-desc">Four signed records — RunIntent, ExceptionNotice, RunCloseout and SystemRuntimeRecord — are filed at different points in a covered run’s life and flow into an append-only, hash-chained record, which projects into Public, Restricted and Sealed disclosure tiers.</desc>
               <defs>
                 <marker id="fig1-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
                   <path class="fig-arrow-head" d="M0,0 L10,5 L0,10 z" />
@@ -500,7 +500,7 @@
               </defs>
               <rect class="fig-box" x="10" y="10" width="236" height="112" rx="6" />
               <text class="fig-title" x="26" y="36">BEFORE THE RUN, ≥ 3 DAYS</text>
-              <text class="fig-label" x="26" y="62">TrainingRunIntent</text>
+              <text class="fig-label" x="26" y="62">RunIntent</text>
               <text class="fig-sublabel" x="26" y="84">topology, safeguards,</text>
               <text class="fig-sublabel" x="26" y="100">criteria, monitors</text>
               <line class="fig-arrow" x1="128" y1="122" x2="128" y2="192" marker-end="url(#fig1-arrow)" />
@@ -512,7 +512,7 @@
               <line class="fig-arrow" x1="376" y1="122" x2="376" y2="192" marker-end="url(#fig1-arrow)" />
               <rect class="fig-box" x="506" y="10" width="236" height="112" rx="6" />
               <text class="fig-title" x="522" y="36">EVERY 30 DAYS / AT END</text>
-              <text class="fig-label" x="522" y="62">TrainingRunCloseout</text>
+              <text class="fig-label" x="522" y="62">RunCloseout</text>
               <text class="fig-sublabel" x="522" y="84">events, pauses, notices,</text>
               <text class="fig-sublabel" x="522" y="100">preservation, scope</text>
               <line class="fig-arrow" x1="624" y1="122" x2="624" y2="192" marker-end="url(#fig1-arrow)" />
@@ -607,13 +607,13 @@
           </thead>
           <tbody>
             <tr>
-              <td><code>TrainingRunIntent</code></td>
+              <td><code>RunIntent</code></td>
               <td>
                 &ge; 3 days before the first optimisation step or safeguards-off
                 evaluation
               </td>
               <td>
-                Egress topology (permitted paths, credential scope, every
+                Agent surface (permitted paths, credential scope, every
                 writable surface by direction, persistence and tenancy, and
                 lineage to other runs reaching the same surface); a checklist of
                 6 production safeguards each stated on, relaxed or off; pause
@@ -636,7 +636,7 @@
               </td>
             </tr>
             <tr>
-              <td><code>TrainingRunCloseout</code></td>
+              <td><code>RunCloseout</code></td>
               <td>
                 on completion or abort, and every 30 days for rolling training
                 runs
@@ -701,12 +701,12 @@
 <!-- BEGIN generated: fig2 -->
             <svg viewBox="0 0 1000 476" role="img" aria-labelledby="fig2-title fig2-desc">
               <title id="fig2-title">Record schema at a glance</title>
-              <desc id="fig2-desc">The fields each of the four DBYR records must carry, marked by disclosure tier at filing: TrainingRunIntent (20 fields), TrainingRunCloseout (17), ExceptionNotice (7) and SystemRuntimeRecord (5).</desc>
+              <desc id="fig2-desc">The fields each of the four DBYR records must carry, marked by disclosure tier at filing: RunIntent (20 fields), RunCloseout (17), ExceptionNotice (7) and SystemRuntimeRecord (5).</desc>
               <rect class="fig-box" x="10" y="10" width="300" height="456" rx="6" />
               <rect class="fig-head" x="11" y="11" width="298" height="37" rx="5" />
               <rect class="fig-head" x="11" y="36" width="298" height="12" />
               <line class="tl-grid" x1="10" y1="48" x2="310" y2="48" />
-              <text class="fig-label" x="24" y="30">TrainingRunIntent</text>
+              <text class="fig-label" x="24" y="30">RunIntent</text>
               <text class="fig-sublabel" x="24" y="43">20 required fields</text>
               <circle class="fig-dot-public" cx="34" cy="66" r="3.5" />
               <text class="fig-field" x="48" y="70">run_id</text>
@@ -730,7 +730,7 @@
               <text class="fig-field" x="48" y="190">monitoring_instruments</text>
               <line class="tl-grid" x1="24" y1="196" x2="296" y2="196" />
               <circle class="fig-dot-restricted" cx="34" cy="206" r="3.5" />
-              <text class="fig-field" x="48" y="210">egress_topology</text>
+              <text class="fig-field" x="48" y="210">agent_surface</text>
               <line class="tl-grid" x1="24" y1="216" x2="296" y2="216" />
               <circle class="fig-dot-public" cx="34" cy="226" r="3.5" />
               <text class="fig-field" x="48" y="230">safeguards_disabled</text>
@@ -771,7 +771,7 @@
               <rect class="fig-head" x="346" y="11" width="298" height="37" rx="5" />
               <rect class="fig-head" x="346" y="36" width="298" height="12" />
               <line class="tl-grid" x1="345" y1="48" x2="645" y2="48" />
-              <text class="fig-label" x="359" y="30">TrainingRunCloseout</text>
+              <text class="fig-label" x="359" y="30">RunCloseout</text>
               <text class="fig-sublabel" x="359" y="43">17 required fields</text>
               <circle class="fig-dot-public" cx="369" cy="66" r="3.5" />
               <text class="fig-field" x="383" y="70">run_id</text>
@@ -918,7 +918,7 @@
                 the FRONTIER Act as introduced. Those regimes ask for the
                 information at the model or incident level, while DBYR asks for
                 it per run and before the run. The 5 fields with no counterpart
-                are <code>egress_topology</code>,
+                are <code>agent_surface</code>,
                 <code>investigator_scope_expansion</code>,
                 <code>log_retention</code>, <code>restart_protocol</code> and
                 <code>safeguards_disabled</code>. The mapping has not been checked
@@ -990,7 +990,7 @@
                   <p>
                     Third-party reconciliation under structured access:
                     containment exceptions, pause events, scope granted, checked
-                    against retained trajectories and egress logs across linked
+                    against retained trajectories and network logs across linked
                     runs. <em>Available, and needs no new cryptography.</em>
                   </p>
                 </div>
@@ -1737,7 +1737,7 @@ FAIL  intent_run_a.json  (6 errors, 0 conduct, 2 warnings)
           </li>
           <li>
             <strong>Completeness, not accuracy</strong>, is the expected failure
-            of <code>egress_topology</code>, and a declaration of reachable
+            of <code>agent_surface</code>, and a declaration of reachable
             surfaces cannot bind a path-dependent hazard. Lineage linking
             mitigates, but does not remove, the fragmentation of oversight
             across runs.
@@ -1775,7 +1775,7 @@ FAIL  intent_run_a.json  (6 errors, 0 conduct, 2 warnings)
         </p>
         <p>
           <strong>Dual use.</strong> A restricted-tier
-          <code>egress_topology</code> maps a lab's internal attack surface, and
+          <code>agent_surface</code> maps a lab's internal attack surface, and
           a breached record is offensive intelligence. Mitigations are the
           hash-committed sealed tier for surface-level detail, no-copy access
           and no real names in the public tier. Nothing scored depends on the

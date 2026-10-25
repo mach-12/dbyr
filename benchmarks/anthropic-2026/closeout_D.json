@@ -1,0 +1,146 @@
+{
+  "schema_version": "0.1.0",
+  "record_type": "TrainingRunCloseout",
+  "run_id": "anthropic-cyber-eval-D",
+  "filed_at": "2026-09-09T00:00:00Z",
+  "period_start": "2026-01-12",
+  "period_end": "2026-02-11",
+  "status": "completed",
+  "attested_absence": false,
+  "security_events": [
+    {
+      "event_id": "D-E1",
+      "at": "2026-01-15T00:00:00Z",
+      "kind": "sandbox_escape",
+      "description": "Internet access from the evaluation environment (9 Sep post, fourth incident).",
+      "evidence": [
+        "trajectories",
+        "tool_calls",
+        "network_logs"
+      ],
+      "detected_at": "2026-08-15T00:00:00Z",
+      "classification_rationale": "traffic left the evaluation environment for the internet, which the evaluation was meant to exclude"
+    },
+    {
+      "event_id": "D-E2",
+      "at": "2026-01-15T00:00:00Z",
+      "kind": "third_party_compromise",
+      "description": "Unauthorised access to a third party's machine, including one person's personal information (9 Sep post).",
+      "evidence": [
+        "trajectories",
+        "tool_calls",
+        "network_logs"
+      ],
+      "affected_parties": [
+        "Third party (incident D)"
+      ],
+      "detected_at": "2026-08-15T00:00:00Z",
+      "classification_rationale": "a real external party's system was accessed and changed"
+    },
+    {
+      "event_id": "D-E3",
+      "at": "2026-01-15T00:00:00Z",
+      "kind": "credential_misuse",
+      "description": "Credentials found on the third party's machine used to gain administrator access (9 Sep post).",
+      "evidence": [
+        "trajectories",
+        "tool_calls",
+        "network_logs"
+      ],
+      "affected_parties": [
+        "Third party (incident D)"
+      ],
+      "detected_at": "2026-08-15T00:00:00Z",
+      "classification_rationale": "credentials found on a third-party system were used against it"
+    }
+  ],
+  "integrity_events": [],
+  "pause_events": [],
+  "containment_exceptions": [
+    {
+      "exception_id": "X-D1",
+      "surface_id": "public-internet",
+      "declared_surface": true,
+      "kind": "network",
+      "opened_at": "2026-01-15T00:00:00Z",
+      "closed_at": "2026-07-23T00:00:00Z",
+      "status": "closed"
+    }
+  ],
+  "logs_preserved_pct": 100,
+  "logs_retention_confirmed": true,
+  "preservation": [
+    {
+      "evidence_class": "trajectories",
+      "denominator": "all records generated in the period",
+      "sample_rate": 1.0,
+      "preserved_pct": 100
+    },
+    {
+      "evidence_class": "chain_of_thought",
+      "denominator": "all records generated in the period",
+      "sample_rate": 1.0,
+      "preserved_pct": 100
+    },
+    {
+      "evidence_class": "tool_calls",
+      "denominator": "all records generated in the period",
+      "sample_rate": 1.0,
+      "preserved_pct": 100
+    },
+    {
+      "evidence_class": "network_logs",
+      "denominator": "all records generated in the period",
+      "sample_rate": 1.0,
+      "preserved_pct": 100
+    }
+  ],
+  "scope_requested_vs_granted": [
+    {
+      "investigator": "METR",
+      "requested": {
+        "start": "2026-01-01",
+        "end": null
+      },
+      "granted": {
+        "start": "2026-01-01",
+        "end": null
+      },
+      "refusals": []
+    }
+  ],
+  "third_party_notifications": [
+    {
+      "party": "Third party (incident D)",
+      "affected_by": [
+        "D-E2",
+        "D-E3"
+      ],
+      "notified": true,
+      "notified_at": "2026-09-09T00:00:00Z",
+      "channel": "notified after discovery (9 Sep post; date not given)"
+    }
+  ],
+  "residual_risk": "Investigated in less depth than the other incidents; independent review pending.",
+  "signer": {
+    "role_id": "R-eval",
+    "organisation": "Anthropic"
+  },
+  "notice_ids": [
+    "N-D"
+  ],
+  "internal_incidents": [
+    {
+      "incident_id": "review-D",
+      "opened_at": "2026-08-15T00:00:00Z",
+      "summary": "fourth incident found while assembling transcripts for an external reviewer",
+      "event_ids": [
+        "D-E1",
+        "D-E2",
+        "D-E3"
+      ]
+    }
+  ],
+  "config_changes": [],
+  "surface_resets": []
+}

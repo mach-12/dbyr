@@ -12,9 +12,9 @@
     "sandbox_escape"
   ],
   "criterion_ids": [
-    "C-egress"
+    "C-escape"
   ],
-  "summary": "egress via request smuggling",
+  "summary": "sandbox escape via request smuggling",
   "affected_parties": [
     "Example Hosting Ltd"
   ],

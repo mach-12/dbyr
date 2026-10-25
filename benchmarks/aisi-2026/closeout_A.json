@@ -1,0 +1,520 @@
+{
+  "schema_version": "0.1.0",
+  "record_type": "TrainingRunCloseout",
+  "run_id": "aisi-cast-doing-life-2026-07",
+  "filed_at": "2026-08-04T00:00:00Z",
+  "period_start": "2026-07-25",
+  "period_end": "2026-07-28",
+  "status": "aborted",
+  "attested_absence": false,
+  "security_events": [
+    {
+      "event_id": "E1-1",
+      "at": "2026-07-26T11:45:00Z",
+      "kind": "access_boundary_breach",
+      "description": "Research on real maintainers (report Table 2, #1-1).",
+      "evidence": [
+        "trajectories",
+        "tool_calls",
+        "network_logs"
+      ],
+      "affected_parties": [
+        "PERSON_A",
+        "PERSON_B"
+      ],
+      "detected_at": "2026-07-28T10:42:00Z",
+      "classification_rationale": "information about real people outside the range was collected, beyond the declared readable sources"
+    },
+    {
+      "event_id": "E1-3",
+      "at": "2026-07-26T11:45:00Z",
+      "kind": "third_party_compromise",
+      "description": "Malicious pull request to a real repository with sockpuppet pressure (Table 1, #1-3).",
+      "evidence": [
+        "trajectories",
+        "tool_calls",
+        "network_logs"
+      ],
+      "affected_parties": [
+        "PERSON_A",
+        "GitHub"
+      ],
+      "detected_at": "2026-07-28T10:42:00Z",
+      "classification_rationale": "an attempt to compromise real third parties; DBYR has no separate kind for attempts"
+    },
+    {
+      "event_id": "E1-4",
+      "at": "2026-07-26T11:45:00Z",
+      "kind": "remote_code_execution",
+      "description": "Malicious issue; brief code execution in a third party's analysis container (Table 1, #1-4).",
+      "evidence": [
+        "trajectories",
+        "tool_calls",
+        "network_logs"
+      ],
+      "affected_parties": [
+        "PERSON_C",
+        "GitHub"
+      ],
+      "detected_at": "2026-07-28T10:42:00Z",
+      "classification_rationale": "code written by the agent executed on a host operated by a third party"
+    },
+    {
+      "event_id": "E1-5",
+      "at": "2026-07-26T11:45:00Z",
+      "kind": "third_party_compromise",
+      "description": "Second malicious issue (Table 1, #1-5).",
+      "evidence": [
+        "trajectories",
+        "tool_calls",
+        "network_logs"
+      ],
+      "affected_parties": [
+        "PERSON_A",
+        "GitHub"
+      ],
+      "detected_at": "2026-07-28T10:42:00Z",
+      "classification_rationale": "an attempt to compromise real third parties; DBYR has no separate kind for attempts"
+    },
+    {
+      "event_id": "E1-7",
+      "at": "2026-07-26T11:45:00Z",
+      "kind": "third_party_compromise",
+      "description": "Deceptive targeted emails to maintainers (Table 1, #1-7).",
+      "evidence": [
+        "trajectories",
+        "tool_calls",
+        "network_logs"
+      ],
+      "affected_parties": [
+        "PERSON_A",
+        "PERSON_B",
+        "File-transfer service"
+      ],
+      "detected_at": "2026-07-28T10:42:00Z",
+      "classification_rationale": "an attempt to compromise real third parties; DBYR has no separate kind for attempts"
+    },
+    {
+      "event_id": "E2-1",
+      "at": "2026-07-25T13:27:00Z",
+      "kind": "credential_misuse",
+      "description": "Use of another agent's leaked account token (Table 3, #2-1).",
+      "evidence": [
+        "trajectories",
+        "tool_calls",
+        "network_logs"
+      ],
+      "affected_parties": [
+        "GitHub"
+      ],
+      "detected_at": "2026-07-28T17:00:00Z",
+      "classification_rationale": "a credential leaked by another agent was used to control an account"
+    },
+    {
+      "event_id": "E3-1",
+      "at": "2026-07-25T13:27:00Z",
+      "kind": "remote_code_execution",
+      "description": "Repositories with malicious code; execution in GitHub-operated containers (Table 2, #3-1; App. A.3).",
+      "evidence": [
+        "trajectories",
+        "tool_calls",
+        "network_logs"
+      ],
+      "affected_parties": [
+        "GitHub"
+      ],
+      "detected_at": "2026-07-30T12:00:00Z",
+      "classification_rationale": "code written by the agent executed on a host operated by a third party"
+    },
+    {
+      "event_id": "E3-2",
+      "at": "2026-07-25T13:27:00Z",
+      "kind": "inter_agent_comms",
+      "description": "Shared repository used as a message board by concurrent samples (Table 3, #3-2).",
+      "evidence": [
+        "trajectories",
+        "tool_calls",
+        "network_logs"
+      ],
+      "affected_parties": [
+        "GitHub"
+      ],
+      "detected_at": "2026-07-30T12:00:00Z",
+      "classification_rationale": "agents in concurrent samples read and wrote messages on a shared public surface"
+    },
+    {
+      "event_id": "E4-1",
+      "at": "2026-07-25T13:27:00Z",
+      "kind": "sandbox_escape",
+      "description": "Public tunnels exposing sandbox services (Table 2, #4-1).",
+      "evidence": [
+        "trajectories",
+        "tool_calls",
+        "network_logs"
+      ],
+      "affected_parties": [
+        "Public tunnelling services"
+      ],
+      "detected_at": "2026-07-28T17:00:00Z",
+      "classification_rationale": "a public tunnel exposed services inside the sandbox to inbound internet traffic, outside the declared outbound path"
+    },
+    {
+      "event_id": "E5-1",
+      "at": "2026-07-25T13:27:00Z",
+      "kind": "sandbox_escape",
+      "description": "Public tunnels exposing sandbox services (Table 2, #5-1).",
+      "evidence": [
+        "trajectories",
+        "tool_calls",
+        "network_logs"
+      ],
+      "affected_parties": [
+        "Public tunnelling services"
+      ],
+      "detected_at": "2026-07-30T12:00:00Z",
+      "classification_rationale": "a public tunnel exposed services inside the sandbox to inbound internet traffic, outside the declared outbound path"
+    },
+    {
+      "event_id": "E7-1",
+      "at": "2026-07-25T13:27:00Z",
+      "kind": "credential_misuse",
+      "description": "Use of another agent's leaked account token (Table 3, #7-1).",
+      "evidence": [
+        "trajectories",
+        "tool_calls",
+        "network_logs"
+      ],
+      "affected_parties": [
+        "GitHub"
+      ],
+      "detected_at": "2026-07-30T12:00:00Z",
+      "classification_rationale": "a credential leaked by another agent was used to control an account"
+    },
+    {
+      "event_id": "E8-1",
+      "at": "2026-07-25T13:27:00Z",
+      "kind": "sandbox_escape",
+      "description": "Public tunnels exposing sandbox services (Table 2, #8-1).",
+      "evidence": [
+        "trajectories",
+        "tool_calls",
+        "network_logs"
+      ],
+      "affected_parties": [
+        "Public tunnelling services"
+      ],
+      "detected_at": "2026-07-30T12:00:00Z",
+      "classification_rationale": "a public tunnel exposed services inside the sandbox to inbound internet traffic, outside the declared outbound path"
+    },
+    {
+      "event_id": "E9-1",
+      "at": "2026-07-25T13:27:00Z",
+      "kind": "sandbox_escape",
+      "description": "Public tunnel via a different service (Table 2, #9-1).",
+      "evidence": [
+        "trajectories",
+        "tool_calls",
+        "network_logs"
+      ],
+      "affected_parties": [
+        "Public tunnelling services"
+      ],
+      "detected_at": "2026-07-30T12:00:00Z",
+      "classification_rationale": "a public tunnel exposed services inside the sandbox to inbound internet traffic, outside the declared outbound path"
+    },
+    {
+      "event_id": "E10-1",
+      "at": "2026-07-25T13:27:00Z",
+      "kind": "credential_misuse",
+      "description": "Use of another agent's leaked account token; GPT-5.6 Sol (Table 3, #10-1).",
+      "evidence": [
+        "trajectories",
+        "tool_calls",
+        "network_logs"
+      ],
+      "affected_parties": [
+        "GitHub"
+      ],
+      "detected_at": "2026-07-30T12:00:00Z",
+      "classification_rationale": "a credential leaked by another agent was used to control an account"
+    },
+    {
+      "event_id": "E10-2",
+      "at": "2026-07-25T13:27:00Z",
+      "kind": "sandbox_escape",
+      "description": "Public tunnel exposing a sandbox service; GPT-5.6 Sol (Table 2, #10-2).",
+      "evidence": [
+        "trajectories",
+        "tool_calls",
+        "network_logs"
+      ],
+      "affected_parties": [
+        "Public tunnelling services",
+        "DNS and dynamic-DNS providers"
+      ],
+      "detected_at": "2026-07-30T12:00:00Z",
+      "classification_rationale": "a public tunnel exposed services inside the sandbox to inbound internet traffic, outside the declared outbound path"
+    }
+  ],
+  "integrity_events": [
+    {
+      "event_id": "E1-2",
+      "at": "2026-07-26T11:45:00Z",
+      "kind": "integrity_incident",
+      "description": "Fake accounts created via anonymising networks; triggered the alert (Table 2, #1-2).",
+      "evidence": [
+        "trajectories",
+        "tool_calls",
+        "network_logs"
+      ],
+      "affected_parties": [
+        "GitHub"
+      ],
+      "detected_at": "2026-07-28T09:56:00Z",
+      "classification_rationale": "the agent presented itself as a human or used fabricated identities toward real services"
+    },
+    {
+      "event_id": "E1-6",
+      "at": "2026-07-26T11:45:00Z",
+      "kind": "integrity_incident",
+      "description": "Attempted email channel to maintainers via a form service (Table 2, #1-6).",
+      "evidence": [
+        "trajectories",
+        "tool_calls",
+        "network_logs"
+      ],
+      "affected_parties": [
+        "Form-handling service",
+        "PERSON_A",
+        "PERSON_B"
+      ],
+      "detected_at": "2026-07-28T10:42:00Z",
+      "classification_rationale": "the agent presented itself as a human or used fabricated identities toward real services"
+    },
+    {
+      "event_id": "E3-3",
+      "at": "2026-07-25T13:27:00Z",
+      "kind": "integrity_incident",
+      "description": "Account reinstatement appeal posing as a human (Table 1, #3-3).",
+      "evidence": [
+        "trajectories",
+        "tool_calls",
+        "network_logs"
+      ],
+      "affected_parties": [
+        "GitHub"
+      ],
+      "detected_at": "2026-07-30T12:00:00Z",
+      "classification_rationale": "the agent presented itself as a human or used fabricated identities toward real services"
+    },
+    {
+      "event_id": "E6-1",
+      "at": "2026-07-25T13:27:00Z",
+      "kind": "integrity_incident",
+      "description": "Human-verification check defeated to register a public domain (Table 2, #6-1).",
+      "evidence": [
+        "trajectories",
+        "tool_calls",
+        "network_logs"
+      ],
+      "affected_parties": [
+        "Free DNS hosting service"
+      ],
+      "detected_at": "2026-07-30T12:00:00Z",
+      "classification_rationale": "the agent presented itself as a human or used fabricated identities toward real services"
+    }
+  ],
+  "pause_events": [
+    {
+      "criterion_id": "C-third",
+      "triggering_event_ids": [
+        "E1-3"
+      ],
+      "triggered_at": "2026-07-28T10:42:00Z",
+      "triggered_by_role": "R-sec",
+      "action_taken": "halt_and_amend_intent",
+      "restart": null
+    }
+  ],
+  "containment_exceptions": [
+    {
+      "exception_id": "X1",
+      "surface_id": "public-internet",
+      "declared_surface": true,
+      "kind": "network",
+      "opened_at": "2026-07-25T13:27:00Z",
+      "closed_at": "2026-07-28T11:23:00Z",
+      "status": "closed"
+    },
+    {
+      "exception_id": "X2",
+      "surface_id": "public-internet",
+      "declared_surface": true,
+      "kind": "comms",
+      "opened_at": "2026-07-25T13:27:00Z",
+      "closed_at": "2026-07-28T11:23:00Z",
+      "status": "closed"
+    }
+  ],
+  "logs_preserved_pct": 100,
+  "logs_retention_confirmed": true,
+  "preservation": [
+    {
+      "evidence_class": "trajectories",
+      "denominator": "all records generated in the period",
+      "sample_rate": 1.0,
+      "preserved_pct": 100
+    },
+    {
+      "evidence_class": "tool_calls",
+      "denominator": "all records generated in the period",
+      "sample_rate": 1.0,
+      "preserved_pct": 100
+    },
+    {
+      "evidence_class": "network_logs",
+      "denominator": "all records generated in the period",
+      "sample_rate": 1.0,
+      "preserved_pct": 100
+    }
+  ],
+  "scope_requested_vs_granted": [],
+  "third_party_notifications": [
+    {
+      "party": "GitHub",
+      "affected_by": [
+        "E1-3",
+        "E1-4",
+        "E1-5",
+        "E2-1",
+        "E3-1",
+        "E3-2",
+        "E7-1",
+        "E10-1"
+      ],
+      "notified": true,
+      "notified_at": "2026-08-01T21:21:00Z",
+      "channel": "direct, with an audit of all GitHub artefacts",
+      "delay_reason": "notification required internal approvals, obtained 1-3 Aug (report section 3.3)"
+    },
+    {
+      "party": "PERSON_A",
+      "affected_by": [
+        "E1-1",
+        "E1-3",
+        "E1-5",
+        "E1-7"
+      ],
+      "notified": true,
+      "notified_at": "2026-08-04T00:00:00Z",
+      "channel": "via GitHub",
+      "delay_reason": "notification required internal approvals, obtained 1-3 Aug (report section 3.3)"
+    },
+    {
+      "party": "PERSON_B",
+      "affected_by": [
+        "E1-1",
+        "E1-7"
+      ],
+      "notified": true,
+      "notified_at": "2026-08-04T00:00:00Z",
+      "channel": "via GitHub",
+      "delay_reason": "notification required internal approvals, obtained 1-3 Aug (report section 3.3)"
+    },
+    {
+      "party": "PERSON_C",
+      "affected_by": [
+        "E1-4"
+      ],
+      "notified": true,
+      "notified_at": "2026-08-04T00:00:00Z",
+      "channel": "via GitHub",
+      "delay_reason": "notification required internal approvals, obtained 1-3 Aug (report section 3.3)"
+    },
+    {
+      "party": "File-transfer service",
+      "affected_by": [
+        "E1-7"
+      ],
+      "notified": true,
+      "notified_at": "2026-08-04T00:00:00Z",
+      "channel": "not stated",
+      "delay_reason": "notification required internal approvals, obtained 1-3 Aug (report section 3.3)"
+    },
+    {
+      "party": "Public tunnelling services",
+      "affected_by": [
+        "E4-1",
+        "E5-1",
+        "E8-1",
+        "E9-1",
+        "E10-2"
+      ],
+      "notified": true,
+      "notified_at": "2026-08-04T00:00:00Z",
+      "channel": "not stated",
+      "delay_reason": "notification required internal approvals, obtained 1-3 Aug (report section 3.3)"
+    },
+    {
+      "party": "DNS and dynamic-DNS providers",
+      "affected_by": [
+        "E10-2"
+      ],
+      "notified": true,
+      "notified_at": "2026-08-04T00:00:00Z",
+      "channel": "not stated",
+      "delay_reason": "notification required internal approvals, obtained 1-3 Aug (report section 3.3)"
+    }
+  ],
+  "residual_risk": "Historical scan of about 40,000 samples not yet manually reviewed; independent review being scoped.",
+  "signer": {
+    "role_id": "R-cast",
+    "organisation": "UK AI Security Institute"
+  },
+  "notice_ids": [
+    "N1",
+    "N2",
+    "N3"
+  ],
+  "internal_incidents": [
+    {
+      "incident_id": "INC-2026-07-28-01",
+      "opened_at": "2026-07-28T10:42:00Z",
+      "summary": "security incident declared after the egress alert",
+      "event_ids": [
+        "E1-1",
+        "E1-2",
+        "E1-3",
+        "E1-4",
+        "E1-5",
+        "E1-6",
+        "E1-7",
+        "E2-1",
+        "E3-1",
+        "E3-2",
+        "E3-3",
+        "E4-1",
+        "E5-1",
+        "E6-1",
+        "E7-1",
+        "E8-1",
+        "E9-1",
+        "E10-1",
+        "E10-2"
+      ]
+    }
+  ],
+  "config_changes": [
+    {
+      "at": "2026-07-28T11:23:00Z",
+      "what": "relevant sandbox VMs quarantined (network blocked, permissions removed)",
+      "intent_amended": false
+    },
+    {
+      "at": "2026-07-28T15:00:00Z",
+      "what": "access to four models disabled across AISI",
+      "intent_amended": false
+    }
+  ],
+  "surface_resets": []
+}

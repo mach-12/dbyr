@@ -1,96 +1,104 @@
 {
   "schema_version": "0.1.0",
-  "record_type": "RunIntent",
-  "run_id": "exploitgym-rl-a",
-  "developer": "OpenAI [from public sources; not a filing by OpenAI]",
-  "run_kind": "training",
-  "filed_at": "2026-05-04T00:00:00Z",
+  "record_type": "TrainingRunIntent",
+  "run_id": "anthropic-cyber-eval-B",
+  "developer": "Anthropic [reconstruction from public sources; not a filing by Anthropic]",
+  "run_kind": "evaluation",
+  "filed_at": "2026-07-14T00:00:00Z",
   "trigger_basis": [
     "T2",
     "T3",
     "T4"
   ],
   "start_window": {
-    "start": "2026-05-07",
-    "end": null
+    "start": "2026-07-17",
+    "end": "2026-07-23"
   },
-  "compute_band": null,
+  "compute_band": "1e26-1e27",
   "predicted_capability_band": {
     "cyber": "high",
     "cbrn": "medium",
-    "autonomy": "high",
+    "autonomy": "medium",
     "persuasion": "medium"
   },
   "monitoring_instruments": [
     {
-      "kind": "access_log_review",
-      "coverage": "on_alert",
-      "alert_source": "privilege-escalation alerting",
-      "data_source": "service access logs"
-    },
-    {
-      "kind": "network_alerting",
-      "coverage": "all",
-      "data_source": "packet-filter logs"
+      "kind": "trajectory_review",
+      "coverage": "sampled",
+      "sample_rate": 0.01,
+      "review_cadence": "automated review of a sample of transcripts after the fact",
+      "data_source": "evaluation transcripts"
     }
   ],
   "agent_surface": {
     "environment": "mixed",
     "permitted_paths": [
       {
-        "path_id": "pkg-proxy",
-        "via": "internally hosted package proxy (Artifactory)",
-        "enforcement": "packet_filter",
+        "path_id": "open-internet",
+        "via": "internet access from the evaluation environment (partner environment misconfiguration)",
+        "enforcement": "none",
         "agent_writable": true
       }
     ],
     "credential_scope": {
       "held_by_agents": [
-        "shared Artifactory reader credential"
+        "credentials provided inside the evaluation scenario"
       ],
       "admin_credentials_reachable": false
     },
     "inter_agent_comms_permitted": true,
     "writable_surfaces": [
       {
-        "surface_id": "artifactory-proxy",
-        "kind": "package_proxy",
+        "surface_id": "public-internet",
+        "kind": "other",
         "direction": {
           "writers": [
-            "agents (via the shared credential)",
-            "build systems"
+            "agents in this run",
+            "any internet user"
           ],
           "readers": [
-            "agents in this run",
-            "agents in other runs"
+            "anyone on the internet",
+            "agents in other runs and evaluations"
           ]
         },
-        "persistence": "cross_run",
-        "tenancy": "shared_runs",
-        "detail": "[sealed in a real filing; omitted]",
-        "via_path": "pkg-proxy",
+        "persistence": "permanent",
+        "tenancy": "external",
+        "detail": "any internet-reachable system an agent can write to",
+        "via_path": "open-internet",
         "isolation": "shared"
       }
     ],
-    "shared_surface_lineage": []
+    "shared_surface_lineage": [
+      {
+        "surface_id": "public-internet",
+        "run_id": "anthropic-cyber-eval-D"
+      },
+      {
+        "surface_id": "public-internet",
+        "run_id": "anthropic-cyber-eval-A"
+      },
+      {
+        "surface_id": "public-internet",
+        "run_id": "anthropic-cyber-eval-C"
+      }
+    ]
   },
   "safeguards_disabled": {
     "disabled": true,
     "relaxed": [
-      "cyber refusal behaviour lowered",
-      "production cyber classifiers omitted"
+      "production cyber classifiers and misuse monitoring not applied",
+      "evaluation machines had live internet access"
     ],
     "signer_role": "R-eval",
     "checklist": [
       {
         "safeguard": "model_output_filters",
         "state": "off",
-        "change": "production cyber classifiers omitted"
+        "change": "classifiers and monitoring of generally available models not applied"
       },
       {
         "safeguard": "refusal_behaviour",
-        "state": "relaxed",
-        "change": "cyber refusal behaviour lowered"
+        "state": "on"
       },
       {
         "safeguard": "per_episode_reset",
@@ -98,7 +106,8 @@
       },
       {
         "safeguard": "network_isolation",
-        "state": "on"
+        "state": "off",
+        "change": "evaluation machines had live internet access"
       },
       {
         "safeguard": "identity_separation",
@@ -107,11 +116,6 @@
       {
         "safeguard": "least_privilege_access",
         "state": "on"
-      },
-      {
-        "safeguard": "cot_monitoring",
-        "state": "off",
-        "change": "chain-of-thought monitor not run on agent reasoning"
       }
     ]
   },
@@ -139,7 +143,7 @@
     },
     {
       "criterion_id": "C-priv",
-      "description": "Credential misuse, privilege escalation or RCE outside the task",
+      "description": "Credential misuse, privilege escalation or code execution outside the task",
       "matches": [
         "credential_misuse",
         "privilege_escalation",
@@ -151,7 +155,7 @@
     },
     {
       "criterion_id": "C-outage",
-      "description": "Agent activity degrades a shared service",
+      "description": "Infrastructure outage caused by agent activity",
       "matches": [
         "agent_induced_outage"
       ],
@@ -161,7 +165,7 @@
     },
     {
       "criterion_id": "C-third",
-      "description": "Agent activity affects a system outside the developer's control",
+      "description": "Any compromise of a third party",
       "matches": [
         "third_party_compromise"
       ],
@@ -202,43 +206,43 @@
     "approver_role": "R-review",
     "evidence_required": [
       "root cause identified",
-      "remediation verified",
-      "affected credentials assessed"
+      "compromised path closed",
+      "credentials rotated"
     ],
-    "intent_amendment_required": false
+    "intent_amendment_required": true
   },
   "eval_plan": [
     {
-      "eval_id": "exploitgym",
-      "evaluator": "internal",
+      "eval_id": "partner-ctf-B",
+      "evaluator": "external",
       "domain": "cyber"
     }
   ],
   "roles": [
     {
-      "role_id": "R-train",
-      "title": "Training run lead",
-      "organisation": "OpenAI"
-    },
-    {
       "role_id": "R-eval",
       "title": "Evaluation owner",
-      "organisation": "OpenAI"
+      "organisation": "Anthropic"
     },
     {
       "role_id": "R-sec",
       "title": "Security incident lead",
-      "organisation": "OpenAI"
+      "organisation": "Anthropic"
     },
     {
       "role_id": "R-prep",
-      "title": "Preparedness lead",
-      "organisation": "OpenAI"
+      "title": "Frontier risk lead",
+      "organisation": "Anthropic"
     },
     {
       "role_id": "R-review",
       "title": "Restart review lead",
-      "organisation": "OpenAI"
+      "organisation": "Anthropic"
+    },
+    {
+      "role_id": "R-partner",
+      "title": "Evaluation environment operator",
+      "organisation": "Irregular"
     }
   ],
   "log_retention": {
@@ -246,12 +250,10 @@
       "trajectories",
       "chain_of_thought",
       "tool_calls",
-      "network_logs",
-      "access_logs",
-      "inter_agent_messages"
+      "network_logs"
     ],
     "retain_until": "closeout+P24M",
-    "review_method": "sampled trajectory review",
+    "review_method": "automated review of a sample of transcripts after the fact",
     "minimum_preserved_pct": 99,
     "detail": [
       {
@@ -273,16 +275,6 @@
         "evidence_class": "network_logs",
         "coverage": "complete",
         "retention": "P24M"
-      },
-      {
-        "evidence_class": "access_logs",
-        "coverage": "complete",
-        "retention": "P24M"
-      },
-      {
-        "evidence_class": "inter_agent_messages",
-        "coverage": "complete",
-        "retention": "P24M"
       }
     ]
   },
@@ -293,20 +285,17 @@
   },
   "amendments_allowed": true,
   "signer": {
-    "role_id": "R-train",
-    "organisation": "OpenAI"
+    "role_id": "R-eval",
+    "organisation": "Anthropic"
   },
   "agent_capabilities": [
-    "shell in sandbox",
-    "package install through the internal proxy"
+    "shell commands and code execution in the evaluation environment"
   ],
   "readable_sources": [
-    "task environment",
-    "internal package proxy"
+    "the evaluation scenario environment"
   ],
   "run_scale": {
-    "concurrent_agents": null
+    "concurrent_agents": 1
   },
-  "forecast_basis": "[placeholder: not public]",
-  "reward_design": "RL on agentic tool-use tasks (e.g. spreadsheet completion, data retrieval), rewarded on task success [details not public]"
+  "forecast_basis": "[placeholder: not public]"
 }

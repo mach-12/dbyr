@@ -11,7 +11,7 @@
     "/agent_surface/permitted_paths/0": "first-party: <source>: the allowlist proxy and its GET-only rule"
   },
   "closeout_A.json": {
-    "/security_events/0": "first-party: <source>: the egress, when it happened and when it was detected",
+    "/security_events/0": "first-party: <source>: the escape, when it happened and when it was detected",
     "/third_party_notifications/0": "first-party: <source>: who was told, when and how"
   },
   "notice_N1.json": {

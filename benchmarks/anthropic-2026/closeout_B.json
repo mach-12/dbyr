@@ -1,0 +1,184 @@
+{
+  "schema_version": "0.1.0",
+  "record_type": "TrainingRunCloseout",
+  "run_id": "anthropic-cyber-eval-B",
+  "filed_at": "2026-07-30T00:00:00Z",
+  "period_start": "2026-07-17",
+  "period_end": "2026-07-19",
+  "status": "completed",
+  "attested_absence": false,
+  "security_events": [
+    {
+      "event_id": "B-E1",
+      "at": "2026-07-18T01:02:54Z",
+      "kind": "sandbox_escape",
+      "description": "Internet access from the evaluation environment (30 Jul post, incident 2; transcript).",
+      "evidence": [
+        "trajectories",
+        "tool_calls",
+        "network_logs"
+      ],
+      "detected_at": "2026-07-24T00:00:00Z",
+      "classification_rationale": "traffic left the evaluation environment for the internet, which the evaluation was meant to exclude"
+    },
+    {
+      "event_id": "B-E2",
+      "at": "2026-07-18T11:28:09Z",
+      "kind": "third_party_compromise",
+      "description": "Malicious package published to the real PyPI and run on 15 real systems (30 Jul post, incident 2).",
+      "evidence": [
+        "trajectories",
+        "tool_calls",
+        "network_logs"
+      ],
+      "affected_parties": [
+        "PyPI",
+        "Security vendor (incident 2)",
+        "Other systems that installed the package (incident 2)"
+      ],
+      "detected_at": "2026-07-24T00:00:00Z",
+      "classification_rationale": "code published by the model ran on real third-party systems"
+    },
+    {
+      "event_id": "B-E3",
+      "at": "2026-07-18T11:28:09Z",
+      "kind": "credential_misuse",
+      "description": "Credentials obtained from the security vendor used to access its systems (30 Jul post, incident 2).",
+      "evidence": [
+        "trajectories",
+        "tool_calls",
+        "network_logs"
+      ],
+      "affected_parties": [
+        "Security vendor (incident 2)"
+      ],
+      "detected_at": "2026-07-24T00:00:00Z",
+      "classification_rationale": "third-party credentials obtained by the model were used against that third party"
+    }
+  ],
+  "integrity_events": [],
+  "pause_events": [
+    {
+      "criterion_id": "C-escape",
+      "triggering_event_ids": [
+        "B-E1"
+      ],
+      "triggered_at": "2026-07-23T00:00:00Z",
+      "triggered_by_role": "R-sec",
+      "action_taken": "pause_and_review",
+      "restart": null
+    },
+    {
+      "criterion_id": "C-third",
+      "triggering_event_ids": [
+        "B-E2",
+        "B-E3"
+      ],
+      "triggered_at": "2026-07-24T00:00:00Z",
+      "triggered_by_role": "R-sec",
+      "action_taken": "halt_and_amend_intent",
+      "restart": {
+        "approved_by_role": "R-review",
+        "approved_at": "2026-08-31T00:00:00Z",
+        "evidence": [
+          "sandbox with no internet access, verified before every evaluation",
+          "pre-engagement validation of the sandbox",
+          "explicit in-scope and out-of-scope instructions",
+          "real-time scope monitoring that alerts a human and ends the exercise"
+        ],
+        "intent_amended": true
+      }
+    }
+  ],
+  "containment_exceptions": [
+    {
+      "exception_id": "X-B1",
+      "surface_id": "public-internet",
+      "declared_surface": true,
+      "kind": "network",
+      "opened_at": "2026-07-18T01:02:54Z",
+      "closed_at": "2026-07-23T00:00:00Z",
+      "status": "closed"
+    }
+  ],
+  "logs_preserved_pct": 100,
+  "logs_retention_confirmed": true,
+  "preservation": [
+    {
+      "evidence_class": "trajectories",
+      "denominator": "all records generated in the period",
+      "sample_rate": 1.0,
+      "preserved_pct": 100
+    },
+    {
+      "evidence_class": "chain_of_thought",
+      "denominator": "all records generated in the period",
+      "sample_rate": 1.0,
+      "preserved_pct": 100
+    },
+    {
+      "evidence_class": "tool_calls",
+      "denominator": "all records generated in the period",
+      "sample_rate": 1.0,
+      "preserved_pct": 100
+    },
+    {
+      "evidence_class": "network_logs",
+      "denominator": "all records generated in the period",
+      "sample_rate": 1.0,
+      "preserved_pct": 100
+    }
+  ],
+  "scope_requested_vs_granted": [],
+  "third_party_notifications": [
+    {
+      "party": "PyPI",
+      "affected_by": [
+        "B-E2"
+      ],
+      "notified": true,
+      "notified_at": "2026-07-30T00:00:00Z",
+      "channel": "notified with indicators (30 Jul post; date not given)"
+    },
+    {
+      "party": "Security vendor (incident 2)",
+      "affected_by": [
+        "B-E2",
+        "B-E3"
+      ],
+      "notified": true,
+      "notified_at": "2026-07-27T00:00:00Z",
+      "channel": "direct contact on 27 Jul (one of the three organisations, not identified, could not be reached at first; 30 Jul post)"
+    },
+    {
+      "party": "Other systems that installed the package (incident 2)",
+      "affected_by": [
+        "B-E2"
+      ],
+      "notified": false,
+      "not_notified_reason": "[placeholder: not public]"
+    }
+  ],
+  "residual_risk": "Partner investigation and independent review pending; one affected organisation not reached at disclosure.",
+  "signer": {
+    "role_id": "R-eval",
+    "organisation": "Anthropic"
+  },
+  "notice_ids": [
+    "N-B"
+  ],
+  "internal_incidents": [
+    {
+      "incident_id": "retrospective-review-2026-07-23",
+      "opened_at": "2026-07-23T00:00:00Z",
+      "summary": "retrospective transcript review; all cyber evaluations stopped the same day",
+      "event_ids": [
+        "B-E1",
+        "B-E2",
+        "B-E3"
+      ]
+    }
+  ],
+  "config_changes": [],
+  "surface_resets": []
+}
