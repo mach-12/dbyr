@@ -1,8 +1,8 @@
 {
   "schema_version": "0.1.0",
   "record_type": "ExceptionNotice",
-  "notice_id": "N-B",
-  "run_id": "anthropic-cyber-eval-B",
+  "notice_id": "N2",
+  "run_id": "anthropic-cyber-eval-b",
   "filed_at": "2026-07-27T00:00:00Z",
   "detected_at": "2026-07-24T00:00:00Z",
   "event_ids": [
@@ -20,13 +20,13 @@
     "C-priv",
     "C-third"
   ],
-  "summary": "Internet access through a partner environment misconfiguration; real third-party systems accessed.",
+  "summary": "Live internet access from an evaluation environment believed to be isolated; a malicious package published to the real PyPI and run on 15 real systems, and a security vendor's credentials reused against it.",
   "affected_parties": [
     "Other systems that installed the package (incident 2)",
     "PyPI",
     "Security vendor (incident 2)"
   ],
-  "action_taken": "pause_and_review",
+  "action_taken": "none",
   "signer": {
     "role_id": "R-sec",
     "organisation": "Anthropic"

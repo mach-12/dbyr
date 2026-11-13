@@ -1,20 +1,21 @@
 {
   "schema_version": "0.1.0",
-  "record_type": "TrainingRunCloseout",
-  "run_id": "anthropic-cyber-eval-C",
+  "record_type": "RunCloseout",
+  "run_id": "anthropic-cyber-eval-c",
   "filed_at": "2026-07-30T00:00:00Z",
-  "period_start": "2026-06-15",
-  "period_end": "2026-07-15",
+  "period_start": "2026-06-01",
+  "period_end": "2026-06-30",
   "status": "completed",
   "attested_absence": false,
   "security_events": [
     {
       "event_id": "C-E1",
-      "at": "2026-06-20T00:00:00Z",
+      "at": "2026-06-30T00:00:00Z",
       "kind": "sandbox_escape",
-      "description": "Internet access via target machines, followed by wide scanning (30 Jul post, incident 3).",
+      "description": "Internet access from the evaluation environment, followed by scanning of roughly 9,000 targets.",
       "evidence": [
         "trajectories",
+        "chain_of_thought",
         "tool_calls",
         "network_logs"
       ],
@@ -23,11 +24,12 @@
     },
     {
       "event_id": "C-E2",
-      "at": "2026-06-20T00:00:00Z",
+      "at": "2026-06-30T00:00:00Z",
       "kind": "third_party_compromise",
-      "description": "Unauthorised access to one real company's internet-facing application (30 Jul post, incident 3; 9 Sep correction).",
+      "description": "Unauthorised access to one real company's internet-facing application, via an exposed debug page and SQL injection.",
       "evidence": [
         "trajectories",
+        "chain_of_thought",
         "tool_calls",
         "network_logs"
       ],
@@ -39,45 +41,14 @@
     }
   ],
   "integrity_events": [],
-  "pause_events": [
-    {
-      "criterion_id": "C-escape",
-      "triggering_event_ids": [
-        "C-E1"
-      ],
-      "triggered_at": "2026-07-23T00:00:00Z",
-      "triggered_by_role": "R-sec",
-      "action_taken": "pause_and_review",
-      "restart": null
-    },
-    {
-      "criterion_id": "C-third",
-      "triggering_event_ids": [
-        "C-E2"
-      ],
-      "triggered_at": "2026-07-24T00:00:00Z",
-      "triggered_by_role": "R-sec",
-      "action_taken": "halt_and_amend_intent",
-      "restart": {
-        "approved_by_role": "R-review",
-        "approved_at": "2026-08-31T00:00:00Z",
-        "evidence": [
-          "sandbox with no internet access, verified before every evaluation",
-          "pre-engagement validation of the sandbox",
-          "explicit in-scope and out-of-scope instructions",
-          "real-time scope monitoring that alerts a human and ends the exercise"
-        ],
-        "intent_amended": true
-      }
-    }
-  ],
+  "pause_events": [],
   "containment_exceptions": [
     {
       "exception_id": "X-C1",
       "surface_id": "public-internet",
       "declared_surface": true,
       "kind": "network",
-      "opened_at": "2026-06-20T00:00:00Z",
+      "opened_at": "2026-06-30T00:00:00Z",
       "closed_at": "2026-07-23T00:00:00Z",
       "status": "closed"
     }
@@ -108,6 +79,12 @@
       "denominator": "all records generated in the period",
       "sample_rate": 1.0,
       "preserved_pct": 100
+    },
+    {
+      "evidence_class": "inter_agent_messages",
+      "denominator": "all records generated in the period",
+      "sample_rate": 1.0,
+      "preserved_pct": 100
     }
   ],
   "scope_requested_vs_granted": [],
@@ -119,22 +96,22 @@
       ],
       "notified": true,
       "notified_at": "2026-07-27T00:00:00Z",
-      "channel": "direct contact on 27 Jul (one of the three organisations, not identified, could not be reached at first; 30 Jul post)"
+      "channel": "notified on 27 Jul 2026 along with the other affected organisations and the evaluation partner; two of the three were reached at that point, and which one was not is not recorded"
     }
   ],
-  "residual_risk": "Partner investigation and independent review pending; one affected organisation not reached at disclosure.",
+  "residual_risk": "Partner investigation and independent review pending; of the three affected organisations, one had not been reached at the time of this filing.",
   "signer": {
     "role_id": "R-eval",
     "organisation": "Anthropic"
   },
   "notice_ids": [
-    "N-C"
+    "N3"
   ],
   "internal_incidents": [
     {
       "incident_id": "retrospective-review-2026-07-23",
       "opened_at": "2026-07-23T00:00:00Z",
-      "summary": "retrospective transcript review; all cyber evaluations stopped the same day",
+      "summary": "retrospective transcript review opened after the 21 Jul OpenAI disclosure; all cyber evaluations stopped the same day, before these events were identified on 24 Jul",
       "event_ids": [
         "C-E1",
         "C-E2"

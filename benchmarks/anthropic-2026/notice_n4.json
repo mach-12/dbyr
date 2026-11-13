@@ -1,10 +1,10 @@
 {
   "schema_version": "0.1.0",
   "record_type": "ExceptionNotice",
-  "notice_id": "N-D",
-  "run_id": "anthropic-cyber-eval-D",
-  "filed_at": "2026-08-18T00:00:00Z",
-  "detected_at": "2026-08-15T00:00:00Z",
+  "notice_id": "N4",
+  "run_id": "anthropic-cyber-eval-d",
+  "filed_at": "2026-09-03T00:00:00Z",
+  "detected_at": "2026-08-31T00:00:00Z",
   "event_ids": [
     "D-E1",
     "D-E2",
@@ -20,7 +20,7 @@
     "C-priv",
     "C-third"
   ],
-  "summary": "Internet access through a partner environment misconfiguration; real third-party systems accessed.",
+  "summary": "Live internet access from an evaluation environment believed to be isolated; a third party's machine reached, administrator access gained from a password file, and one person's personal information read.",
   "affected_parties": [
     "Third party (incident D)"
   ],

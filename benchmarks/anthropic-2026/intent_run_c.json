@@ -1,20 +1,20 @@
 {
   "schema_version": "0.1.0",
-  "record_type": "TrainingRunIntent",
-  "run_id": "anthropic-cyber-eval-C",
+  "record_type": "RunIntent",
+  "run_id": "anthropic-cyber-eval-c",
   "developer": "Anthropic [reconstruction from public sources; not a filing by Anthropic]",
   "run_kind": "evaluation",
-  "filed_at": "2026-06-12T00:00:00Z",
+  "filed_at": "2026-05-29T00:00:00Z",
   "trigger_basis": [
     "T2",
     "T3",
     "T4"
   ],
   "start_window": {
-    "start": "2026-06-15",
-    "end": "2026-07-15"
+    "start": "2026-06-01",
+    "end": "2026-06-30"
   },
-  "compute_band": "1e26-1e27",
+  "compute_band": null,
   "predicted_capability_band": {
     "cyber": "high",
     "cbrn": "medium",
@@ -34,8 +34,14 @@
     "environment": "mixed",
     "permitted_paths": [
       {
-        "path_id": "open-internet",
-        "via": "internet access via target machines that had internet access (partner environment misconfiguration)",
+        "path_id": "eval-range",
+        "via": "partner-operated evaluation range, reachable only from the evaluation sandbox",
+        "enforcement": "packet_filter",
+        "agent_writable": true
+      },
+      {
+        "path_id": "internet-egress",
+        "via": "live route from the partner-operated evaluation environment to the public internet, left open by an environment misconfiguration",
         "enforcement": "none",
         "agent_writable": true
       }
@@ -48,6 +54,24 @@
     },
     "inter_agent_comms_permitted": true,
     "writable_surfaces": [
+      {
+        "surface_id": "eval-range-targets",
+        "kind": "other",
+        "direction": {
+          "writers": [
+            "agents in this run"
+          ],
+          "readers": [
+            "agents in this run",
+            "the evaluation environment operator"
+          ]
+        },
+        "persistence": "run",
+        "tenancy": "run_only",
+        "detail": "the target machines inside the partner-operated evaluation range",
+        "via_path": "eval-range",
+        "isolation": "per_episode"
+      },
       {
         "surface_id": "public-internet",
         "kind": "other",
@@ -64,18 +88,18 @@
         "persistence": "permanent",
         "tenancy": "external",
         "detail": "any internet-reachable system an agent can write to",
-        "via_path": "open-internet",
+        "via_path": "internet-egress",
         "isolation": "shared"
       }
     ],
     "shared_surface_lineage": [
       {
         "surface_id": "public-internet",
-        "run_id": "anthropic-cyber-eval-D"
+        "run_id": "anthropic-cyber-eval-d"
       },
       {
         "surface_id": "public-internet",
-        "run_id": "anthropic-cyber-eval-A"
+        "run_id": "anthropic-cyber-eval-a"
       }
     ]
   },
@@ -83,7 +107,7 @@
     "disabled": true,
     "relaxed": [
       "production cyber classifiers and misuse monitoring not applied",
-      "evaluation machines had live internet access"
+      "evaluation machines had a live route to the public internet"
     ],
     "signer_role": "R-eval",
     "checklist": [
@@ -103,7 +127,7 @@
       {
         "safeguard": "network_isolation",
         "state": "off",
-        "change": "evaluation machines had live internet access"
+        "change": "evaluation machines had a live route to the public internet"
       },
       {
         "safeguard": "identity_separation",
@@ -171,6 +195,7 @@
     },
     {
       "criterion_id": "C-tamper",
+      "description": "Agent changes to the evaluation environment outside the task",
       "matches": [
         "environment_tampering"
       ],
@@ -180,6 +205,7 @@
     },
     {
       "criterion_id": "C-boundary",
+      "description": "Access outside the declared boundary, or exposure of data held in it",
       "matches": [
         "access_boundary_breach",
         "data_exposure"
@@ -190,6 +216,7 @@
     },
     {
       "criterion_id": "C-integrity",
+      "description": "Evidence or configuration integrity incident",
       "matches": [
         "integrity_incident"
       ],
@@ -246,7 +273,8 @@
       "trajectories",
       "chain_of_thought",
       "tool_calls",
-      "network_logs"
+      "network_logs",
+      "inter_agent_messages"
     ],
     "retain_until": "closeout+P24M",
     "review_method": "automated review of a sample of transcripts after the fact",
@@ -271,6 +299,11 @@
         "evidence_class": "network_logs",
         "coverage": "complete",
         "retention": "P24M"
+      },
+      {
+        "evidence_class": "inter_agent_messages",
+        "coverage": "complete",
+        "retention": "P24M"
       }
     ]
   },
@@ -291,7 +324,7 @@
     "the evaluation scenario environment"
   ],
   "run_scale": {
-    "concurrent_agents": 1
+    "concurrent_agents": null
   },
   "forecast_basis": "[placeholder: not public]"
 }
