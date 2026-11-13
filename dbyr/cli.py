@@ -13,11 +13,18 @@
   backtest init DIR [--name NAME]  write the example case to a new folder, to start from
   backtest check CASE...           check cases before scoring: shape, frozen schema hash, record keys, schema fields,
                                    placeholders. Scores nothing.
-  backtest score CASE... [--out DIR] [--write-results] [--design NAME]... [--json]
+  backtest score CASE... [--out DIR] [--design NAME]... [--json]
                                    score cases; every input is hashed before and after scoring.
-                                   Prints the verdicts and tables; --out writes report.md,
-                                   report.html and metrics.json; --write-results writes
-                                   results.json and results.md next to each case
+                                   Prints the verdicts and tables; --out writes the report and
+                                   the per-case results
+  backtest score CASE --mode dp_coverage [--filer_type F]
+                                   how many decision points the filings make attributable:
+                                   {total_dp, found_dp, coverage}
+  backtest score CASE --mode visibility_gap --dp_num DP --filer_type F [--closeout-lag DAYS]
+                                   how much earlier an outsider would have held one decision
+                                   point's material fact: {actual_date, dbyr_date, found_early_by}.
+                                   found_early_by is null where no filing was due before the fact
+                                   reached the outside
 
   A CASE is a folder holding decision_points.json, or the decision_points.json file itself. Its
   filings are either listed in "records" or found through "filings": the path to any filing set
@@ -35,7 +42,8 @@ from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PrivateKey
 from cryptography.hazmat.primitives.serialization import (
     Encoding, NoEncryption, PrivateFormat, load_pem_private_key)
 
-from .backtest import Backtest, CaseError, DESIGNS, InputsChanged, SchemaChanged, check_case, init_case
+from .backtest import (Backtest, Case, CaseError, DESIGNS, InputsChanged, SchemaChanged, VisibilityError,
+                       check_case, dp_coverage, init_case, visibility_gap)
 from .disclosure import project
 from .docgen import sync
 from .filingset import FilingSetError, load_filing_set
@@ -105,6 +113,35 @@ def backtest(args) -> int:
             worst = max(worst, 1 if errs else 0)
         return worst
 
+    if args.out:                      # make the output folder, and any parent, before scoring
+        try:
+            Path(args.out).mkdir(parents=True, exist_ok=True)
+        except OSError as exc:
+            print(f"dbyr backtest score: --out {args.out}: {exc}", file=sys.stderr)
+            return 2
+
+    if args.mode:
+        if args.mode == "visibility_gap" and not (args.dp_num and args.filer_type):
+            print("dbyr backtest score --mode visibility_gap: needs --dp_num and --filer_type", file=sys.stderr)
+            return 2
+        results = {}
+        for case_path in args.cases:
+            try:
+                case = Case.load(case_path)
+                results[case.name] = (
+                    dp_coverage(case, args.filer_type) if args.mode == "dp_coverage"
+                    else visibility_gap(case, args.dp_num, args.filer_type, args.closeout_lag))
+            except (CaseError, VisibilityError) as exc:
+                print(f"dbyr backtest score: {exc}", file=sys.stderr)
+                return 2
+        out = results if len(results) > 1 else next(iter(results.values()))
+        print(json.dumps(out, indent=2, ensure_ascii=False))
+        if args.out:
+            path = Path(args.out) / f"{args.mode}.json"
+            _write(path, out)
+            print(f"wrote {path}", file=sys.stderr)
+        return 0
+
     try:
         report = Backtest(*args.cases, designs=args.design or None).run()
     except (CaseError, ValueError, KeyError) as exc:
@@ -117,7 +154,6 @@ def backtest(args) -> int:
     if args.out:
         for path in report.write(args.out).values():
             print(f"wrote {path}", file=sys.stderr)
-    if args.write_results:
         for path in report.write_results():
             print(f"wrote {path}", file=sys.stderr)
     return 0
@@ -151,8 +187,16 @@ def main(argv: list[str] | None = None) -> int:
     bc.add_argument("cases", nargs="+", type=Path, help="case folders or decision_points.json files")
     bs = bsub.add_parser("score", help="score cases and build the results tables")
     bs.add_argument("cases", nargs="+", type=Path, help="case folders or decision_points.json files")
-    bs.add_argument("--out", type=Path, help="write report.md, report.html and metrics.json here")
-    bs.add_argument("--write-results", action="store_true", help="write results.json and results.md next to each case")
+    bs.add_argument("--out", type=Path, help="write the results here")
+    bs.add_argument("--mode", choices=["dp_coverage", "visibility_gap"],
+                    help="dp_coverage: how many decision points the filings make attributable. "
+                         "visibility_gap: how much earlier an outsider would have held one decision "
+                         "point's material fact. Omit for the full report.")
+    bs.add_argument("--dp_num", help="visibility_gap: the decision point, e.g. DP2 or 2")
+    bs.add_argument("--filer_type", choices=["as_believed", "diligent"],
+                    help="which filer to score; required for visibility_gap")
+    bs.add_argument("--closeout-lag", type=int, metavar="DAYS",
+                    help="filing lag after a closeout period ends; required for a closeout-carried point")
     bs.add_argument("--design", action="append", choices=sorted(DESIGNS), help="table design(s) to build (default: all)")
     bs.add_argument("--json", action="store_true", help="print the report as JSON instead of Markdown")
     args = p.parse_args(argv)

@@ -172,6 +172,84 @@ def apply_variant(records: dict, variant: dict) -> dict:
     return out
 
 
+
+# ---------------------------------------------------------------- format normalisation
+
+def _old_predicate(pred: dict) -> dict:
+    """A test written in the current format, as the scorer's evaluator expects it.
+
+    The scorer is not changed: the two formats are the same tests under different key names,
+    so a rename cannot move a result.
+    """
+    if "all_of" in pred:
+        out = {"all": [_old_predicate(p) for p in pred["all_of"]]}
+        if "evidence" in pred:
+            out["evidence"] = pred["evidence"]
+        return out
+    out = {"record": pred["record"]}
+    if "has_item_where" in pred:
+        out["any"] = pred["pointer"]
+        where = {}
+        for key, cond in pred["has_item_where"].items():
+            if isinstance(cond, dict) and "one_of" in cond:
+                where[key] = cond["one_of"]
+            elif isinstance(cond, dict) and "not_empty" in cond:
+                where[key] = {"nonempty": cond["not_empty"]}
+            else:
+                where[key] = cond
+        out["where"] = where
+    else:
+        out["pointer"] = pred["pointer"]
+        for key in ("equals", "exists"):
+            if key in pred:
+                out[key] = pred[key]
+    if "evidence" in pred:
+        out["evidence"] = pred["evidence"]
+    return out
+
+
+def _normalise(spec: dict) -> dict:
+    """Accept either the current spec format or the earlier one, and return the earlier shape.
+
+    Everything downstream - scoring, metrics, tables - reads one shape. Keys the current format
+    adds (material_fact, outside_record, actor) are carried through untouched for the parts that
+    want them.
+    """
+    if "case_id" not in spec and not isinstance(spec.get("filings"), dict):
+        return spec
+    out = {"case": spec["case_id"]}
+    freeze = spec.get("freeze", {})
+    if "schema_hash" in freeze:
+        out["schema_hash"] = freeze["schema_hash"]
+    out["is_derivation_case"] = bool(spec.get("in_sample", False))
+    if "title" in spec:
+        out["title"] = spec["title"]
+    out["records"] = {k: v["file"] for k, v in spec["filings"].items()}
+    out["closes"] = {k: v["closes"] for k, v in spec["filings"].items() if "closes" in v}
+    out["variants"] = {}
+    for name, filer in spec.get("filers", {}).items():
+        edits, variant = filer.get("edits", {}), {"description": filer.get("description", "")}
+        for src, dst in (("drop_writable_surfaces", "remove_surfaces"), ("drop_paths", "remove_paths"),
+                         ("set_path_writable", "path_writable")):
+            if edits.get(src):
+                variant[dst] = edits[src]
+        out["variants"][name] = variant
+    points = []
+    for dp in spec["decision_points"]:
+        tests = dp["tests"]
+        rule = dict(tests["would_have_changed_the_action"])
+        if "against_closeout" in rule:
+            rule["closeout"] = rule.pop("against_closeout")
+        point = dict(dp)
+        point["recorded_before"] = _old_predicate(tests["declared_before_the_run"])
+        point["checkable_after"] = _old_predicate(tests["checkable_afterwards"])
+        point["decision_rule"] = rule
+        point["developer_aware"] = "yes" if dp.get("developer_knew", {}).get("status") else "no"
+        points.append(point)
+    out["decision_points"] = points
+    return out
+
+
 def _locate(path: Path) -> tuple[Path, Path]:
     """(case folder, decision_points.json) for a folder or a decision-points file."""
     if path.is_file():
@@ -201,6 +279,7 @@ class Case:
         spec = _read(spec_file)
         if not isinstance(spec, dict):
             raise CaseError(f"{spec_file}: must be a JSON object")
+        spec = _normalise(spec)
         _check_spec(spec, spec_file)
 
         if "filings" in spec:

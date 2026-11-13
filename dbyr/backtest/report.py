@@ -2,7 +2,7 @@
 
     report = Backtest("cases/a", "cases/b/decision_points.json").run()
     report.verdicts()                      # pre-registered pass/fail per case and variant
-    report.table("question_matrix")        # one of the four designs
+    report.table("table2")                 # one of the designs
     report.write("out/")                   # report.md, report.html, metrics.json
     report.write_results()                 # results.json and results.md next to each case
 
@@ -44,11 +44,13 @@ class BacktestReport:
         return next((t for t in self.tables if t.id == design), None) or build(design, self.metrics)
 
     def to_json(self) -> dict:
-        return {"schema_hash": self.schema_hash, "integrity": self.integrity, "verdicts": self.verdicts(),
-                "metrics": self.metrics,
+        """The tables' values, and what is needed to show they came from unchanged inputs."""
+        return {"schema_hash": self.schema_hash,
+                "cases": {name: {"unchanged": c["unchanged"], "files": len(c["files"]),
+                                 "schema_matches": c["schema_matches"]}
+                          for name, c in self.integrity.items()},
                 "tables": [{"id": t.id, "title": t.title, "columns": t.columns, "rows": t.rows,
-                            "new_columns": sorted(t.new_columns), "new_rows": sorted(t.new_rows), "notes": t.notes}
-                           for t in self.tables]}
+                            "notes": t.notes} for t in self.tables]}
 
     def markdown(self) -> str:
         return report_markdown(self)
@@ -81,7 +83,7 @@ class Backtest:
         if not cases:
             raise ValueError("a backtest needs at least one case (a folder or a decision_points.json)")
         self.paths = [Path(c) for c in cases]
-        self.designs = designs or list(DESIGNS)
+        self.designs = designs or ["table1", "table2"]
         self.strict = strict
 
     def run(self) -> BacktestReport:

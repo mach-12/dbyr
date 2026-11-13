@@ -30,20 +30,23 @@ def consistency(closeout: dict) -> list[Finding]:
         out.append(Finding("error", "period_inverted", "/period_end", "period_end precedes period_start"))
 
     # Every affected external party must be accounted for in third_party_notifications.
-    event_ids = {e["event_id"] for e in events}
+    # Integrity events affect third parties too, so both lists count here and below.
+    reportable = events + closeout.get("integrity_events", [])
+    event_ids = {e["event_id"] for e in reportable}
     notified = {n["party"]: n for n in closeout.get("third_party_notifications", [])}
-    for i, e in enumerate(events):
+    for i, e in enumerate(reportable):
+        where = f"/security_events/{i}" if i < len(events) else f"/integrity_events/{i - len(events)}"
         for party in e.get("affected_parties", []):
             if party not in notified:
-                out.append(Finding("error", "affected_party_unaccounted", f"/security_events/{i}/affected_parties",
+                out.append(Finding("error", "affected_party_unaccounted", f"{where}/affected_parties",
                                    f"{party!r} was affected by {e['event_id']} but has no notification entry"))
     for i, n in enumerate(closeout.get("third_party_notifications", [])):
         for ref in n["affected_by"]:
             if ref not in event_ids:
                 out.append(Finding("error", "notification_unknown_event", f"/third_party_notifications/{i}/affected_by",
-                                   f"event {ref!r} is not in security_events"))
+                                   f"event {ref!r} is not a reported event"))
         if n.get("notified") and n.get("notified_at"):
-            first = min((ts(e["at"]) for e in events if e["event_id"] in n["affected_by"]), default=None)
+            first = min((ts(e["at"]) for e in reportable if e["event_id"] in n["affected_by"]), default=None)
             if first and ts(n["notified_at"]) < first:
                 out.append(Finding("error", "notified_before_event", f"/third_party_notifications/{i}/notified_at",
                                    "notification predates the event it reports"))
@@ -66,7 +69,7 @@ def consistency(closeout: dict) -> list[Finding]:
 
 def timeliness(closeout: dict) -> list[Finding]:
     out: list[Finding] = []
-    events = {e["event_id"]: e for e in closeout["security_events"]}
+    events = {e["event_id"]: e for e in closeout["security_events"] + closeout.get("integrity_events", [])}
     for eid, e in events.items():
         if "detected_at" not in e:
             out.append(Finding("error", "detection_time_missing", f"/security_events/{eid}",

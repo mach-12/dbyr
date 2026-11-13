@@ -1,5 +1,7 @@
-"""The four results-table designs, built from metrics (metrics.compute) for any set of cases.
+"""The results-table designs, built from metrics (metrics.compute) for any set of cases.
 
+  table1          section 6: attributable decision points, one row per framework
+  table2          section 7: lead time of the outside record, one row per decision point
   scorecard       one row per case, one column per question
   question_matrix one row per question asked after an incident, one column per case
   today_vs_dbyr   one row per question: today's record, the DBYR record, and the evidence
@@ -237,7 +239,82 @@ def lifecycle(ms: list[dict]) -> Table:
     return Table("lifecycle", "Incident lifecycle", cols, rows, new_rows={0, 1, 2, 3, 4, 5}, notes=notes)
 
 
-DESIGNS = {"scorecard": scorecard, "question_matrix": question_matrix,
+
+# ------------------------------------------------------------------ the two design tables
+
+FILER_LABELS = {"as_believed": "DBYR, as-believed filer", "diligent": "DBYR, diligent filer"}
+
+
+def _share(f: dict) -> str:
+    """The attributable share as a decimal, with the count beside it."""
+    return f"{f['attributable'] / f['n']:.2f} ({f['attributable']})" if f["n"] else "-"
+
+
+def table1(ms: list[dict]) -> Table:
+    """Section 6: attributable decision points. One column per case, one row per filer."""
+    cols = ["Framework"] + [f"{m['label']}{', in-sample' if m['is_derivation_case'] else ''} "
+                            f"(N = {m['table1']['n']})" for m in ms]
+    rows = []
+    for key in ("as_believed", "diligent"):
+        if any(key in m["table1"]["filers"] for m in ms):
+            rows.append([FILER_LABELS.get(key, key)] +
+                        [_share(m["table1"]["filers"][key]) if key in m["table1"]["filers"] else "-"
+                         for m in ms])
+    changed = "; ".join(f"{m['label']} {m['table1']['filers'][m['primary_variant']]['changed']} of "
+                        f"{m['table1']['n']}" for m in ms)
+    bar = "; ".join(
+        f"{m['label']}: {m['registered'][m['primary_variant']]['attributable']} of {m['table1']['n']}, needs "
+        f"{m['registered'][m['primary_variant']]['needed']} - "
+        f"{'reference (in-sample)' if m['is_derivation_case'] else ('passes' if m['registered'][m['primary_variant']]['passes'] else 'fails')}"
+        for m in ms)
+    notes = [f"Each cell is the share of decision points that are attributable, with the count beside it.",
+             f"Pass bar, fixed before scoring - at least half the decision points attributable. {bar}.",
+             f"Reported separately, not folded into the above - decisions a rule would have changed (c): {changed}.",
+             "An in-sample case is the one the protocol was written from; it shows traceability, not validation."]
+    return Table("table1", "Table 1: attributable decision points", cols, rows, notes=notes)
+
+
+def _lead(e: dict) -> str:
+    if e["lead"] is None and e["dbyr"] is None and e["actual"] is None:
+        return "-"
+    if e.get("lead_range"):
+        low, high = e["lead_range"]
+        return f"{low}-{high}"
+    if e["lead"] is None:
+        return "none"
+    prefix = {"lower": "\u2265", "upper": "\u2264"}.get(e.get("bound"), "")
+    return f"{prefix}{e['lead']}"
+
+
+def table2(ms: list[dict]) -> Table:
+    """Section 7: lead time of the outside record, one row per decision point of each case."""
+    cols = ["Decision point", "Decision", "Carrying filing", "Actual", "DBYR", "Lead time (days)"]
+    rows, medians = [], []
+    for m in ms:
+        for e in m["table2"]:
+            rows.append([e["id"], e["decision"][:80], e["carried_by"] or "-",
+                         e["actual"] or "-", e["dbyr"] or "-", _lead(e)])
+        got = sorted(e["lead"] for e in m["table2"] if e["lead"] is not None)
+        if got:
+            mid = got[len(got) // 2] if len(got) % 2 else (got[len(got)//2 - 1] + got[len(got)//2]) // 2
+            by_carrier = {}
+            for e in m["table2"]:
+                if e["lead"] is not None:
+                    by_carrier.setdefault(e["carried_by"], []).append(e["lead"])
+            split = ", ".join(f"{k} n={len(v)} median {sorted(v)[len(v)//2]}d" for k, v in sorted(by_carrier.items()))
+            medians.append(f"{m['label']}: median {mid} days, range {got[0]}-{got[-1]}, "
+                           f"{len(got)} of {len(m['table2'])} scored. By carrying filing: {split}.")
+    notes = medians + [
+        "Measures visibility, not the length of an incident. Not 'days saved'.",
+        "The three carrying filings mean different things, so do not average across them.",
+        "Scored on the as-believed filer. A lead is zero where no filing was due.",
+        "A range is a contested detection date, scored both ways. A sign is a bound, not an estimate."]
+    missing = [f"{e['id']}: {e['note']}" for m in ms for e in m["table2"]
+               if e["lead"] is None and e.get("note") and e["dbyr"] is None and e["actual"] is None]
+    return Table("table2", "Table 2: lead time of the outside record", cols, rows, notes=notes + missing)
+
+
+DESIGNS = {"table1": table1, "table2": table2, "scorecard": scorecard, "question_matrix": question_matrix,
            "today_vs_dbyr": today_vs_dbyr, "lifecycle": lifecycle}
 
 

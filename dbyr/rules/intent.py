@@ -119,8 +119,9 @@ def coverage(intent: dict) -> list[Finding]:
     # A6: permitting inter-agent communication is allowed, but then the channel must be declared,
     # retained and watched, so coordination stays visible. [T06]
     if topo["inter_agent_comms_permitted"]:
-        shared = [s for s in topo["writable_surfaces"] if s["tenancy"] in ("shared_agents", "shared_runs")]
-        if not shared:
+        # Same predicate as comms_flag_inconsistent below, or the two checks contradict each other
+        # on an external shared surface (the public internet).
+        if not shared_agent_surfaces(topo):
             out.append(Finding("error", "comms_channel_undeclared", "/agent_surface/inter_agent_comms_permitted",
                                "inter-agent communication is permitted but no shared surface carries it"))
         if "inter_agent_messages" not in intent["log_retention"]["retained"]:

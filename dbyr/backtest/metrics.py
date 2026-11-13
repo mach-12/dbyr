@@ -217,6 +217,48 @@ def deployment(case: Case) -> dict | None:
 
 # ------------------------------------------------------------------ per case
 
+
+# ------------------------------------------------------------------ the two design tables
+
+def design_table_1(case: Case, scored: dict) -> dict:
+    """Attributable decision points, per filer, for section 6.
+
+    Baselines are listed but not scored: this repository holds no baseline mapping, and an
+    empty row says so where a missing row would not.
+    """
+    filers = {}
+    for name, variant in scored["variants"].items():
+        n, found = variant["n"], variant["attributable"]
+        filers[name] = {"attributable": found, "n": n,
+                        "pct": round(100 * found / n) if n else 0,
+                        "changed": variant["changes_decision_yes"]}
+    return {"filers": filers, "n": next(iter(scored["variants"].values()))["n"],
+            "in_sample": case.is_derivation_case}
+
+
+def design_table_2(case: Case, lag: int | None) -> list[dict]:
+    """Lead time of the outside record, one entry per decision point, for section 7.
+
+    The full per-decision-point list section 7 asks for in an appendix. Entries the record
+    cannot support carry the reason instead of a number.
+    """
+    from .visibility import VisibilityError, visibility_gap
+    filer, out = case.primary_variant, []
+    for dp in case.decision_points:
+        entry = {"id": dp["id"], "decision": dp["decision"],
+                 "carried_by": (dp.get("outside_record") or {}).get("carried_by", "")}
+        try:
+            gap = visibility_gap(case, dp["id"], filer, lag)
+            entry.update(actual=gap["actual_date"], dbyr=gap["dbyr_date"], lead=gap["found_early_by"],
+                         lead_range=gap.get("found_early_by_range"), bound=gap.get("bound"),
+                         note=gap.get("note"))
+        except VisibilityError as exc:
+            entry.update(actual=None, dbyr=None, lead=None, lead_range=None, bound=None,
+                         note=str(exc).split(": ", 1)[-1])
+        out.append(entry)
+    return out
+
+
 def compute(case: Case, scored: dict) -> dict:
     """Every metric for one scored case, for its primary variant unless stated."""
     primary = case.primary_variant
@@ -280,6 +322,9 @@ def compute(case: Case, scored: dict) -> dict:
     return {
         "case": case.name, "label": case.label, "title": case.title,
         "is_derivation_case": case.is_derivation_case, "primary_variant": primary,
+        "table1": design_table_1(case, scored),
+        "table2": design_table_2(case, case.spec.get("closeout_filing_lag_days")),
+        "closeout_lag": case.spec.get("closeout_filing_lag_days"),
         "void": case.schema_matches is False, "frozen_schema_hash": case.frozen_hash,
         "registered": registered,
         "decision_points": per_dp,

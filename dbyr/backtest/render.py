@@ -85,35 +85,20 @@ def report_markdown(report) -> str:
     for name, check in report.integrity.items():
         state = "unchanged" if check["unchanged"] else "CHANGED: " + "; ".join(check["diff"])
         out.append(f"- `{name}`: {len(check['files'])} input files hashed before and after scoring, {state}")
-    out += ["", "## Pre-registered verdicts", "", "| Case | Variant | Attributable | Needed | Verdict |", "|---|---|---|---|---|"]
-    for m in report.metrics:
-        for name, r in m["registered"].items():
-            v = "reference" if m["is_derivation_case"] else ("passes" if r["passes"] else "fails")
-            out.append(f"| {m['label']} | {name} | {r['attributable']} of {r['n']} | {r['needed']} | {v} |")
-    out += ["", "## Results tables", ""] + [table_markdown(t) for t in report.tables]
-    out += ["## Every decision point", ""] + [decisions_markdown(m) for m in report.metrics]
+    out += [""] + [table_markdown(t) for t in report.tables]
     return "\n".join(out)
 
 
 def report_html(report) -> str:
-    rows = "".join(
-        f"<tr><th>{html.escape(m['label'])}</th><td>{html.escape(name)}</td><td>{r['attributable']} of {r['n']}</td>"
-        f"<td>{r['needed']}</td><td class={'ok' if r['passes'] else 'bad'}>"
-        f"{'reference' if m['is_derivation_case'] else ('passes' if r['passes'] else 'fails')}</td></tr>"
-        for m in report.metrics for name, r in m["registered"].items())
     integrity = "".join(
         f"<li><code>{html.escape(n)}</code>: {len(c['files'])} input files hashed before and after scoring, "
         f"{'unchanged' if c['unchanged'] else 'CHANGED'}</li>" for n, c in report.integrity.items())
-    details = "".join(f"<section><h2>{html.escape(m['label'])}: every decision point</h2>"
-                      f"<div class=scroll>{_decisions_html(m)}</div></section>" for m in report.metrics)
     return (f"<!doctype html><html lang=en><head><meta charset=utf-8>"
             f"<meta name=viewport content='width=device-width,initial-scale=1'><title>DBYR backtest report</title>"
             f"<style>{CSS}</style></head><body><main><header><h1>DBYR backtest report</h1>"
             f"<p>Schema hash <code>{html.escape(report.schema_hash)}</code></p></header>"
             f"<section><h2>Input integrity</h2><ul>{integrity}</ul></section>"
-            f"<section><h2>Pre-registered verdicts</h2><div class=scroll><table><thead><tr><th>Case</th><th>Variant</th>"
-            f"<th>Attributable</th><th>Needed</th><th>Verdict</th></tr></thead><tbody>{rows}</tbody></table></div></section>"
-            + "".join(table_html(t) for t in report.tables) + details + "</main></body></html>\n")
+            + "".join(table_html(t) for t in report.tables) + "</main></body></html>\n")
 
 
 def _decisions_html(m: dict) -> str:
