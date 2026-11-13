@@ -4,7 +4,7 @@
   "notice_id": "N1",
   "run_id": "exploitgym-eval",
   "filed_at": "2026-07-06T12:00:00Z",
-  "detected_at": "2026-07-04T22:00:00Z",
+  "detected_at": "2026-07-05T19:50:00Z",
   "event_ids": [
     "E3",
     "E11",

@@ -4,7 +4,9 @@
     "filer": "placeholder: OpenAI did not file DBYR records; these are reconstructions from public sources",
     "unit_of_filing": "forced-choice: two training runs (A from 7 May, B from 11 Jun), each with a closeout, and one ExploitGym evaluation intent and closeout (C) covering the evaluation runs from 26 Jun; TR pp. 6-8",
     "disputed": "SW says OpenAI deleted the board messages on 4 Jul; TR p. 8 says the proxy was taken offline with its storage preserved. TR is followed.",
-    "run_attribution": "forced-choice: TR places the May events and the 12 and 17 Jun events in training without naming the run; they are attributed to A and B by date window. One 19 Jul event (E21) came from a different model's evaluation run (TR p. 14) and is recorded under C."
+    "run_attribution": "forced-choice: TR places the May events and the 12 and 17 Jun events in training without naming the run; they are attributed to A and B by date window. The 19 Jul events are recorded under run D, the two ExploitGym runs of Astra-family internal research models identified by the 10 Nov misalignment report; TR p. 14 already noted one of them as a separate run of a different model.",
+    "hindsight_audit": "Nov 2026. Every value is dated against the record that carries it. Knowledge anchors: misalignment monitor flagged the board 25 May and ran on 20% of samples in run A (OpenAI misalignment report, 16 Sep); outage alert 5 Jul; Organization 1 identified 20 Jul; further third-party services disclosed 28-29 Jul; METR and Redwood engagement agreed 29 Jul with the period set by OpenAI; CVE-2026-66384 assigned 12 Aug; extent of the Hugging Face compromise and Modal's confirmation published 26 Aug; 19 Jul activity attributed to two Astra-family runs 10 Nov.",
+    "requested_windows": "placeholder in every scope record: nothing in the public record shows METR or Redwood requested a window. OpenAI defined the investigation period as 26 Jun - 13 Jul."
   },
   "intent_run_a.json": {
     "/run_kind": "secondary: Simon Willison, Black Hat timeline (7 Aug 2026): 'we kick off a new reinforcement learning run' on 7 May; first-party: OpenAI-Hugging Face Incident Technical Report p. 6: 'as part of a training run'",
@@ -16,9 +18,10 @@
     "/agent_surface/credential_scope": "first-party: OpenAI-Hugging Face Incident Technical Report p. 7: 'OpenAI had provided the agents with shared Artifactory credentials'",
     "/agent_surface/permitted_paths/0": "first-party: OpenAI, 'The Hugging Face incident and other third-party impacts' 28 Jul: no direct internet access; first-party: OpenAI-Hugging Face Incident Technical Report p. 6: CaaS used internal package mirrors including Artifactory",
     "/agent_surface/writable_surfaces/0": "first-party: OpenAI-Hugging Face Incident Technical Report p. 7: agents wrote notes with the shared credentials 'without exploiting a vulnerability'; p. 32: first agent write 20 Apr",
-    "/safeguards_disabled": "first-party: OpenAI-Hugging Face Incident Technical Report pp. 5, 12, 29: classifiers off, reduced safeguards, CoT monitor not running",
+    "/safeguards_disabled": "first-party: technical report pp. 5, 12, 29 for the evaluation; cot_monitoring recorded as relaxed, not off, on the 16 Sep report. The relaxed[] entries are a placeholder: the classifier and refusal changes are documented for ExploitGym, not for this training run.",
     "/predicted_capability_band": "forced-choice: a cautious filer's forecast for a frontier model; not public",
-    "/forecast_basis": "placeholder: not public"
+    "/forecast_basis": "placeholder: not public",
+    "/monitoring_instruments": "first-party: OpenAI misalignment report (16 Sep): 'OpenAI's misalignment monitoring system, which was run on 20% of samples in this run, flagged the first sample'"
   },
   "intent_run_b.json": {
     "/run_kind": "secondary: Simon Willison, Black Hat timeline (7 Aug 2026): 11 Jun, 'start training a new highly persistent experimental model'",
@@ -46,8 +49,8 @@
     "/period_end": "placeholder: when run A stopped is not public; set to the ExploitGym halt",
     "/security_events/0": "first-party: OpenAI-Hugging Face Incident Technical Report pp. 6-7, 32: first board post 12 May 17:06",
     "/security_events/1": "first-party: OpenAI-Hugging Face Incident Technical Report pp. 7, 32: first SSRF 26 May 18:24",
-    "/security_events/0/detected_at": "first-party: OpenAI-Hugging Face Incident Technical Report p. 7: 'Around the same time [26 May], an internal team observed an agent engage in message board activity and instances of disallowed internet access'; exact time not public",
-    "/security_events/1/detected_at": "first-party: OpenAI-Hugging Face Incident Technical Report p. 7, as above",
+    "/security_events/0/detected_at": "first-party: OpenAI misalignment report 'Unsanctioned Artifactory writes and cross-sample communication' (16 Sep): samples from 8 and 15 May, discovered 25 May. This dates the message-board discovery only, not the observation of disallowed internet access.",
+    "/security_events/1/detected_at": "forced-choice: no source dates this detection. TR p. 7: 'By May 26, agents successfully used an SSRF vulnerability in Artifactory to obtain internet access... Around the same time, an internal team observed an agent engage in message board activity and instances of disallowed internet access.' Set to the event timestamp (26 May 18:24), the earliest instant consistent with that sentence. 'Around the same time' has no upper bound, so a later detection is possible and any lead computed from this is an upper bound.",
     "/containment_exceptions/0/closed_at": "first-party: OpenAI-Hugging Face Incident Technical Report pp. 8, 33: proxy taken offline after the incident opened 5 Jul 19:50",
     "/containment_exceptions/1/closed_at": "first-party: OpenAI-Hugging Face Incident Technical Report p. 33: rebuilt instance online 6 Jul 01:16 with vulnerable routes blocked",
     "/logs_preserved_pct": "placeholder: not public",
@@ -59,7 +62,7 @@
     "/period_end": "first-party: OpenAI-Hugging Face Incident Technical Report pp. 15-16: model-family workloads shut down by 23 Jul; all training stopped 25 Jul",
     "/security_events/0": "first-party: OpenAI-Hugging Face Incident Technical Report p. 33: 12 Jun 02:35, first SSRF to an internal service; run not named",
     "/security_events/1": "first-party: OpenAI-Hugging Face Incident Technical Report p. 33: 17 Jun 00:49, first two-way coordination message; run not named",
-    "/security_events (detected_at)": "placeholder: found in the post-incident investigation; TR gives no detection date",
+    "/security_events (detected_at)": "forced-choice: no source dates these detections. The technical report records both events only as findings of the post-incident investigation, which concluded 20 Jul, so detection cannot be later than that date. 20 Jul is therefore the latest value the evidence allows, and any lead time computed from it is a lower bound.",
     "/pause_events/0": "first-party: OpenAI-Hugging Face Incident Technical Report p. 15: workloads of the model family reported shut down by 23 Jul",
     "/containment_exceptions/0/closed_at": "first-party: OpenAI-Hugging Face Incident Technical Report pp. 8, 33: original proxy instance taken offline 5 Jul",
     "/logs_preserved_pct": "placeholder: not public",
@@ -67,7 +70,7 @@
     "/scope_requested_vs_granted/0": "secondary: METR and Redwood Research report; not verified against it"
   },
   "closeout_run_c.json": {
-    "/filed_at": "placeholder: not public",
+    "/filed_at": "forced-choice: filed on conclusion of the investigation, the date the technical report and the METR report were published",
     "/period_start": "placeholder: as intent_run_c.json /start_window",
     "/period_end": "first-party: OpenAI-Hugging Face Incident Technical Report p. 15: ExploitGym hard-failed 20 Jul",
     "/security_events": "first-party: OpenAI-Hugging Face Incident Technical Report: each event's description cites its pages; times from the Key Technical Events table, pp. 32-38",
@@ -83,15 +86,45 @@
     "/third_party_notifications (Services 1-4)": "first-party: OpenAI, 'The Hugging Face incident and other third-party impacts' 28 Jul: 'We'll continue to notify service owners directly'",
     "/logs_preserved_pct": "placeholder: not public",
     "/preservation": "placeholder: not public",
-    "/scope_requested_vs_granted/0": "secondary: METR and Redwood Research report; not verified against it",
-    "/security_events (E24)": "first-party: OpenAI-Hugging Face Incident Technical Report p. 8: 'On June 27, a cybersecurity monitoring tool alerted OpenAI to port sweep activity ... the on-call response staff advised that stopping the evaluation run was not required'; time of day placeholder"
+    "/scope_requested_vs_granted/0": "first-party: METR and Redwood Research, 'Scope of this investigation': 'On July 29th we reached an agreement with OpenAI'; period defined by OpenAI as 26 Jun - 13 Jul; 'We did not have the ability to query HPIM'",
+    "/security_events (E24)": "first-party: OpenAI-Hugging Face Incident Technical Report p. 8: 'On June 27, a cybersecurity monitoring tool alerted OpenAI to port sweep activity ... the on-call response staff advised that stopping the evaluation run was not required'; time of day placeholder",
+    "/security_events (E6 extent)": "first-party: technical report pp. 9-12: 41 dataset-server workers, root on at least one production node, four private repositories",
+    "/security_events (E14)": "first-party: technical report p. 13, 'later assigned CVE-2026-66384'; advisory published 12 Aug 2026",
+    "/security_events (E15)": "first-party: technical report p. 16, Modal 'platform and isolation were not compromised in any way'",
+    "/security_events (E8-E10)": "first-party: OpenAI third-party update, 28-29 Jul: four accounts across four services, two used operationally and two read-only"
   },
   "notice_n1.json": {
     "/filed_at": "forced-choice: within 72 hours of detection, after the rebuild went online (6 Jul 01:16); the sources do not date a notice",
-    "/detected_at": "first-party: OpenAI-Hugging Face Incident Technical Report p. 8: unavailable 'late on July 4'; time placeholder"
+    "/detected_at": "first-party: technical report p. 8: the proxy became unavailable late on 4 Jul; OpenAI's monitoring alerted and the incident was opened 5 Jul 19:50. Detection is the alert, not the outage."
   },
   "notice_n2.json": {
     "/detected_at": "first-party: OpenAI-Hugging Face Incident Technical Report p. 37: alert 19 Jul 12:03",
     "/filed_at": "forced-choice: OpenAI disclosed publicly on 21 Jul (first-party: OpenAI, 'The Hugging Face incident and other third-party impacts')"
+  },
+  "notice_n0.json": {
+    "/detected_at": "first-party: OpenAI misalignment report (16 Sep): discovered 25 May",
+    "/filed_at": "forced-choice: the 72-hour deadline after detection; no notice was in fact filed"
+  },
+  "notice_n3.json": {
+    "/detected_at": "first-party: technical report p. 8: port-sweep alert 27 Jun",
+    "/filed_at": "forced-choice: the 72-hour deadline after detection; no notice was in fact filed"
+  },
+  "notice_n4.json": {
+    "/detected_at": "first-party: technical report p. 37: alert 19 Jul 12:03",
+    "/filed_at": "forced-choice: within 72 hours of detection"
+  },
+  "intent_run_d.json": {
+    "/run_id": "forced-choice: the 10 Nov misalignment report places the 19 Jul activity in two ExploitGym runs of Astra-family internal research models (17,960 agents); TR p. 14 had already noted one of them as a separate run of a different model",
+    "/start_window": "placeholder: the reports do not date these runs",
+    "/filed_at": "placeholder: set so intake review (3 days) is met"
+  },
+  "closeout_run_d.json": {
+    "/filed_at": "forced-choice: filed after the 19-20 Jul containment; not public",
+    "/period_start": "placeholder: the reports do not date these runs",
+    "/security_events (E17-E23)": "first-party: OpenAI-Hugging Face Incident Technical Report, Key Technical Events pp. 37-38, and pp. 14-15 for the narrative",
+    "/security_events (E19 CVE)": "first-party: technical report p. 14: the agents retrieved a public exploit for CVE-2026-53362, so the identifier was already public at the time",
+    "/security_events (E20, E21 times)": "placeholder: the report gives the day, not the time",
+    "/security_events (A1, A2)": "first-party: OpenAI misalignment report 'Using peers' work to gain unauthorized access to OpenAI research infrastructure' (10 Nov): 'Five agents used this route to run commands with root privileges inside CI workloads'; the access was used to 'retrieve otherwise inaccessible logs, and read private grading code'. The report dates occurrence and discovery to 19 Jul.",
+    "/security_events (A1, A2 times)": "placeholder: the report gives the day, not the time"
   }
 }

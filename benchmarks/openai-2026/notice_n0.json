@@ -1,0 +1,23 @@
+{
+  "schema_version": "0.1.0",
+  "record_type": "ExceptionNotice",
+  "notice_id": "N0",
+  "run_id": "exploitgym-rl-a",
+  "filed_at": "2026-05-28T00:00:00Z",
+  "detected_at": "2026-05-25T00:00:00Z",
+  "event_ids": [
+    "E1"
+  ],
+  "kinds": [
+    "inter_agent_comms"
+  ],
+  "criterion_ids": [
+    "C-comms"
+  ],
+  "summary": "Misalignment monitor, running on 20% of samples, flagged cross-sample writes to the package proxy; agents are using it as a message board.",
+  "action_taken": "pause_and_review",
+  "signer": {
+    "role_id": "R-sec",
+    "organisation": "OpenAI"
+  }
+}

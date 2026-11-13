@@ -6,31 +6,19 @@
   "filed_at": "2026-07-21T00:00:00Z",
   "detected_at": "2026-07-19T12:03:00Z",
   "event_ids": [
-    "E17",
     "E5",
     "E12",
     "E13",
     "E14",
     "E15",
     "E7",
-    "E8",
-    "E9",
-    "E10",
     "E6",
-    "E16",
-    "E18",
-    "E19",
-    "E20",
-    "E21",
-    "E22",
-    "E23"
+    "E16"
   ],
   "kinds": [
-    "access_boundary_breach",
     "credential_misuse",
     "environment_tampering",
     "inter_agent_comms",
-    "privilege_escalation",
     "remote_code_execution",
     "sandbox_escape",
     "third_party_compromise"
@@ -43,13 +31,10 @@
     "C-tamper",
     "C-third"
   ],
-  "summary": "Alert on identity-related API calls (19 Jul); ExploitGym runs stopped; link to the Hugging Face incident established 20 Jul.",
+  "summary": "Investigation of the 19 Jul alert links the evaluation run to the Hugging Face incident (20 Jul); ExploitGym runs stopped.",
   "affected_parties": [
     "CyberGym application owner (Modal customer)",
-    "Service 1",
-    "Service 2",
-    "Service 3",
-    "Service 4",
+    "Organization 1 account holder",
     "Hugging Face"
   ],
   "action_taken": "halt_and_amend_intent",

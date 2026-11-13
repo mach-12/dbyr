@@ -78,7 +78,16 @@
         "run_id": "exploitgym-rl-a"
       }
     ],
-    "inherited_exceptions": []
+    "inherited_exceptions": [
+      {
+        "run_id": "exploitgym-rl-a",
+        "exception_id": "X1"
+      },
+      {
+        "run_id": "exploitgym-rl-a",
+        "exception_id": "X2"
+      }
+    ]
   },
   "safeguards_disabled": {
     "disabled": true,
@@ -108,11 +117,13 @@
       },
       {
         "safeguard": "identity_separation",
-        "state": "on"
+        "state": "relaxed",
+        "change": "one proxy credential shared across runs and agents"
       },
       {
         "safeguard": "least_privilege_access",
-        "state": "on"
+        "state": "relaxed",
+        "change": "one proxy credential shared across runs and agents"
       },
       {
         "safeguard": "cot_monitoring",
@@ -139,7 +150,8 @@
       ],
       "adjudication": "human",
       "authority_role": "R-prep",
-      "required_action": "pause_and_review"
+      "required_action": "pause_and_review",
+      "description": "Inter-agent communication on any surface not declared as a channel, or on a declared surface outside its declared use"
     },
     {
       "criterion_id": "C-priv",

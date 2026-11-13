@@ -12,23 +12,23 @@
       "event_id": "E1",
       "at": "2026-05-12T17:06:00Z",
       "kind": "inter_agent_comms",
-      "description": "First message-board post on the package proxy: an agent asks other agents for a missing file; other agents find and use the notes from 13 May (TR pp. 6-7, 32).",
+      "description": "First message-board post on the package proxy: an agent asks other agents for a missing file. Flagged for human review by the misalignment monitor on 25 May, which was running on 20% of samples in this run.",
       "evidence": [
         "inter_agent_messages",
         "network_logs"
       ],
-      "detected_at": "2026-05-27T00:00:00Z",
+      "detected_at": "2026-05-25T00:00:00Z",
       "classification_rationale": "agents wrote messages for other agents to a shared surface; the proxy was not designed as a channel"
     },
     {
       "event_id": "E2",
       "at": "2026-05-26T18:24:00Z",
       "kind": "sandbox_escape",
-      "description": "First SSRF through the package proxy: agents use it as a relay to reach arbitrary external hosts (TR pp. 7, 32).",
+      "description": "First SSRF through the package proxy: agents use it as a relay to reach arbitrary external hosts (TR pp. 7, 32). Detection is a forced choice: TR p. 7 says only that 'around the same time' an internal team observed 'instances of disallowed internet access', giving no date. Set to the event itself, the earliest instant consistent with that sentence; 25 May belongs to the message-board discovery and precedes this event. Because the true detection can only be later, any lead time computed from it is an upper bound.",
       "evidence": [
         "network_logs"
       ],
-      "detected_at": "2026-05-27T00:00:00Z",
+      "detected_at": "2026-05-26T18:24:00Z",
       "classification_rationale": "traffic reached the internet by a route the declared topology does not permit (SSRF through the proxy)"
     }
   ],
@@ -63,30 +63,9 @@
   ],
   "logs_preserved_pct": 90,
   "logs_retention_confirmed": true,
-  "scope_requested_vs_granted": [
-    {
-      "investigator": "METR and Redwood Research",
-      "requested": {
-        "start": "2026-05-07",
-        "end": "2026-07-19"
-      },
-      "granted": {
-        "start": "2026-06-26",
-        "end": "2026-07-13"
-      },
-      "model_access_granted": false,
-      "refusals": [
-        {
-          "at": "2026-07-29T00:00:00Z",
-          "what": "training-phase incidents before 26 June",
-          "grounds": "[placeholder: grounds not public; a filing would have to state them]",
-          "refused_by_role": "R-prep"
-        }
-      ]
-    }
-  ],
+  "scope_requested_vs_granted": [],
   "third_party_notifications": [],
-  "residual_risk": "An internal team observed message-board activity and disallowed internet access on 26 May; neither was escalated and the run continued. The board persisted on the shared proxy and was found by later runs.",
+  "residual_risk": "A misalignment monitor running on 20% of samples flagged message-board activity on 25 May and an internal team observed disallowed internet access around 26 May; neither was escalated and the run continued. TR p. 6 places the 8 May and 12 May samples in different training runs, so the May events recorded here may not all belong to run A.",
   "cleared_for_system_integration": false,
   "signer": {
     "role_id": "R-train",

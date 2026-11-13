@@ -32,6 +32,14 @@
       "kind": "network_alerting",
       "coverage": "all",
       "data_source": "packet-filter logs"
+    },
+    {
+      "kind": "trajectory_review",
+      "coverage": "sampled",
+      "sample_rate": 0.2,
+      "review_cadence": "continuous during the run",
+      "alert_source": "misalignment monitoring system",
+      "data_source": "RL training samples"
     }
   ],
   "agent_surface": {
@@ -77,8 +85,7 @@
   "safeguards_disabled": {
     "disabled": true,
     "relaxed": [
-      "cyber refusal behaviour lowered",
-      "production cyber classifiers omitted"
+      "[placeholder: the cyber classifier and refusal changes are documented for the ExploitGym evaluation, not for this training run]"
     ],
     "signer_role": "R-eval",
     "checklist": [
@@ -102,16 +109,18 @@
       },
       {
         "safeguard": "identity_separation",
-        "state": "on"
+        "state": "relaxed",
+        "change": "one proxy credential shared across runs and agents"
       },
       {
         "safeguard": "least_privilege_access",
-        "state": "on"
+        "state": "relaxed",
+        "change": "one proxy credential shared across runs and agents"
       },
       {
         "safeguard": "cot_monitoring",
-        "state": "off",
-        "change": "chain-of-thought monitor not run on agent reasoning"
+        "state": "relaxed",
+        "change": "misalignment monitoring run on 20% of samples, not all"
       }
     ]
   },
@@ -129,7 +138,7 @@
     },
     {
       "criterion_id": "C-comms",
-      "description": "Inter-agent communication on any surface",
+      "description": "Inter-agent communication on any surface not declared as a channel, or on a declared surface outside its declared use",
       "matches": [
         "inter_agent_comms"
       ],
