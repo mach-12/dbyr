@@ -1,36 +1,22 @@
 # RunIntent
 
-The Intent is filed before the first optimisation step, or before the first safeguards-off
-evaluation, of a covered model. It turns "we were careful" into specific promises that can be
-checked: what agents could reach, which safeguards were off, what would have stopped the run and
-who decides, and what evidence will be kept to prove it. Its fields fall into nine groups:
+Filed before the first optimisation step, or the first safeguards-off evaluation, of a covered
+model. It turns "we were careful" into promises that can be checked: what agents could reach, which
+safeguards were off, what would have stopped the run and who decides, and what evidence is kept.
 
-| # | Group | What it answers |
-|---|---|---|
-| 1 | [Identity](#1-identity) | Who is filing, and for which run? |
-| 2 | [What the run is](#2-what-the-run-is) | What kind of run, why DBYR covers it ([trigger basis](README.md#trigger-basis)), when, and at what scale? |
-| 3 | [Capability forecast](#3-capability-forecast) | What does the developer expect the model to be able to do, and how will that be tested? |
-| 4 | [Safeguards](#4-safeguards) | Which production safeguards are relaxed or off? |
-| 5 | [Environment](#5-environment) | What can agents reach, write to, do and read? |
-| 6 | [Monitoring](#6-monitoring) | How is the run watched? |
-| 7 | [Pause criteria and restarts](#7-pause-criteria-and-restarts) | What stops the run, who decides, and how does it restart? |
-| 8 | [Evidence retention](#8-evidence-retention) | What evidence is kept, so the filing can be checked later? |
-| 9 | [People and investigations](#9-people-and-investigations) | Who holds each role, and what may an investigator do? |
+**When:** at least 3 days before `start_window.start`. When a declared fact changes, file an
+amendment — a new Intent with the same `run_id`, `amends` set to the ledger sequence of the Intent
+it amends, and `changes` saying what changed. Every version is kept, and each Closeout is checked
+against the version in force when it was filed.
 
-**When:** at least 3 days before `start_window.start`, so intake review can happen. When a declared
-fact changes, file an amendment: a new Intent with the same `run_id`, `amends` set to the ledger
-sequence number of the Intent it amends, and `changes` saying what changed and why. Every version
-is kept, and each Closeout is checked against the version in force when it was filed.
-
-**Example:** [`dbyr/backtest/template/intent_A.json`](../../dbyr/backtest/template/intent_A.json),
-a safeguards-off cyber evaluation that passes every check.
+**Example:** [`intent_A.json`](../../dbyr/backtest/template/intent_A.json), a safeguards-off cyber
+evaluation that passes every check.
 
 ## Fields
 
-Generated from [`run_intent.schema.json`](../../dbyr/schema/run_intent.schema.json).
-Required "yes" means the schema requires it; the checks below require more. Nested fields are
-written `parent.child`, and `parent[].child` for each item of a list. Types are Python type hints;
-see [Field types](README.md#field-types).
+Generated from [`run_intent.schema.json`](../../dbyr/schema/run_intent.schema.json). Nested fields
+are written `parent.child`, and `parent[].child` for each item of a list. See
+[field types](README.md#field-types) and [disclosure tiers](README.md#disclosure-tiers).
 
 <!-- fields:start -->
 ### 1. Identity
@@ -208,11 +194,9 @@ Who holds each role, and what a post-incident investigator may do.
 | `investigator_scope_expansion.model_access_committed` | no | public | Whether an investigator may also access the model. | `bool` |
 <!-- fields:end -->
 
-## Checks on this filing
+## Checks when filed
 
-These run when the Intent is filed. An error stops it being lodged.
-
-### Consistency
+An error stops the filing being lodged.
 
 | Code | Severity | Fires when | Why |
 |---|---|---|---|
@@ -222,13 +206,6 @@ These run when the Intent is filed. An error stops it being lodged.
 | `shared_surface_without_lineage` | warning | A surface persists across runs and is shared, but no other run is listed for it. | Confirm this is the first run to reach it. |
 | `no_monitoring_declared` | warning | `monitoring_instruments` is empty. | A Closeout attesting no events then carries little weight. |
 | `trajectories_not_retained` | warning | `log_retention.retained` does not include `trajectories`. | Behavioural events cannot be checked afterwards. |
-
-### Coverage
-
-Whether the declared monitors and criteria can actually catch what they promise to.
-
-| Code | Severity | Fires when | Why |
-|---|---|---|---|
 | `t3_missing` | error | A capability band is forecast `high` or `critical` but `trigger_basis` does not list `T3`. | The forecast and the trigger cannot disagree. |
 | `no_monitoring_t4` | error | A safeguards-off (T4) run declares no monitor that observes anything. | [T07] |
 | `unenforced_path_t4` | error | A safeguards-off run declares a network path with `enforcement: none`. | [T08] |
@@ -242,13 +219,6 @@ Whether the declared monitors and criteria can actually catch what they promise 
 | `comms_unmonitored` | error | Inter-agent communication is permitted but neither an `inter_agent_message_monitor` nor `trajectory_review` watches it. | [T06] |
 | `run_kind_undeclared` | error | `run_kind` is missing. | Run kind cannot be inferred from the trigger basis: an evaluation can also carry T3. [T05] |
 | `standing_intent` | error | An evaluation has no end date, or its window is longer than 31 days. | One Intent per evaluation, not a standing filing. [T05] |
-
-### Completeness
-
-Whether the facts a later investigation needs are stated.
-
-| Code | Severity | Fires when | Why |
-|---|---|---|---|
 | `safeguard_checklist_missing` | error | `safeguards_disabled.checklist` is missing. | Relaxing a safeguard counts as disabling it, so every safeguard's state must be stated. [R1 S2-E1, S3-E9] |
 | `safeguard_checklist_incomplete` | error | The checklist does not name each of the six safeguards exactly once. | [R1 S2-E1, S3-E9] |
 | `disabled_inconsistent` | error | `disabled` is not true exactly when some checklist item is `relaxed` or `off`. | Calling a weakening a relaxation cannot escape the T4 duties. [R1 S2-E1, S3-E9] |
@@ -272,20 +242,9 @@ Whether the facts a later investigation needs are stated.
 
 ## Checks across filings
 
-### Versions
-
-Run over every version of a run's Intent.
-
 | Code | Severity | Fires when | Why |
 |---|---|---|---|
 | `standing_intent` | error | The versions of an evaluation or deployment Intent together cover more than 31 days. | Chaining date-only amendments cannot turn an evaluation into a standing filing. [R1 judge item 9; S3-E2] |
-
-### Lineage
-
-Run over every Intent in the set, and the Closeouts filed before each.
-
-| Code | Severity | Fires when | Why |
-|---|---|---|---|
 | `lineage_not_cited` | error | An earlier run reaches the same persistent shared surface and this Intent does not cite it in `shared_surface_lineage`. | Runs that share a surface are reconciled together. |
 | `inherited_exception_not_cited` | error | A containment exception on a surface this run reaches was on record, and still open, when this Intent was filed, but it is not cited in `inherited_exceptions`. | A run must not inherit a known breach silently. |
 | `tenancy_conflict` | error | Two runs declare the same surface, one as `run_only` and the other as shared. | They cannot both be right. [T13] |

@@ -1,41 +1,24 @@
 # RunCloseout
 
-The Closeout says what actually happened in a period of the run: every reportable event detected,
-every pause, every containment failure, who was told, what investigators asked for and were given,
-and how much of the evidence is still held. It is then checked against the Intent, so a gap between
-what was declared and what happened shows up as a finding.
+What actually happened in a period of the run: every reportable event detected, every pause, every
+containment failure, who was told, what investigators asked for and were given, and how much of the
+evidence is still held. It is checked against the Intent, so a gap between what was declared and
+what happened shows up as a finding.
 
 **When:** when the run completes or is aborted, and at least every 30 days while it runs.
 Consecutive Closeouts must leave no gap between periods.
 
-**Clearing a run for downstream use:** a run's latest Closeout states, in
-`cleared_for_system_integration`, whether the model it produced may be built on.
+**An empty event list is a statement.** `security_events` and `integrity_events` list every
+reportable event detected in the period; if neither has any, the Closeout must say whether absence
+is attested (`attested_absence`) and on what basis (`absence_basis`).
 
-**Completeness:** `security_events` and `integrity_events` list every event of a reportable kind
-detected in the period. An empty list is a statement that none was detected, so the Closeout must
-also say whether absence is attested (`attested_absence`) and on what basis (`absence_basis`).
-
-Its fields fall into eight groups:
-
-| # | Group | What it answers |
-|---|---|---|
-| 1 | [Identity and period](#1-identity-and-period) | Who is filing, for which run, which days does it cover, and what state is it in? |
-| 2 | [Events](#2-events) | What was detected in the period, or why was nothing? |
-| 3 | [Pauses](#3-pauses) | What did the run do each time a pause criterion fired? |
-| 4 | [Containment and changes](#4-containment-and-changes) | Where did containment fail, and what changed mid-run? |
-| 5 | [Third parties](#5-third-parties) | Who outside was affected, and were they told in time? |
-| 6 | [Evidence](#6-evidence) | How much of the promised evidence is still held? |
-| 7 | [Investigations](#7-investigations) | What did investigators ask for, and what were they given? |
-| 8 | [Outcome](#8-outcome) | Which evaluations ran, what risk remains, and may the model be deployed? |
-
-**Example:** [`dbyr/backtest/template/closeout_A.json`](../../dbyr/backtest/template/closeout_A.json).
+**Example:** [`closeout_A.json`](../../dbyr/backtest/template/closeout_A.json).
 
 ## Fields
 
-Generated from [`run_closeout.schema.json`](../../dbyr/schema/run_closeout.schema.json).
-Required "yes" means the schema requires it; the checks below require more. Nested fields are
-written `parent.child`, and `parent[].child` for each item of a list. Types are Python type hints;
-see [Field types](README.md#field-types).
+Generated from [`run_closeout.schema.json`](../../dbyr/schema/run_closeout.schema.json). Nested
+fields are written `parent.child`, and `parent[].child` for each item of a list. See
+[field types](README.md#field-types) and [disclosure tiers](README.md#disclosure-tiers).
 
 <!-- fields:start -->
 ### 1. Identity and period
@@ -194,11 +177,9 @@ Which evaluations ran, what risk remains, and whether the model may be deployed.
 | `cleared_for_system_integration` | no | public | Whether the model this run produced is cleared to be built on downstream. | `bool` |
 <!-- fields:end -->
 
-## Checks on this filing
+## Checks when filed
 
-These run when the Closeout is filed. An error stops it being lodged.
-
-### Consistency
+An error stops the filing being lodged.
 
 | Code | Severity | Fires when | Why |
 |---|---|---|---|
@@ -210,19 +191,6 @@ These run when the Closeout is filed. An error stops it being lodged.
 | `undeclared_surface` | warning | A containment exception is on a surface the Intent did not declare. | The expected completeness failure: amend the Intent. |
 | `closed_without_time` | error | A closed containment exception has no `closed_at`. | |
 | `silent_scope_narrowing` | error | An investigator was granted a narrower period than requested and no refusal is logged. | |
-
-### Timeliness
-
-| Code | Severity | Fires when | Why |
-|---|---|---|---|
-| `detection_time_missing` | error | A security or integrity event has no `detected_at`. | Detection starts the notice and notification clocks. |
-| `detected_before_event` | error | `detected_at` is earlier than the event. | |
-| `late_notification` | error | A party was told more than 72 hours after detection and no `delay_reason` is given. | [T10] |
-
-### Completeness
-
-| Code | Severity | Fires when | Why |
-|---|---|---|---|
 | `absence_not_attested` | error | `attested_absence` is missing. | Completeness is attested, not implied by an empty list. [R1 S2-E6] |
 | `absence_basis_missing` | error | No events are listed and there is no `absence_basis`, or absence is attested without one. | The basis says which monitors support the claim, or why absence cannot be attested, so a weakly monitored run can still file honestly. [R1 S2-E6] |
 | `absence_not_supportable` | warning | No events are listed and absence is not attested. | The stated basis explains why. |
@@ -234,10 +202,11 @@ These run when the Closeout is filed. An error stops it being lodged.
 | `preservation_overstated` | error | `logs_preserved_pct` is higher than the weakest class (`sample_rate` × `preserved_pct`). | The headline figure is the weakest class, not an average. [R1 S2-E7, S3-E12] |
 | `evidence_destroyed` | conduct | A surface was reset without a snapshot while an internal incident was open. | [R1 S2-E8] |
 | `change_without_amendment` | warning | A configuration change was made without amending the Intent. | Confirm it changes no declared fact. |
+| `detection_time_missing` | error | A security or integrity event has no `detected_at`. | Detection starts the notice and notification clocks. |
+| `detected_before_event` | error | `detected_at` is earlier than the event. | |
+| `late_notification` | error | A party was told more than 72 hours after detection and no `delay_reason` is given. | [T10] |
 
 ## Checks across filings
-
-### Reconciliation with the Intent
 
 Each Closeout is checked against the Intent version in force when it was filed. This checks that the
 filings agree with each other; an auditor then checks them against the retained evidence.
@@ -257,13 +226,6 @@ filings agree with each other; an auditor then checks them against the retained 
 | `absence_unsupported` | error | Absence of events is attested, but no declared monitor could observe one of the core kinds. | Attested absence is only as strong as the monitoring behind it. [T19; R1 S2-E6] |
 | `preservation_incomplete` | error | An evidence class the Intent retains has no `preservation` entry. | |
 | `rolling_not_training` | error | `status` is `rolling` but the run is not a training run. | [R1 S3-E2] |
-
-### Cadence
-
-Run over every Closeout of a run, against the Intent version in force for each.
-
-| Code | Severity | Fires when | Why |
-|---|---|---|---|
 | `closeout_overdue` | conduct | One Closeout covers more than 30 days. | A late Closeout is recorded, not refused. [R1 judge item 9; S3-E2] |
 | `closeout_gap` | conduct | No Closeout covers the days between two periods. | |
 | `period_outside_window` | conduct | A period falls outside the Intent's `start_window`. | The run operated outside its declared window. |

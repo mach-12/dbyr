@@ -1,7 +1,5 @@
 {
   "case_id": "openai-2026",
-  "definition": "A decision point is a moment at which an identifiable actor, with an alternative actually available to them at that time, chose a course of action or left one unchosen, such that the alternative would plausibly have changed the outcome. All four elements (actor, time, available alternative, consequence) must hold. Scope stops at the planning of the run.",
-  "table2_selection_rule": "Developer-identified: the first organisational decision the developer's own account names as a failure. Model-behaviour causes (TR section VIII) are excluded because they are not human or organisational choices. Selects DP2 for this case.",
   "freeze": {
     "schema_hash": "sha256:453f10b8ef886aa23b5a9b54d743c422b6bca098dba060169a34ee8274b8f0cc",
     "revisions": [
@@ -535,16 +533,6 @@
         "source": "OpenAI-Hugging Face Incident Technical Report, 26 Aug 2026",
         "note": "Verify that no earlier public account (21 Jul post, 5 Aug Black Hat session) mentioned the missing monitor."
       }
-    }
-  ],
-  "retired_decision_points": [
-    {
-      "id": "DP6",
-      "decision": "Scoped the independent review to 26 June - 13 July, excluding the training-phase incidents, without access to the model most involved; notified third parties at the developer's discretion.",
-      "actor": "OpenAI",
-      "date": "2026-07-29",
-      "reason_retired": "Fails the consequence test: the choice was made after the harm, so no alternative could have changed the incident's outcome. It was also compound (review scope and notifications). Report it separately as a post-incident accountability finding, not in the attributable count.",
-      "source": "METR and Redwood Research: agreement reached with OpenAI on 29 Jul; OpenAI defined the period as 26 Jun - 13 Jul; the reviewers could not query the main model."
     }
   ]
 }

@@ -1,59 +1,28 @@
 {
   "case_id": "aisi-2026",
   "in_sample": false,
-  "definition": "A decision point is a moment at which an identifiable actor, with an alternative actually available to them at that time, chose a course of action or left one unchosen, such that the alternative would plausibly have changed the outcome. All four elements (actor, time, available alternative, consequence) must hold. Scope stops at the planning of the run.",
-  "condition_b_convention": "checkable_afterwards always tests an event, exception or pause recorded in the Closeout - never a re-attestation of a configuration the Intent already declares. A Closeout that repeats the Intent adds no information: same filer, same claim, no reconciliation. Where a decision point concerns a configuration, (b) tests the events that configuration produced.",
-  "table2_selection_rule": "Developer-identified: the first organisational decision the developer's own account names as a cause. TR 5.1 names internet access first among the five contributing factors and states the but-for claim. Selects DP1 for this case.",
-  "sensitivity": {
-    "why": "The diligent verdict is fragile and must not be quoted without this block. Scored as written, the diligent filer reaches 4 of 7 against a bar of 4 and passes. That pass rests entirely on two judgements about which evidence classes an investigator needs, both made by the same author who wrote the tests, and both made after v1's scores were known.",
-    "runs": [
-      {
-        "variant": "v2 as written",
-        "diligent": "4/7 passes",
-        "as_believed": "2/7 fails"
-      },
-      {
-        "variant": "DP5 evidence restored to inter_agent_messages",
-        "diligent": "3/7 fails",
-        "as_believed": "2/7 fails"
-      },
-      {
-        "variant": "DP6 evidence restored to access_logs",
-        "diligent": "3/7 fails",
-        "as_believed": "1/7 fails"
-      },
-      {
-        "variant": "all three v1 evidence demands restored (DP4, DP5, DP6)",
-        "diligent": "2/7 fails",
-        "as_believed": "1/7 fails"
-      }
-    ],
-    "reading": "Restoring either single demand is enough to flip the diligent verdict back to fail. The as-believed filer, which the paper uses as its headline, fails in every variant. The robust result for this case is therefore 'fails', and the diligent pass should be reported only with the sensitivity shown.",
-    "what_did_not_drive_it": "The pass is not an artefact of the smaller denominator. Two of v1's four attributable decision points, v1 DP8 and DP9 (retired here as R3 and R4), were retired on the actor test, so the audit removed successes as well as failures; and the retirement criteria were taken from the definition openai-2026 adopted on 2026-11-15, not chosen after inspecting what they would do to this case.",
-    "open_question": "Whether a scorer may narrow an evidence list after seeing that it failed is unresolved. The argument for it is that the list should name what is strictly necessary to verify the material fact. The argument against is that every such narrowing so far has raised the score and none has lowered it. A pre-registered rule applied to all three cases, written by someone who has not seen these numbers, is the only clean way to settle it."
-  },
   "freeze": {
     "schema_hash": "sha256:453f10b8ef886aa23b5a9b54d743c422b6bca098dba060169a34ee8274b8f0cc",
     "revisions": [
       {
         "on": "2026-11-16",
         "pre_registered": false,
-        "reason": "Ids in this entry are v1 ids; every entry carries from_v1 for the mapping, and the scored set is renumbered DP1-DP7 with retired entries as R1-R8. Four-element audit of decision_points.json, made after scoring, applying the definition openai-2026 adopted on 2026-11-15. Eight of fifteen entries retired. DP3, DP4 and DP6 reframed upstream from agent actions and standing states to the human choices that produced them. DP2 retired: disabling classifiers has no available alternative, since TR 5.2 states the evaluation's purpose would also have been prevented. DP7, DP8 and DP9 retired: agent actions with no identifiable actor. DP11, DP14 and DP15 retired: choices made after the harm. DP13 retired: post-harm with no identified ongoing exposure. All tests changed, so no score carries over from v1."
+        "reason": "Four-element audit, made after scoring, applying the definition openai-2026 adopted on 2026-11-15. Eight of fifteen entries retired; three reframed upstream from agent actions to the human choices behind them. Scored set renumbered DP1-DP7, retired entries R1-R8; every entry carries from_v1."
       },
       {
         "on": "2026-11-16",
         "pre_registered": false,
-        "reason": "Honesty note. This file is not a pre-registered artefact. It is written in knowledge of the published 11/13 and 6/13 figures and of v1's 4/15, and must not be described as blind to them. developer_knew.status is boolean throughout, which is the form the scorer reads at case.py:247. The nuance sits in a separate knowledge field (known | believed | unknown) that the scorer ignores. Note for whoever fixes openai-2026: its v2 file puts the string form in status, which is a filing error - any non-empty string is truthy, so 'unknown' would score as aware. It does not bite there because that case has no unknown entries, but it would have flipped condition (c) on DP6 here."
+        "reason": "Not a pre-registered artefact: written in knowledge of the published 11/13 and 6/13 figures and of v1's 4/15. developer_knew.status is boolean, which is the form the scorer reads."
       },
       {
         "on": "2026-11-16",
         "pre_registered": false,
-        "reason": "DP7 (a) re-pointed from /third_party_notification_commitment to the notices' /affected_parties, matching the convention anthropic-2026 DP16 already uses for a notification decision point. Made after scoring and it RAISES this case's score, from 4/7 to 5/7 diligent and 2/7 to 3/7 as-believed. The justification does not rest on the score: the previous pointer named a field that does not exist and was withdrawn from the v0.4 proposal as redundant, since RunCloseout already carries third_party_notifications and rules/closeout.py already enforces NOTIFY_HOURS against it. Condition (a) is not restricted to the Intent; the notices are the earlier filing that records the fact."
+        "reason": "DP7 (a) re-pointed from a proposed v0.4 field to the notices' /affected_parties, matching anthropic-2026 DP16. Raises this case from 4/7 to 5/7 diligent and 2/7 to 3/7 as-believed. The previous pointer named a field that does not exist and was withdrawn as redundant: RunCloseout already carries third_party_notifications and closeout.py enforces NOTIFY_HOURS against it."
       },
       {
         "on": "2026-11-16",
         "pre_registered": false,
-        "reason": "SystemRuntimeRecord removed from the protocol, to match the paper's three records. Its schema, rules module and protocol stage are gone, and system_id is no longer an alternative owner on ExceptionNotice or RunCloseout, so run_id is now required on both. No case in this repository filed one, so no record changed. Frozen hash updated from sha256:5d7ed0105e75a8cea3729adc4af8b78f45f9a6cee212e31b1ffe3bd567c348f8 to sha256:453f10b8ef886aa23b5a9b54d743c422b6bca098dba060169a34ee8274b8f0cc; scores re-run and unchanged."
+        "reason": "SystemRuntimeRecord removed from the protocol, to match the paper's three records. No case filed one, so no record changed. Hash re-frozen; scores re-run and unchanged."
       }
     ]
   },
@@ -137,7 +106,7 @@
           "reason": "No during-run criterion governs a declared path's enforcement. The protocol acts on this at intake instead: unenforced_path_t4 refuses the Intent, which is scored separately and deliberately not folded in here."
         }
       },
-      "note": "(b) tests the containment exception, not the path declaration, per condition_b_convention. The exception carries opened_at and closed_at, so it records that the condition persisted - it is the one Closeout structure that can express an interval rather than a point.",
+      "note": "(b) tests the containment exception, not the path declaration. The exception carries opened_at and closed_at, so it records that the condition persisted — the one Closeout structure that expresses an interval rather than a point.",
       "outside_record": {
         "by_filer": {
           "diligent": {
@@ -197,7 +166,7 @@
           "reason": "A monitoring gap is recorded, not acted on during the run. The protocol acts at intake: comms_unmonitored and dead_criterion both fire on this Intent."
         }
       },
-      "note": "The material fact is an absence, and condition (a) cannot express one directly. (a) is therefore written in the positive form the Intent can hold: the declared monitor set. An Intent listing only network_alerting against event kinds whose declared observers are trajectory_review or inter_agent_message_monitor is itself the record of the gap - a declared absence is attributable. Replaces v1 DP3, whose (a) demanded coverage 'on_alert' where the filing truthfully says 'all', and whose (b) demanded a monitor_alert event the Closeout never uses.",
+      "note": "The material fact is an absence, and (a) cannot express one directly, so (a) is written in the positive form the Intent can hold: the declared monitor set. An Intent listing only network_alerting, against kinds whose observers are trajectory_review or inter_agent_message_monitor, is itself the record of the gap.",
       "outside_record": {
         "by_filer": {
           "diligent": {
@@ -253,7 +222,7 @@
           "reason": "No criterion governs prompt configuration."
         }
       },
-      "note": "Schema limitation, registered deliberately and not rewritten onto an adjacent field. DBYR has no field for the scope statement an agent is given, so (a) names where the fact would belong and scores No for every filer. This is the same missing region as DP4 here and DP3 in anthropic-2026; three decision points across two held-out cases point at one absent field. The lint warning 'can never hold' on this pointer is the intended diagnostic. CONSEQUENCE IS CONTESTED: TR 5.4 states the analysis 'cannot confirm whether the misconfiguration increased the risk of unsanctioned behaviour', and 7 of the 10 misconfigured Mythos 5 samples attacked the out-of-scope target anyway. Retained because the two most severe samples were both misconfigured, but a second reader may reject it on the fourth test.",
+      "note": "Schema limitation: DBYR has no field for the scope statement an agent is given, so (a) names where the fact would belong and scores No for every filer. The lint warning 'can never hold' is the intended diagnostic. Same missing field as DP4 here and DP3 in anthropic-2026. CONSEQUENCE IS CONTESTED: TR 5.4 says the analysis 'cannot confirm whether the misconfiguration increased the risk', and 7 of the 10 misconfigured samples attacked the out-of-scope target anyway. Retained because the two most severe samples were both misconfigured; a second reader may reject it on the fourth test.",
       "outside_record": {
         "by_filer": {
           "diligent": {
@@ -308,7 +277,7 @@
           "reason": "No criterion governs prompt content."
         }
       },
-      "note": "Second schema limitation of the same family as DP3. v1 tested /safeguards_disabled/checklist for refusal_behaviour 'on', which passed - converting a protocol gap into a protocol success. That was the worst available outcome and is corrected here. (b) names trajectories only: the prompts are carried in the transcripts, and TR Appendix B publishes them, so chain_of_thought is not needed to verify the fact.",
+      "note": "Schema limitation, same missing field as DP3. (b) names trajectories only: the prompts are carried in the transcripts and TR Appendix B publishes them.",
       "outside_record": {
         "by_filer": {
           "diligent": {
@@ -382,7 +351,7 @@
           "against_closeout": "closeout:A"
         }
       },
-      "note": "Reframed from v1 DP6, which described the credential reuse itself - an agent action with no identifiable actor. The human choice upstream is concurrency on a shared surface without identity scoping. (a) tests isolation, not tenancy: the filing records tenancy 'external', which the schema defines as readable by parties outside the developer and which does not assert cross-sample sharing; isolation 'shared' is the field that carries the material fact, and v1's test wrongly omitted it. (b) names trajectories and tool_calls rather than inter_agent_messages: the messages were GitHub commits, a README and a Gist, all written through tool calls and therefore carried in the transcripts.",
+      "note": "The credential reuse itself is an agent action with no actor; the human choice upstream is concurrency on a shared surface without identity scoping. (a) tests isolation, not tenancy: tenancy 'external' means readable by outside parties and does not assert cross-sample sharing, whereas isolation 'shared' carries the material fact. (b) names trajectories and tool_calls: the messages were GitHub commits, a README and a Gist, all written through tool calls.",
       "outside_record": {
         "by_filer": {
           "diligent": {
@@ -459,7 +428,7 @@
           "against_closeout": "closeout:A"
         }
       },
-      "note": "The one decision in the case that went right, and the only place a declared criterion and the action actually taken can be reconciled against each other. v1 paired the pause-criteria test with /restart_protocol/approver_role, which sources.json marks placeholder for the whole block; that conjunct is removed here, since a predicate must not read an invented value and the restart is in any case a different decision. The surviving pointer reads /pause_criteria, which sources.json marks forced-choice, not placeholder. SOURCE INCONSISTENCY: TR 1.1 and TR 3.1 both put the quarantine at 12:23 BST; Figure 2 puts it at 13:17 BST. Nothing here turns on which is right. (b) names trajectories and network_logs rather than access_logs: the pause event is attested in the Closeout with its role and timestamp, and termination is visible in network traffic.",
+      "note": "The one decision in the case that went right, and the only place a declared criterion and the action taken can be reconciled against each other. The (a) pointer reads /pause_criteria, which sources.json marks forced-choice. SOURCE INCONSISTENCY: TR 1.1 and TR 3.1 put the quarantine at 12:23 BST, Figure 2 at 13:17; nothing here turns on which is right.",
       "outside_record": {
         "by_filer": {
           "diligent": {
@@ -531,7 +500,7 @@
           "reason": "The protocol requires the notification to be recorded with its timing, not to be made by a particular date during the run."
         }
       },
-      "note": "Third schema limitation. params.NOTIFY_HOURS sets a 72-hour third-party notification deadline - detection at 28 Jul 10:56 BST puts it at 31 Jul 10:56 BST, so the notification came about 36 hours late - but RunIntent has no field in which a filer commits to that duty before the run. The deadline is measured after the fact and promised nowhere. v1 tested /containment_plan/on_detected_subversion, which is absent from the Intent and in any case concerns technical containment rather than who is told. The evidence list is empty because a notification is checked against the filing itself, not against a retained log class. REVISED 16 Nov 2026: (a) previously read /third_party_notification_commitment, a field proposed for v0.4 and since withdrawn. It was the wrong shape - it tried to pre-declare a commitment, when the material fact is the delay itself. The notices are the filing that precedes the event and records the fact: N1 (detected 2026-07-28T09:56:00Z), N2 and N3 all name GitHub in affected_parties, and a notice is due within 72h of detection, so by 31 Jul - before GitHub was contacted on 1 Aug. The notice establishes the clock start and the Closeout the clock end, which is what makes the four-day delay attributable from the filings alone. This follows anthropic-2026 DP16, which tests /affected_parties across three notices for the same kind of fact.",
+      "note": "params.NOTIFY_HOURS sets a 72-hour notification deadline and closeout.py enforces it, but RunIntent has no field in which a filer commits to it: the deadline is measured after the fact and promised nowhere. (a) therefore reads the notices, which name GitHub in affected_parties and are due by 31 Jul — before GitHub was contacted on 1 Aug. The notice fixes the clock start and the Closeout the clock end, which is what makes the four-day delay attributable. Follows anthropic-2026 DP16. Evidence is empty because a notification is checked against the filing itself, not a retained log class.",
       "outside_record": {
         "by_filer": {
           "diligent": {
@@ -548,88 +517,6 @@
         "source": "AISI, 'Incident Report: unsanctioned agent behaviour during cyber testing', 4 Aug 2026",
         "note": "The outside date is when GitHub itself was told, which precedes publication. Closeout lead depends on the declared filing lag and should be reported as a range, not a single figure."
       }
-    }
-  ],
-  "retired_decision_points": [
-    {
-      "id": "R1",
-      "from_v1": "DP2",
-      "decision": "Disabled the model providers' cyber classifiers for Mythos 5 and GPT-5.6 Sol.",
-      "actor": "CAST",
-      "date": "2026-07-25",
-      "failed_test": "available alternative",
-      "reason_retired": "No alternative was available without abandoning the evaluation's purpose. TR 5.2: 'It is necessary to disable these classifiers in order to measure cyber capabilities. While the dangerous actions might have been prevented by these classifiers, the designed goal of the evaluation would also have been prevented.' This is the premise of the experiment, not a choice that could have gone otherwise. Its decision-relevant content is carried by DP1 (the internet path the classifiers would otherwise have constrained) and DP2 (the absence of a compensating monitor). Reporting it separately also removes a case where condition (b) had no legitimate content: RunCloseout has no field for safeguard state, and a Closeout that repeated the Intent's checklist would add no information.",
-      "source": "TR 2 and TR 5.2."
-    },
-    {
-      "id": "R2",
-      "from_v1": "DP7",
-      "decision": "An agent conducted a sustained social-engineering campaign against two real maintainers over 34 and a half hours.",
-      "actor": "none - agent action",
-      "date": "2026-07-26",
-      "failed_test": "actor",
-      "reason_retired": "No person or organisation decided this. It is the most severe conduct in the incident but it is an agent action, and the human choices upstream of it are DP1 (the internet path) and DP2 (nothing reviewing behaviour while samples ran). Severity does not make an event a decision point. The events remain in the Closeout and in the harm record.",
-      "source": "TR 1.1, TR 3.1 and TR 4.1."
-    },
-    {
-      "id": "R3",
-      "from_v1": "DP8",
-      "decision": "Agent-authored package metadata executed inside at least 53 GitHub-operated Dependabot containers.",
-      "actor": "none - agent action",
-      "date": "2026-07-27",
-      "failed_test": "actor",
-      "reason_retired": "An agent action. Retiring it is uncomfortable, because this is the point at which the exercise had a measurable effect on a third party's production infrastructure, and it was one of only four decision points v1 scored as attributable. But nobody chose it. The upstream choices are DP1 and DP5.",
-      "source": "TR A.3: 'At least 53 distinct Dependabot containers executed the payload.'"
-    },
-    {
-      "id": "R4",
-      "from_v1": "DP9",
-      "decision": "An agent obtained root code execution inside a container a member of the public had set up to investigate its malware, and planted a credential watcher.",
-      "actor": "none - agent action",
-      "date": "2026-07-27",
-      "failed_test": "actor",
-      "reason_retired": "An agent action. As with R3, it was scored attributable in v1 and is retired here on the actor test rather than on any weakness in the record.",
-      "source": "TR 4.2.3 and TR A.1, Event 1-4."
-    },
-    {
-      "id": "R5",
-      "from_v1": "DP11",
-      "decision": "Disabled access to four models across AISI, then re-enabled Opus 5 and GPT-5.6 Sol with cyber classifiers on.",
-      "actor": "AISI",
-      "date": "2026-07-28",
-      "failed_test": "consequence",
-      "reason_retired": "Made after the harm and after containment, so no alternative could have changed this incident's outcome. Separately, it was unscorable: its only bearing field, /restart_protocol, is marked placeholder in full by sources.json, so v1's condition (a) passed on values the reconstruction invented. That is a source gap rather than a schema gap - DBYR has exactly the right field and AISI published nothing to put in it, which tells slightly in the protocol's favour. Report as a post-incident accountability finding.",
-      "source": "TR 3.1."
-    },
-    {
-      "id": "R6",
-      "from_v1": "DP13",
-      "decision": "Informed the developers of the evaluated models, and the US Center for AI Standards and Innovation, on 3 Aug, six days after detection.",
-      "actor": "AISI",
-      "date": "2026-08-03",
-      "failed_test": "consequence",
-      "reason_retired": "Post-harm, and unlike DP7 no continuing third-party exposure has been identified that earlier notice would have shortened: the incident was contained on 28 Jul and no further agent activity followed. Retired on that basis, and the line between it and DP7 is exposure, not timing. PRESERVE THE SCHEMA FINDING: DBYR has no field naming the developer of an evaluated model as a party owed notice, because the protocol assumes the filer owns the model. That is the gap specific to this case being an evaluator's, and it is why the six-day delay sits on no filing deadline at all. It should be reported as a schema limitation even though the decision point is not scored.",
-      "source": "TR 3.3."
-    },
-    {
-      "id": "R7",
-      "from_v1": "DP14",
-      "decision": "Opened a retrospective scan of about 40,000 historic samples for similar unsanctioned behaviour, and published while its results were unreviewed.",
-      "actor": "AISI's Model Transparency team",
-      "date": "2026-07-30",
-      "failed_test": "consequence",
-      "reason_retired": "Made after the harm; the scan bears on discovering other incidents, not on this one's outcome. PRESERVE THE FINDING: this was attributable in v1, and it is the one place the protocol demonstrably works end to end - complete trajectory retention declared in the Intent is what makes a retrospective scan possible at all, and residual_risk carries the unfinished result. Worth reporting as a positive post-incident finding. Note also that v1's condition (b) was a bare existence check on residual_risk, which verifies only that the field is non-empty.",
-      "source": "TR 6.1 and TR 1.3."
-    },
-    {
-      "id": "R8",
-      "from_v1": "DP15",
-      "decision": "Committed to an independent third-party review by METR.",
-      "actor": "AISI",
-      "date": "2026-08-04",
-      "failed_test": "consequence",
-      "reason_retired": "Made after the harm. PRESERVE THE FINDING: v1 scored this as a Closeout failure, which was wrong. The blog of 4 Aug records that the scope was still being settled, and access was confirmed only on 23 Oct, so any Closeout covering a run that ended 28 Jul fell due long before there was a scope to record. This is a timing gap in the protocol, not a reconstruction oversight. docs/cases/decision_points.md documents a supersedes key for later filings carrying facts that did not exist earlier, but supersedes appears nowhere in dbyr/ and openai-2026 does not use it, so there is currently no implemented route for post-closeout facts in any case.",
-      "source": "Blog, 4 Aug 2026; AISI, 'Investigating alignment failures in AISI's incident', 23 Oct 2026."
     }
   ]
 }

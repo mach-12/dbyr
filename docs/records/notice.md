@@ -1,30 +1,19 @@
 # ExceptionNotice
 
-The ExceptionNotice is an interim filing. It closes the gap between a fast incident and a Closeout
-that may be 30 days away: when the developer detects a reportable event (every event kind except
-`monitor_alert`), it says what was detected, when, and what was done about it. It records
-detection; it does not detect.
-
-A notice names the run the events happened in (`run_id`). Its fields fall into four groups:
-
-| # | Group | What it answers |
-|---|---|---|
-| 1 | [Identity](#1-identity) | Who is filing, and for which run? |
-| 2 | [What was detected](#2-what-was-detected) | What happened, and when did the developer find out? |
-| 3 | [What it touches](#3-what-it-touches) | Which pause criteria did it match, and who outside was affected? |
-| 4 | [Response](#4-response) | What did the developer do about it? |
+An interim filing. It closes the gap between a fast incident and a Closeout that may be 30 days
+away: when the developer detects a reportable event (every kind except `monitor_alert`), it says
+what was detected, when, and what was done about it. It records detection; it does not detect.
 
 **When:** within 72 hours of `detected_at`. One notice may cover several events; list each in
 `event_ids`, using the ids the run's Closeout will give the same events. The Closeout lists the
 notices filed in its period in `notice_ids`.
 
-**Example:** [`dbyr/backtest/template/notice_N1.json`](../../dbyr/backtest/template/notice_N1.json).
+**Example:** [`notice_N1.json`](../../dbyr/backtest/template/notice_N1.json).
 
 ## Fields
 
 Generated from [`exception_notice.schema.json`](../../dbyr/schema/exception_notice.schema.json).
-Required "yes" means the schema requires it. Types are Python type hints; see
-[Field types](README.md#field-types).
+See [field types](README.md#field-types) and [disclosure tiers](README.md#disclosure-tiers).
 
 <!-- fields:start -->
 ### 1. Identity
@@ -71,7 +60,7 @@ What the developer did about it.
 | `action_taken` | yes | public | What the filer did in response. none records that nothing was done. | `Literal["pause", "pause_and_review", "halt_and_amend_intent", "notify_only", "none"]` |
 <!-- fields:end -->
 
-## Checks on this filing
+## Checks when filed
 
 | Code | Severity | Fires when | Why |
 |---|---|---|---|
@@ -79,9 +68,8 @@ What the developer did about it.
 
 ## Checks across filings
 
-Run when the run's (or system's) Closeout is filed: each reportable event it lists is matched to
-the notices for the same run or system. A notice for a run never counts for a system, or the other
-way round.
+Run when the run's Closeout is filed: each reportable event it lists is matched to the notices for
+the same run.
 
 | Code | Severity | Fires when | Why |
 |---|---|---|---|

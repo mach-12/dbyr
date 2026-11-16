@@ -1,6 +1,5 @@
 {
   "case_id": "anthropic-2026",
-  "_about": "Revamped decision points for anthropic-2026. THE RULE: a decision point is a moment at which an identifiable actor, with an alternative actually available to them at that time, chose a course of action or left one unchosen, such that the alternative would plausibly have changed the outcome. Derived from decision_points.json by applying that rule to every point in it, then checked against the reports for decisions the source list had missed. Ids below DP18 are unchanged from the source file so the two can be diffed; DP19 is new.",
   "in_sample": false,
   "freeze": {
     "schema_hash": "sha256:453f10b8ef886aa23b5a9b54d743c422b6bca098dba060169a34ee8274b8f0cc",

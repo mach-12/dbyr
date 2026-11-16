@@ -1,100 +1,77 @@
 # DBYR records
 
-DBYR has three records. A developer files them; the protocol checks each one when it is filed and
+DBYR has three records. A developer files them; the protocol checks each one when it is filed, and
 checks them against each other as the set grows.
 
-| Record | Filed | What it says | Doc |
-|---|---|---|---|
-| RunIntent | before the run starts, at least 3 days ahead; again as an amendment when a declared fact changes | what the run will do, what it can reach, how it is watched, and what will pause it | [intent.md](intent.md) |
-| ExceptionNotice | within 72 hours of detecting a reportable event | what was detected, when, and what was done | [notice.md](notice.md) |
-| RunCloseout | when the run ends or is aborted, and at least every 30 days while it runs | what actually happened in the period: events, pauses, containment failures, evidence kept | [closeout.md](closeout.md) |
+| Record | Filed | What it says |
+|---|---|---|
+| [RunIntent](intent.md) | at least 3 days before the run starts; again as an amendment when a declared fact changes | what the run will do, what it can reach, how it is watched, what will pause it |
+| [ExceptionNotice](notice.md) | within 72 hours of detecting a reportable event | what was detected, when, and what was done |
+| [RunCloseout](closeout.md) | when the run ends or is aborted, and at least every 30 days while it runs | what actually happened: events, pauses, containment failures, evidence kept |
 
-The deadlines are the defaults in [`dbyr/params.py`](../../dbyr/params.py) (see [Parameters](#parameters)).
-
-## How the records link
+## How they link
 
 - **`run_id`** ties an Intent to its notices and Closeouts.
-- **Amendments:** an amendment is another Intent with the same `run_id`, an `amends` field and a
-  `changes` list. The protocol keeps every version. Each Closeout is checked against the version in
-  force when the Closeout was filed.
+- **Amendments** are another Intent with the same `run_id`, plus `amends` and `changes`. Every
+  version is kept; each Closeout is checked against the version in force when it was filed.
 - **Event ids:** a Notice's `event_ids` are the ids the run's Closeout gives the same events, and a
   Closeout lists its notices in `notice_ids`.
-- **Surfaces:** runs that reach the same persistent shared surface (the same `surface_id`) must
-  cite each other in `shared_surface_lineage`. They are reconciled as one group.
+- **Surfaces:** runs reaching the same persistent shared surface must cite each other in
+  `shared_surface_lineage`. They are reconciled as one group.
 
-## How filings are checked
+`dbyr run FOLDER` runs the checks in order: each filing alone, then Intent versions, each Closeout
+against the Intent in force, notice timeliness, and lineage across runs. Each record's doc lists its
+own codes.
 
-`dbyr run FOLDER` (or `dbyr.check(...)` in Python) runs these stages in order:
+## Severity
 
-| Stage | Checks | Documented in |
-|---|---|---|
-| records | each filing on its own: the schema, then the checks for its record type | each record's doc, *Checks on this filing* |
-| versions | every version of a run's Intent; Closeout cadence | [intent.md](intent.md#checks-across-filings), [closeout.md](closeout.md#checks-across-filings) |
-| reconcile | each Closeout against the Intent version in force | [closeout.md](closeout.md#checks-across-filings) |
-| notices | the notices each Closeout's events require | [notice.md](notice.md#checks-across-filings) |
-| lineage | runs that share a persistent surface | [intent.md](intent.md#checks-across-filings) |
-
-The checks test what a filing commits to, not whether it is true. A false filing that is specific
-enough passes. Catching it needs a later check against the retained evidence, which is why the
-Intent must say what evidence is kept.
-
-### Severity
-
-| Severity | Meaning |
+| | |
 |---|---|
-| error | The filing is defective. A filing with an error in its own checks is not lodged, and any error fails the set. |
-| conduct | The filing lodges, but it records a breach of the filer's own commitments, such as a late notice or a matched criterion with no pause. It goes to adjudication. Breaches are recorded rather than refused, so that admitting one is never costlier than hiding it. |
-| warning | The filing lodges. A reviewer should look here. |
+| **error** | the filing is defective and is not lodged |
+| **conduct** | it lodges, but records a breach of the filer's own commitments. It goes to adjudication |
+| **warning** | for the reviewer's attention |
 
-### Checks that apply to every record
+Four codes are not specific to one record:
 
-| Code | Severity | Fires when | Why |
-|---|---|---|---|
-| `schema` | error | The filing does not match its record's schema. The message names the field. No other check runs on a filing that fails the schema. | The other checks assume a well-formed record. |
-| `unknown_record_type` | error | `record_type` is not one of the three records. | |
-| `intent_missing` | error | A Closeout's `run_id` has no Intent in the set. | A Closeout can only be reconciled against an Intent. |
-| `unreconcilable` | error | A cross-filing stage could not run because a filing it needs is malformed. The filing's own errors say why. | |
+| Code | Severity | Fires when |
+|---|---|---|
+| `schema` | error | The filing does not match its schema. No other check runs on it. |
+| `unknown_record_type` | error | `record_type` is not one of the three records. |
+| `intent_missing` | error | A Closeout's `run_id` has no Intent in the set. |
+| `unreconcilable` | error | A cross-filing stage could not run because a filing it needs is malformed. |
 
-### Citations
-
-The *Why* column cites the evasion that motivated a check: `[T..]` is a scenario from the scripted
-tabletop, and `[R1 ..]` an evasion found in round 1 of the independent tabletop.
+A bracketed tag such as `[T09]` or `[R1 S2-E3]` names the tabletop finding that motivated a check.
 
 ## Disclosure tiers
 
-Every field has a tier, shown in each record's field table. A field without its own tier takes its
-parent's. Each filing is projected into three views; where a view may not show a field, it holds a
-salted hash of the value instead, so a reader sees that the field exists and can later check it
-against the value when it is opened.
+Every field has a tier, shown in each record's field table; a field without one takes its parent's.
+Each filing is projected into three views. Where a view may not show a field it holds a salted hash
+instead, so a reader sees the field exists and can check it later when the value is opened.
 
 | Tier | Shown in |
 |---|---|
 | public | every view |
-| restricted | the restricted and sealed views; a hash in the public view |
-| sealed | only the sealed view, the developer's own copy, opened under legal hold; a hash in the others |
+| restricted | restricted and sealed; a hash in public |
+| sealed | only the sealed view, opened under legal hold; a hash in the others |
 
-## Shared types
+## Trigger basis
 
-### Trigger basis
-
-The Intent's `trigger_basis` lists why DBYR covers the run: one or more of the four triggers. A run
-covered for several reasons lists each. T3 and T4 cannot be left out when they apply, and T4 brings
-the strictest checks.
+The Intent's `trigger_basis` lists why DBYR covers the run. A run covered for several reasons lists
+each. T4 brings the strictest checks.
 
 | Trigger | Covers a run when | Must be listed when | What it adds |
 |---|---|---|---|
-| `T1` | its training compute is above the threshold the operator sets | the filer declares it | no checks beyond those every Intent gets |
-| `T2` | the developer is a covered developer | the filer declares it | no checks beyond those every Intent gets |
-| `T3` | it is forecast to reach a high or critical capability | any `predicted_capability_band` is `high` or `critical` (`t3_missing`) | no further checks; the forecast is tested through `eval_plan`, which any band above `low` needs, with or without T3 (`eval_plan_missing`) |
-| `T4` | any production safeguard is relaxed or off | `safeguards_disabled.disabled` is true (`t4_missing`) | at least one working monitor (`no_monitoring_t4`); no unenforced network path (`unenforced_path_t4`); an observable, pausing criterion for each core kind (`core_kind_uncovered`); a criterion for every reportable kind (`kind_uncriteried`) |
+| `T1` | training compute is above the operator's threshold | the filer declares it | nothing beyond the checks every Intent gets |
+| `T2` | the developer is a covered developer | the filer declares it | nothing beyond the checks every Intent gets |
+| `T3` | it is forecast to reach a high or critical capability | any `predicted_capability_band` is `high` or `critical` | nothing further; the forecast is tested through `eval_plan`, which any band above `low` needs |
+| `T4` | any production safeguard is relaxed or off | `safeguards_disabled.disabled` is true | a working monitor; no unenforced network path; an observable pausing criterion for each core kind; a criterion for every reportable kind |
 
-Checks named here are described in [intent.md](intent.md#coverage).
+See [intent.md](intent.md#checks-when-filed) for the codes these raise.
 
-### Other shared types
+## Event kinds
 
-**Event kinds.** Every kind except `monitor_alert` is reportable: it must be listed in the
-Closeout and needs an ExceptionNotice. An event kind can only fire a pause criterion if a declared
-monitor can observe it:
+Every kind except `monitor_alert` is reportable: it must be listed in the Closeout and needs an
+ExceptionNotice. A kind can only fire a pause criterion if a declared monitor can observe it.
 
 | Event kind | Meaning | Observed by |
 |---|---|---|
@@ -115,24 +92,7 @@ monitor can observe it:
 A monitor counts as an observer only if it actually observes: a sampled monitor below a 1% sample
 rate, an on-alert monitor with no `alert_source`, and an `aggregate_report` observe nothing.
 
-**Evidence classes:** `trajectories` full agent transcripts; `chain_of_thought` reasoning traces;
-`tool_calls` every tool invocation with its arguments; `network_logs` network flows leaving the
-sandbox; `access_logs` authentication and authorisation records on reachable systems;
-`inter_agent_messages` every write to a surface another agent can read, with its author;
-`config_snapshots` environment, permission and surface state at each change.
-
-**Safeguards** (Intent `safeguards_disabled.checklist`, each stated exactly once):
-`model_output_filters` production classifiers on outputs; `refusal_behaviour` trained refusals;
-`per_episode_reset` sandbox state wiped between episodes; `network_isolation` no route outside the
-declared paths; `identity_separation` agents act under their own identity, never a person's;
-`least_privilege_access` agents read only what the task needs. Optionally, `cot_monitoring` the
-production chain-of-thought monitor runs on agent reasoning; at most once, not required. Each is `on`,
-`relaxed` (weakened in any way) or `off`.
-
-**Roles:** every role a filing names (pause authorities, the restart approver, signers) must be
-declared in the Intent's `roles`.
-
-### Field types
+## Field types
 
 The *Type* column gives each field's type as a Python type hint, as the JSON is parsed:
 
@@ -170,15 +130,4 @@ others; changing one changes what lodges.
 | `CORE_KINDS_T4` | `sandbox_escape`, `privilege_escalation`, `inter_agent_comms`, `third_party_compromise` | the kinds a safeguards-off run needs an observable, pausing criterion for |
 | `PAUSING` | `pause`, `pause_and_review`, `halt_and_amend_intent` | the required actions that count as pausing |
 
-## Keeping these docs current
-
-The field tables are generated from the schemas in [`dbyr/schema/`](../../dbyr/schema/), so a
-field's meaning is written once, in the schema's `description`. After changing a schema, run:
-
-```bash
-dbyr docs              # rewrites the field tables in docs/records/
-dbyr docs --check      # exit code 1 if a table is out of date
-```
-
-The check tables are written by hand. The tests fail if a check code exists in `dbyr/rules/` but
-not here, or here but not in the code, or if a severity differs.
+The field tables are generated: run `dbyr docs` after a schema change, or `dbyr docs --check` in CI.
