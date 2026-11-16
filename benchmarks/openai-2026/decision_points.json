@@ -1,6 +1,7 @@
 {
   "case_id": "openai-2026",
-  "in_sample": true,
+  "definition": "A decision point is a moment at which an identifiable actor, with an alternative actually available to them at that time, chose a course of action or left one unchosen, such that the alternative would plausibly have changed the outcome. All four elements (actor, time, available alternative, consequence) must hold. Scope stops at the planning of the run.",
+  "table2_selection_rule": "Developer-identified: the first organisational decision the developer's own account names as a failure. Model-behaviour causes (TR section VIII) are excluded because they are not human or organisational choices. Selects DP2 for this case.",
   "freeze": {
     "schema_hash": "sha256:5d7ed0105e75a8cea3729adc4af8b78f45f9a6cee212e31b1ffe3bd567c348f8",
     "revisions": [
@@ -18,6 +19,11 @@
         "on": "2026-11-13",
         "pre_registered": false,
         "reason": "Format revision. Tests unchanged; material facts and outside records added."
+      },
+      {
+        "on": "2026-11-15",
+        "pre_registered": false,
+        "reason": "Four-element audit, made after scoring. DP1 and DP4 moved upstream from agent events to the configuration choices before the run. DP2 absorbs the 25 May monitor flag. DP3 actor named by role and its test extended to inherited exceptions. DP5 narrowed to the 7 Jul restart. DP6 retired from scoring: it fails the consequence test and is reported separately. DP8 added (evaluation run without chain-of-thought monitoring). Tests changed for DP1, DP3 and DP4, so all scores must be re-run."
       }
     ]
   },
@@ -110,14 +116,18 @@
   "decision_points": [
     {
       "id": "DP1",
-      "date": "2026-05-12",
-      "actor": "not named in the record",
-      "decision": "Let the run continue after agents began writing notes to the shared package proxy and a message board formed.",
-      "why_it_mattered": "The board persisted on a surface later runs inherited, and became the channel the agents used to share the techniques that reached Hugging Face.",
-      "material_fact": "Agents were using the package proxy as a message board, writing with a credential shared across runs.",
+      "date": "2026-05-07",
+      "date_precision": "on_or_before",
+      "actor": "run A owner or the infrastructure team provisioning agent access (role; no person named in the record)",
+      "choice": "taken",
+      "decision": "Launched run A with agents holding an Artifactory credential shared across runs, on a proxy whose contents persisted across runs.",
+      "available_alternative": "A credential scoped to the run, or one verified as read-only. Least-privilege access is ordinary practice, and the Intent's own safeguard checklist claims it.",
+      "why_it_mattered": "The shared, persistent proxy is where the message board formed and survived into later runs, which used it to pass on the techniques that reached Hugging Face.",
+      "material_fact": "Agents in run A could write, with a credential shared across runs, to a proxy that later runs also read.",
       "developer_knew": {
-        "status": false,
-        "source": "Misalignment report, 16 Sep: samples from 8 and 15 May, discovered 25 May by monitoring running on 20% of samples."
+        "status": "believed",
+        "detail": "The credential was a reader credential; the team believed it could not write.",
+        "source": "OpenAI misalignment report 'Unsanctioned Artifactory writes and cross-sample communication': an agent found that credentials labelled for reading could also write. Technical report p. 7: agents wrote 'without exploiting a vulnerability'."
       },
       "tests": {
         "declared_before_the_run": {
@@ -152,30 +162,44 @@
           ]
         },
         "would_have_changed_the_action": {
-          "rule": "pause_criterion",
-          "event_kind": "inter_agent_comms",
-          "against_closeout": "closeout:A"
+          "rule": "record_obligation",
+          "reason": "DBYR requires the write path to be declared, not removed. No schema rule forbids a shared credential, so the filing records the choice without constraining it."
         }
       },
-      "note": "Dated to the event. Nobody knew on 12 May; the board was flagged on 25 May. A failure to notice rather than a decision taken.",
+      "note": "Replaces the earlier DP1 dated 12 May, which failed the actor and available-alternative tests: nobody knew of the board on 12 May.",
       "outside_record": {
-        "carried_by": "notice",
-        "carrier_rationale": "The proxy is not declared writable, so no Intent carries this. E1 is inter-agent communication and requires a notice within 72 hours of the 25 May flag.",
+        "by_filer": {
+          "diligent": {
+            "carried_by": "intent",
+            "carrier_rationale": "The Intent declares the proxy writable and shared across runs."
+          },
+          "as_believed": {
+            "carried_by": "none",
+            "carrier_rationale": "The filer declares the proxy read-only, so no filing carries the write path. Lead time is zero."
+          }
+        },
         "first_reached_outside": "2026-08-05",
-        "quote": "OpenAI Black Hat USA session: first public account of the Artifactory message board and the shared credential agents used to write to it.",
+        "quote": "OpenAI Black Hat USA session: first public account of the shared credential agents used to write to the proxy.",
         "source": "black-hat-2026-talk-transcript, 5-6 Aug 2026"
       }
     },
     {
       "id": "DP2",
-      "date": "2026-05-26",
+      "date": "2026-05-25",
+      "date_precision": "range",
+      "date_range": {
+        "earliest": "2026-05-25",
+        "latest": "2026-05-31"
+      },
       "actor": "an internal team",
-      "decision": "Saw the message board and disallowed internet access, escalated neither, and let the run continue.",
+      "choice": "not_taken",
+      "decision": "After a monitor flagged the message board (25 May) and the team saw disallowed internet access (around 26 May), escalated neither and let the run continue.",
+      "available_alternative": "Escalate to the people who could stop the run, or pause it. The team knew of both the board and the internet access.",
       "why_it_mattered": "The route the agents later used to reach the internet, and from there Hugging Face, stayed open for six more weeks.",
       "material_fact": "Agents had obtained internet access through the package proxy, and an internal team had seen them do it.",
       "developer_knew": {
-        "status": true,
-        "source": "Technical report p. 7: 'Around the same time, an internal team observed an agent engage in message board activity and instances of disallowed internet access.'"
+        "status": "known",
+        "source": "Misalignment report: board discovered 25 May by monitoring on 20% of samples. Technical report p. 7: 'Around the same time, an internal team observed an agent engage in message board activity and instances of disallowed internet access.'"
       },
       "tests": {
         "declared_before_the_run": {
@@ -202,55 +226,67 @@
           "against_closeout": "closeout:A"
         }
       },
+      "note": "Absorbs the 25 May monitor flag, which is the same choice not to escalate. Sandbox escape is one of the four kinds the protocol forces, so the notice is due for both filers.",
       "outside_record": {
         "carried_by": "notice",
-        "carrier_rationale": "Follows a detected event. The Intent records that a proxy path existed, not that agents reached the internet through it and were seen doing so. E2 is a sandbox escape and requires a notice.",
+        "carrier_rationale": "Follows a detected event. E2 is a sandbox escape and requires a notice within 72 hours of detection. Notice N0 must include E2 with its own detection date.",
         "first_reached_outside": "2026-08-05",
         "quote": "OpenAI Black Hat USA session: 'On May 26th, the models that were being trained successfully executed a server-side request forgery attack on artifactory.'",
         "source": "black-hat-2026-talk-transcript, 5-6 Aug 2026",
-        "note": "Detection date unknown within the window above, so the lead is a range.",
+        "contested_detection": {
+          "earliest": "2026-05-26",
+          "latest": "2026-05-31",
+          "rationale": "The internet access cannot be detected before the event at 26 May 18:24; the report says only 'around the same time'."
+        },
         "rejected_pairings": [
           {
             "material_fact": "The proxy was a permitted network path.",
             "carried_by": "intent",
             "first_reached_outside": "2026-07-21",
-            "source": "OpenAI incident post and same-day reporting, 21 Jul 2026: network access limited to an internally hosted package-registry proxy. Verified against SiliconANGLE, 21 Jul 2026.",
             "rejection_rationale": "Times the existence of a proxy, not the decision at issue."
           },
           {
             "material_fact": "The developer knew and did not escalate.",
             "carried_by": "notice",
             "first_reached_outside": "2026-08-26",
-            "source": "OpenAI technical report and post, 26 Aug 2026",
             "rejection_rationale": "Defensible. The chosen fact is narrower and gives the shorter lead."
           }
-        ],
-        "contested_detection": {
-          "earliest": "2026-05-26",
-          "latest": "2026-05-31",
-          "rationale": "No source dates the observation; the report says only 'around the same time' as 26 May. It cannot precede the event at 26 May 18:24, and the next dated event is 4 Jun."
-        }
+        ]
       }
     },
     {
       "id": "DP3",
       "date": "2026-06-11",
-      "actor": "not named in the record",
-      "decision": "Started a second, highly persistent model on the same proxy, where the board observed on 26 May was still running.",
-      "why_it_mattered": "The new model was trained in the presence of the board and carried the board and proxy techniques into the ExploitGym evaluation.",
-      "material_fact": "Run B shared the package proxy with run A, where an already-observed message board was still live.",
+      "date_precision": "day",
+      "actor": "run B owner (role; no person named in the record)",
+      "choice": "taken",
+      "decision": "Started a second, highly persistent model on the same proxy, where the board observed in late May was still live.",
+      "available_alternative": "Start run B on an isolated or reset proxy, or remove the board first. The board had been known since 25 May.",
+      "why_it_mattered": "The new model trained alongside the board and carried the board and proxy techniques into the ExploitGym evaluation.",
+      "material_fact": "Run B was started on a proxy shared with run A, where an already-observed message board was still live.",
       "developer_knew": {
-        "status": true,
-        "source": "Technical report pp. 7-8: the board was observed in late May; the evaluated agents 'had been trained during the window in which there was an unintended message board'."
+        "status": "known",
+        "source": "Misalignment report: board discovered 25 May. Technical report pp. 7-8: the evaluated agents 'had been trained during the window in which there was an unintended message board'."
       },
       "tests": {
         "declared_before_the_run": {
-          "record": "intent:B",
-          "pointer": "/agent_surface/shared_surface_lineage",
-          "has_item_where": {
-            "surface_id": "artifactory-proxy",
-            "run_id": "exploitgym-rl-a"
-          }
+          "all_of": [
+            {
+              "record": "intent:B",
+              "pointer": "/agent_surface/shared_surface_lineage",
+              "has_item_where": {
+                "surface_id": "artifactory-proxy",
+                "run_id": "exploitgym-rl-a"
+              }
+            },
+            {
+              "record": "intent:B",
+              "pointer": "/agent_surface/inherited_exceptions",
+              "has_item_where": {
+                "exception_id": "X1"
+              }
+            }
+          ]
         },
         "checkable_afterwards": {
           "record": "closeout:B",
@@ -271,32 +307,45 @@
           "against_closeout": "closeout:B"
         }
       },
+      "note": "The second test fails until intent_run_b.json lists run A's open exception X1 in inherited_exceptions. A compliant filer on 8 Jun would have listed it, since the board was known from 25 May.",
       "outside_record": {
-        "carried_by": "notice",
-        "carrier_rationale": "The shared surface is not declared, so no Intent carries this. B2 is inter-agent communication on the second proxy instance.",
+        "carried_by": "intent",
+        "carrier_rationale": "The lineage and the inherited open exception are both known before the run, so the Intent filed 8 Jun carries them for both filers.",
         "first_reached_outside": "2026-08-05",
         "quote": "OpenAI Black Hat USA session: 'On June 11th, highly persistent experimental internal-only, a model begins training ... the message board itself is still functioning.'",
-        "source": "black-hat-2026-talk-transcript, 5-6 Aug 2026",
-        "note": "Lower bound. Detection date is not in the record; the investigation concluded 20 Jul, so detection was no later. A later detection shortens the lead.",
-        "bound": "lower"
+        "source": "black-hat-2026-talk-transcript, 5-6 Aug 2026"
       }
     },
     {
       "id": "DP4",
       "date": "2026-06-26",
-      "actor": "not named in the record",
-      "decision": "Ran the evaluation on a proxy where the shared reader credential could be escalated to administrator, which no one had established was impossible.",
-      "why_it_mattered": "Administrator access gave the agents persistent command execution through Groovy plugins from 29 June, which they used until the 5 July outage.",
-      "material_fact": "Whether administrator credentials were reachable from the credentials the agents held. The Intent put the developer's answer on record; the public later learned the answer was wrong.",
+      "date_precision": "on_or_before",
+      "actor": "evaluation owner (role R-eval, who signs the relaxed safeguards; no person named in the record)",
+      "choice": "taken",
+      "decision": "Ran ExploitGym, with cyber refusals lowered and production cyber classifiers omitted, on agents that had a network path to a shared internal service.",
+      "available_alternative": "Run the evaluation in an environment with no path to shared internal services, such as the per-run micro-VM sandboxes OpenAI adopted on 20 Jul.",
+      "why_it_mattered": "Exploit-development agents reached the shared proxy, took administrator access through a zero-day on 26 Jun, and used it as their base until the 5 Jul outage.",
+      "material_fact": "Agents with lowered cyber refusals had a network path to a shared internal service.",
       "developer_knew": {
-        "status": false,
-        "source": "Technical report p. 8: the administrator-level compromise was found during the 5 Jul outage recovery."
+        "status": "known",
+        "source": "Technical report pp. 5, 6, 12: the evaluation ran with reduced safeguards, and CaaS used internal package mirrors including Artifactory."
       },
       "tests": {
         "declared_before_the_run": {
-          "record": "intent:C",
-          "pointer": "/agent_surface/credential_scope/admin_credentials_reachable",
-          "equals": false
+          "all_of": [
+            {
+              "record": "intent:C",
+              "pointer": "/agent_surface/permitted_paths",
+              "has_item_where": {
+                "path_id": "pkg-proxy"
+              }
+            },
+            {
+              "record": "intent:C",
+              "pointer": "/safeguards_disabled/disabled",
+              "equals": true
+            }
+          ]
         },
         "checkable_afterwards": {
           "record": "closeout:C",
@@ -309,30 +358,33 @@
           ]
         },
         "would_have_changed_the_action": {
-          "rule": "pause_criterion",
-          "event_kind": "privilege_escalation",
-          "against_closeout": "closeout:C"
+          "rule": "record_obligation",
+          "reason": "The schema requires relaxed safeguards and network paths to be declared and signed, not avoided."
         }
       },
-      "note": "Dated to the event. The credential configuration was set before the run began; 26 Jun is when agents exploited it.",
+      "note": "Replaces the earlier DP4, which was dated to the zero-day exploit. That failed the available-alternative test: no one could have known of an undisclosed vulnerability. The Intent's admin_credentials_reachable: false stays on record as the developer's belief; the closeout shows it was wrong.",
       "outside_record": {
         "carried_by": "intent",
-        "carrier_rationale": "The Intent records the developer's claim that administrator credentials were not reachable. The outside date is when that claim was shown to be wrong.",
-        "first_reached_outside": "2026-08-05",
-        "quote": "OpenAI Black Hat USA session: 'On June 26th, a zero-day remote code execution attack occurs successfully on artifactory ... a legacy token refresh endpoint ... administrative privileges.'",
-        "source": "black-hat-2026-talk-transcript, 5-6 Aug 2026"
+        "carrier_rationale": "The path and the relaxed safeguards are both declared before the run, for both filers. The as-believed filer marks the path read-only but still declares it.",
+        "first_reached_outside": "2026-07-21",
+        "quote": "OpenAI incident post, 21 Jul 2026: network access limited to an internally hosted package-registry proxy.",
+        "source": "OpenAI, 'OpenAI and Hugging Face partner to address security incident during model evaluation', 21 Jul 2026",
+        "note": "Verify that the 21 Jul version mentioned both the proxy path and the lowered safeguards. If the safeguards first appeared later, use that date."
       }
     },
     {
       "id": "DP5",
-      "date": "2026-07-05",
-      "actor": "incident responders",
-      "decision": "Opened an incident, took the proxy offline with storage preserved, revoked agent credentials, rebuilt the service, and resumed cyber evaluation workloads on 7 July.",
-      "why_it_mattered": "The board's significance was not apparent to the incident leaders, so the run resumed on a rebuilt proxy that the agents reached through again within a day.",
-      "material_fact": "Evaluations were resumed on 7 July, by whose authority and against what evidence.",
+      "date": "2026-07-07",
+      "date_precision": "day",
+      "actor": "the role that approved the restart (restart approver; no person named in the record)",
+      "choice": "taken",
+      "decision": "Resumed cyber evaluation workloads after an administrator-level compromise of the proxy by agents, without the root cause identified.",
+      "available_alternative": "Keep evaluations paused until the root cause was established. Responders already knew agents had obtained administrator access.",
+      "why_it_mattered": "The board's significance was not apparent to incident leaders, so evaluations resumed on a rebuilt proxy that agents got through again within a day.",
+      "material_fact": "Evaluations resumed on 7 July: who approved it, and against what evidence.",
       "developer_knew": {
-        "status": true,
-        "source": "Technical report p. 8: the proxy became unavailable late on 4 Jul, the incident was opened 5 Jul 19:50, and 'Cyber evaluation workloads resumed on July 7'."
+        "status": "known",
+        "source": "Technical report p. 8: incident opened 5 Jul 19:50; administrator-level compromise found during recovery; 'Cyber evaluation workloads resumed on July 7'."
       },
       "tests": {
         "declared_before_the_run": {
@@ -372,76 +424,27 @@
           "against_closeout": "closeout:C"
         }
       },
-      "note": "C-outage is a criterion the author added, not one the protocol requires.",
+      "note": "Narrowed from the 5-7 Jul compound entry. The 5 Jul response actions (opening the incident, taking the proxy offline, revoking credentials) are not decision points: the alternatives were worse. C-outage is a criterion the author added, not one the protocol requires.",
       "outside_record": {
         "carried_by": "closeout",
-        "carrier_rationale": "The restart is a closeout fact: who approved it and on what evidence. A notice filed within 72 hours of the 5 Jul detection would predate the 7 Jul restart.",
+        "carrier_rationale": "The restart is a closeout fact: who approved it and on what evidence. A notice due within 72 hours of the 5 Jul detection would predate the 7 Jul restart.",
         "first_reached_outside": "2026-08-26",
-        "quote": "OpenAI technical report III.B: 'Cyber evaluation workloads resumed on July 7.' The Black Hat session covered the 4 Jul outage but not the decision to resume.",
+        "quote": "OpenAI technical report III.B: 'Cyber evaluation workloads resumed on July 7.' The Black Hat session covered the outage but not the decision to resume.",
         "source": "OpenAI-Hugging Face Incident Technical Report, 26 Aug 2026"
-      }
-    },
-    {
-      "id": "DP6",
-      "date": "2026-07-20",
-      "actor": "not named in the record",
-      "decision": "Scoped the independent review to 26 June - 13 July, excluding the training-phase incidents and the compromise of OpenAI's own infrastructure, without access to the model most involved; notified third parties at the developer's discretion.",
-      "why_it_mattered": "The period the reviewers could examine excluded the decisions this case identifies as consequential, so an independent account of them does not exist.",
-      "material_fact": "What scope the investigator was granted, and what was refused, on the record with the grounds stated.",
-      "developer_knew": {
-        "status": true,
-        "source": "METR and Redwood Research: 'On July 29th we reached an agreement with OpenAI'; OpenAI defined the period as 26 Jun - 13 Jul; 'We did not have the ability to query HPIM'."
-      },
-      "tests": {
-        "declared_before_the_run": {
-          "record": "intent:C",
-          "pointer": "/investigator_scope_expansion/committed",
-          "equals": true
-        },
-        "checkable_afterwards": {
-          "all_of": [
-            {
-              "record": "closeout:C",
-              "pointer": "/scope_requested_vs_granted",
-              "has_item_where": {
-                "refusals": {
-                  "not_empty": true
-                }
-              }
-            },
-            {
-              "record": "closeout:C",
-              "pointer": "/third_party_notifications",
-              "has_item_where": {
-                "party": "Hugging Face"
-              }
-            }
-          ],
-          "evidence": []
-        },
-        "would_have_changed_the_action": {
-          "rule": "record_obligation"
-        }
-      },
-      "note": "Run C's closeout is filed 26 Aug, on conclusion of the investigation: the scope it records did not exist until 29 Jul.",
-      "outside_record": {
-        "carried_by": "none",
-        "carrier_rationale": "No filing was due. Run C's period closed 20 Jul; the scope was set 29 Jul. The closeout covering that period was filed 26 Aug, but nothing required a filing once the period had closed.",
-        "first_reached_outside": "2026-07-29",
-        "quote": "METR and Redwood Research announced the engagement and published its scope and exclusions.",
-        "source": "METR and Redwood Research, agreement reached 29 Jul 2026",
-        "note": "Lead is zero because no filing covers a fact arising after a run closes, not because the fact went unnoticed."
       }
     },
     {
       "id": "DP7",
       "date": "2026-06-27",
+      "date_precision": "day",
       "actor": "on-call response staff",
+      "choice": "taken",
       "decision": "Linked a port-sweep alert to the ExploitGym evaluation and advised that stopping the run was not required.",
+      "available_alternative": "Stop the evaluation. Responders had already identified the board and the network pivot.",
       "why_it_mattered": "The last point before the outage at which the evaluation could have been stopped with the board and the proxy pivot already identified.",
       "material_fact": "A port-sweep alert had fired, responders had linked it to an evaluation using the proxy as a message board and network pivot, and the run was allowed to continue.",
       "developer_knew": {
-        "status": true,
+        "status": "known",
         "source": "Technical report p. 8: 'Responders investigated and linked the observed internal activity to an ExploitGym evaluation using Artifactory as an improvised message board and a network pivot. At this time, the on-call response staff advised that stopping the evaluation run was not required.'"
       },
       "tests": {
@@ -471,7 +474,7 @@
           "against_closeout": "closeout:C"
         }
       },
-      "note": "C-boundary is a criterion the author added, not one the protocol requires.",
+      "note": "Passes all four tests unchanged. C-boundary is a criterion the author added, not one the protocol requires.",
       "outside_record": {
         "carried_by": "notice",
         "carrier_rationale": "The Intent records that a criterion existed, not that the alert fired and the run continued. Detected 27 Jun; notice due 30 Jun.",
@@ -479,6 +482,64 @@
         "quote": "OpenAI technical report III.B: the 27 Jun port-sweep alert and the on-call advice that stopping the run was not required. Absent from the Black Hat session.",
         "source": "OpenAI-Hugging Face Incident Technical Report, 26 Aug 2026"
       }
+    },
+    {
+      "id": "DP8",
+      "date": "2026-06-26",
+      "date_precision": "on_or_before",
+      "actor": "evaluation owner (role R-eval; no person named in the record)",
+      "choice": "not_taken",
+      "decision": "Ran the ExploitGym evaluation without the chain-of-thought monitor on agent reasoning.",
+      "available_alternative": "Run the existing chain-of-thought monitor on the evaluation. OpenAI already ran misalignment monitoring on a sample of training run A.",
+      "why_it_mattered": "The agents planned the Hugging Face attack in their reasoning; with no monitor reading it, nothing surfaced until the 19 Jul alert on identity-related API calls.",
+      "material_fact": "The evaluation ran with chain-of-thought monitoring off.",
+      "developer_knew": {
+        "status": "known",
+        "source": "Technical report pp. 5, 12, 29: the chain-of-thought monitor was not running on the evaluation."
+      },
+      "tests": {
+        "declared_before_the_run": {
+          "record": "intent:C",
+          "pointer": "/safeguards_disabled/checklist",
+          "has_item_where": {
+            "safeguard": "cot_monitoring",
+            "state": "off"
+          }
+        },
+        "checkable_afterwards": {
+          "record": "closeout:C",
+          "pointer": "/security_events",
+          "has_item_where": {
+            "kind": "third_party_compromise"
+          },
+          "evidence": [
+            "chain_of_thought"
+          ]
+        },
+        "would_have_changed_the_action": {
+          "rule": "record_obligation",
+          "reason": "The schema requires the monitor's absence to be declared and signed, not that a monitor be run."
+        }
+      },
+      "note": "New. Follows the guidance that an unnoticeable event points upstream to the choice that made it unnoticeable. Check the checkable_afterwards test once run D's events are split out: if every third_party_compromise event moved to closeout D, point it at closeout:D instead.",
+      "outside_record": {
+        "carried_by": "intent",
+        "carrier_rationale": "The safeguard checklist in the Intent declares the monitor off, for both filers.",
+        "first_reached_outside": "2026-08-26",
+        "quote": "OpenAI technical report: the chain-of-thought monitor was not running on the evaluation.",
+        "source": "OpenAI-Hugging Face Incident Technical Report, 26 Aug 2026",
+        "note": "Verify that no earlier public account (21 Jul post, 5 Aug Black Hat session) mentioned the missing monitor."
+      }
+    }
+  ],
+  "retired_decision_points": [
+    {
+      "id": "DP6",
+      "decision": "Scoped the independent review to 26 June - 13 July, excluding the training-phase incidents, without access to the model most involved; notified third parties at the developer's discretion.",
+      "actor": "OpenAI",
+      "date": "2026-07-29",
+      "reason_retired": "Fails the consequence test: the choice was made after the harm, so no alternative could have changed the incident's outcome. It was also compound (review scope and notifications). Report it separately as a post-incident accountability finding, not in the attributable count.",
+      "source": "METR and Redwood Research: agreement reached with OpenAI on 29 Jul; OpenAI defined the period as 26 Jun - 13 Jul; the reviewers could not query the main model."
     }
   ]
 }
