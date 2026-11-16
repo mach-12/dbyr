@@ -3,7 +3,7 @@
   "definition": "A decision point is a moment at which an identifiable actor, with an alternative actually available to them at that time, chose a course of action or left one unchosen, such that the alternative would plausibly have changed the outcome. All four elements (actor, time, available alternative, consequence) must hold. Scope stops at the planning of the run.",
   "table2_selection_rule": "Developer-identified: the first organisational decision the developer's own account names as a failure. Model-behaviour causes (TR section VIII) are excluded because they are not human or organisational choices. Selects DP2 for this case.",
   "freeze": {
-    "schema_hash": "sha256:5d7ed0105e75a8cea3729adc4af8b78f45f9a6cee212e31b1ffe3bd567c348f8",
+    "schema_hash": "sha256:453f10b8ef886aa23b5a9b54d743c422b6bca098dba060169a34ee8274b8f0cc",
     "revisions": [
       {
         "on": "2026-08-26",
@@ -24,6 +24,11 @@
         "on": "2026-11-15",
         "pre_registered": false,
         "reason": "Four-element audit, made after scoring. DP1 and DP4 moved upstream from agent events to the configuration choices before the run. DP2 absorbs the 25 May monitor flag. DP3 actor named by role and its test extended to inherited exceptions. DP5 narrowed to the 7 Jul restart. DP6 retired from scoring: it fails the consequence test and is reported separately. DP8 added (evaluation run without chain-of-thought monitoring). Tests changed for DP1, DP3 and DP4, so all scores must be re-run."
+      },
+      {
+        "on": "2026-11-16",
+        "pre_registered": false,
+        "reason": "SystemRuntimeRecord removed from the protocol, to match the paper's three records. Its schema, rules module and protocol stage are gone, and system_id is no longer an alternative owner on ExceptionNotice or RunCloseout, so run_id is now required on both. No case in this repository filed one, so no record changed. Frozen hash updated from sha256:5d7ed0105e75a8cea3729adc4af8b78f45f9a6cee212e31b1ffe3bd567c348f8 to sha256:453f10b8ef886aa23b5a9b54d743c422b6bca098dba060169a34ee8274b8f0cc; scores re-run and unchanged."
       }
     ]
   },

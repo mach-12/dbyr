@@ -18,7 +18,6 @@ DOCS = {
     "RunIntent": "intent.md",
     "ExceptionNotice": "notice.md",
     "RunCloseout": "closeout.md",
-    "SystemRuntimeRecord": "runtime.md",
 }
 # Shared types from common.schema.json as Python types. EventKind and EvidenceClass are the
 # Literal aliases docs/records/README.md defines.
@@ -179,8 +178,8 @@ GROUPS = {
          ["roles", "investigator_scope_expansion"]),
     ],
     "ExceptionNotice": [
-        ("Identity", "Who is filing, and for which run or deployed system.",
-         ["schema_version", "record_type", "notice_id", "run_id", "system_id", "filed_at", "signer"]),
+        ("Identity", "Who is filing, and for which run.",
+         ["schema_version", "record_type", "notice_id", "run_id", "filed_at", "signer"]),
         ("What was detected", "What happened, and when the developer found out.",
          ["detected_at", "event_ids", "kinds", "summary"]),
         ("What it touches", "Which of the Intent's pause criteria it matched, and who outside was affected.",
@@ -189,8 +188,8 @@ GROUPS = {
          ["action_taken"]),
     ],
     "RunCloseout": [
-        ("Identity and period", "Who is filing, for which run or deployed system, which days it covers, and its state.",
-         ["schema_version", "record_type", "run_id", "system_id", "filed_at", "signer", "period_start", "period_end",
+        ("Identity and period", "Who is filing, for which run, which days it covers, and its state.",
+         ["schema_version", "record_type", "run_id", "filed_at", "signer", "period_start", "period_end",
           "status"]),
         ("Events", "What was detected in the period, or why nothing was.",
          ["security_events", "integrity_events", "attested_absence", "absence_basis", "internal_incidents",
@@ -207,20 +206,6 @@ GROUPS = {
          ["scope_requested_vs_granted"]),
         ("Outcome", "Which evaluations ran, what risk remains, and whether the model may be deployed.",
          ["evals_planned_vs_run", "residual_risk", "cleared_for_system_integration"]),
-    ],
-    "SystemRuntimeRecord": [
-        ("Identity", "Who is filing, for which system, and who holds each role.",
-         ["schema_version", "record_type", "system_id", "filed_at", "signer", "roles"]),
-        ("Origin and deployment", "Which runs the system is built on, where it is deployed, and when.",
-         ["base_run_ids", "deployment_context", "deployment_window"]),
-        ("What the system can do", "The tools it gives the model, how much compute it can use, and whether its instances share output.",
-         ["tools_and_scaffolding", "inference_scaling", "inter_agent_comms_permitted"]),
-        ("Exposure and oversight", "Who uses it, how people oversee it, and how often it is re-evaluated.",
-         ["user_exposure", "oversight_mode", "recurring_eval_cadence"]),
-        ("Monitoring and pause criteria", "How the deployed system is watched, what pauses it, who decides, and how it is restored.",
-         ["monitoring_instruments", "pause_criteria", "restart_protocol"]),
-        ("Evidence retention", "What evidence from the deployment is kept, so later reports can be checked.",
-         ["log_retention"]),
     ],
 }
 

@@ -3,7 +3,7 @@
   "_about": "Revamped decision points for anthropic-2026. THE RULE: a decision point is a moment at which an identifiable actor, with an alternative actually available to them at that time, chose a course of action or left one unchosen, such that the alternative would plausibly have changed the outcome. Derived from decision_points.json by applying that rule to every point in it, then checked against the reports for decisions the source list had missed. Ids below DP18 are unchanged from the source file so the two can be diffed; DP19 is new.",
   "in_sample": false,
   "freeze": {
-    "schema_hash": "sha256:5d7ed0105e75a8cea3729adc4af8b78f45f9a6cee212e31b1ffe3bd567c348f8",
+    "schema_hash": "sha256:453f10b8ef886aa23b5a9b54d743c422b6bca098dba060169a34ee8274b8f0cc",
     "derived_from": "decision_points.json",
     "revisions": [
       {
@@ -15,6 +15,11 @@
         "on": "2026-11-16",
         "pre_registered": false,
         "reason": "Second pass, derived from the reports rather than by pruning the source list. Retired DP17 on the consequence test, matching the retirement of its analogue in PAPER/uk_aisi_dp.md. Re-grounded DP15 on continued exposure rather than on discovery, which is the line that separates AISI's DP7 from its R6. Added DP19, the 23 Jul halt: it was v1 DP14, had been dropped, and both sibling cases carry their equivalent - without it this case had one response-phase point against AISI's two and openai-2026's three. Recorded two further decisions the consequence test excludes (the disclosure timetable and the 31 Aug resumption) in 'dropped', so the exclusions are visible rather than silent."
+      },
+      {
+        "on": "2026-11-16",
+        "pre_registered": false,
+        "reason": "SystemRuntimeRecord removed from the protocol, to match the paper's three records. Its schema, rules module and protocol stage are gone, and system_id is no longer an alternative owner on ExceptionNotice or RunCloseout, so run_id is now required on both. No case in this repository filed one, so no record changed. Frozen hash updated from sha256:5d7ed0105e75a8cea3729adc4af8b78f45f9a6cee212e31b1ffe3bd567c348f8 to sha256:453f10b8ef886aa23b5a9b54d743c422b6bca098dba060169a34ee8274b8f0cc; scores re-run and unchanged."
       }
     ]
   },

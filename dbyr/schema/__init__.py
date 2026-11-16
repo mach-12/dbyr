@@ -17,7 +17,6 @@ SCHEMA_VERSION = "0.1.0"
 RECORD_SCHEMAS = {
     "RunIntent": "run_intent.schema.json",
     "RunCloseout": "run_closeout.schema.json",
-    "SystemRuntimeRecord": "system_runtime_record.schema.json",
     "ExceptionNotice": "exception_notice.schema.json",
 }
 

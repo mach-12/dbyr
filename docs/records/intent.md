@@ -45,7 +45,7 @@ Who is filing, and for which run.
 | `developer` | yes | public | The organisation running the training or evaluation. | `str` |
 | `filed_at` | yes | public | When the Intent was filed. A first Intent must be filed at least the intake period (default 3 days) before the start. | `datetime` |
 | `signer` | yes | public | Who signs the filing. | `dict` |
-| `signer.role_id` | yes | public | The signing role, declared in the roles of the Intent, or of the SystemRuntimeRecord for a deployed system. | `str` |
+| `signer.role_id` | yes | public | The signing role, declared in the roles of the Intent. | `str` |
 | `signer.organisation` | yes | public | The organisation the signer acts for. | `str` |
 | `amends` | no | public | Ledger sequence number of the Intent this filing amends, if any. At least 0. | `int` |
 | `changes` | no | public | For an amendment: what changed and why. | `list[str]` |
@@ -61,7 +61,7 @@ What kind of run it is, why DBYR covers it, when and at what scale.
 | `trigger_basis` | yes | public | T1 compute threshold; T2 covered-developer status; T3 predicted high/critical capability crossing; T4 safeguards-off evaluation. | `list[Literal["T1", "T2", "T3", "T4"]]` |
 | `start_window` | yes | public | When the run may operate. A Closeout period outside the window is a conduct finding. | `dict` |
 | `start_window.start` | yes | public | First day of the window. | `date` |
-| `start_window.end` | no | public | null means open-ended: a rolling training run, or a system that stays deployed. Closeouts are then due every 30 days. | `date \| None` |
+| `start_window.end` | no | public | null means open-ended: a rolling training run. Closeouts are then due every 30 days. | `date \| None` |
 | `compute_band` | yes | public | A band, never a value. Band edges are a schema parameter set by the operator. null means the filer withheld or did not know the band. | `Literal["<1e24", "1e24-1e25", "1e25-1e26", "1e26-1e27", ">=1e27", None]` |
 | `run_scale` | no | restricted | How large the run is. | `dict` |
 | `run_scale.concurrent_agents` | yes | restricted | The most agents running at once, at least 1. null means the filer withheld or did not know the count. | `int \| None` |

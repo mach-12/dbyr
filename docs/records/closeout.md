@@ -5,16 +5,11 @@ every pause, every containment failure, who was told, what investigators asked f
 and how much of the evidence is still held. It is then checked against the Intent, so a gap between
 what was declared and what happened shows up as a finding.
 
-The same Closeout reports on a deployed system: it names the `system_id` instead of a `run_id`, and
-is checked against the system's [SystemRuntimeRecord](runtime.md), which declares the same
-monitors, pause criteria, roles, restart protocol and retention.
+**When:** when the run completes or is aborted, and at least every 30 days while it runs.
+Consecutive Closeouts must leave no gap between periods.
 
-**When:** when the run completes or is aborted, and at least every 30 days while it runs or while
-the system stays deployed. Consecutive Closeouts must leave no gap between periods.
-
-**Clearing a run for deployment:** a run's latest Closeout must set `cleared_for_system_integration`
-to true before any system built on it is deployed; otherwise the deployment is a conduct finding
-(`deployed_uncleared`, in [runtime.md](runtime.md#checks-across-filings)).
+**Clearing a run for downstream use:** a run's latest Closeout states, in
+`cleared_for_system_integration`, whether the model it produced may be built on.
 
 **Completeness:** `security_events` and `integrity_events` list every event of a reportable kind
 detected in the period. An empty list is a statement that none was detected, so the Closeout must
@@ -24,7 +19,7 @@ Its fields fall into eight groups:
 
 | # | Group | What it answers |
 |---|---|---|
-| 1 | [Identity and period](#1-identity-and-period) | Who is filing, for which run or deployed system, which days does it cover, and what state is it in? |
+| 1 | [Identity and period](#1-identity-and-period) | Who is filing, for which run, which days does it cover, and what state is it in? |
 | 2 | [Events](#2-events) | What was detected in the period, or why was nothing? |
 | 3 | [Pauses](#3-pauses) | What did the run do each time a pause criterion fired? |
 | 4 | [Containment and changes](#4-containment-and-changes) | Where did containment fail, and what changed mid-run? |
@@ -45,21 +40,20 @@ see [Field types](README.md#field-types).
 <!-- fields:start -->
 ### 1. Identity and period
 
-Who is filing, for which run or deployed system, which days it covers, and its state.
+Who is filing, for which run, which days it covers, and its state.
 
 | Field | Required | Tier | Meaning | Type |
 |---|---|---|---|---|
 | `schema_version` | yes | public | The schema version the filing is written against. | `Literal["0.1.0"]` |
 | `record_type` | yes | public | The record type. It fixes which schema and which checks apply. | `Literal["RunCloseout"]` |
-| `run_id` | yes, unless `system_id` is given | public | The run this Closeout closes. It must match the Intent's run_id. Give run_id or system_id, not both. | `str` |
-| `system_id` | yes, unless `run_id` is given | public | The deployed system this Closeout reports on. It is checked against the system's SystemRuntimeRecord. Give run_id or system_id, not both. | `str` |
+| `run_id` | yes | public | The run this Closeout closes. It must match the Intent's run_id. | `str` |
 | `filed_at` | yes | public | When the Closeout was filed. It is checked against the Intent version in force at this time. | `datetime` |
 | `signer` | yes | public | Who signs the filing. | `dict` |
-| `signer.role_id` | yes | public | The signing role, declared in the roles of the Intent, or of the SystemRuntimeRecord for a deployed system. | `str` |
+| `signer.role_id` | yes | public | The signing role, declared in the roles of the Intent. | `str` |
 | `signer.organisation` | yes | public | The organisation the signer acts for. | `str` |
 | `period_start` | yes | public | First day the Closeout covers. | `date` |
 | `period_end` | yes | public | Last day the Closeout covers. One Closeout may cover at most 30 days (default). | `date` |
-| `status` | yes | public | The run's or system's state at the end of the period. Only training runs and deployed systems may be rolling. | `Literal["completed", "aborted", "paused", "rolling"]` |
+| `status` | yes | public | The run's state at the end of the period. Only training runs may be rolling. | `Literal["completed", "aborted", "paused", "rolling"]` |
 
 ### 2. Events
 
@@ -178,10 +172,10 @@ What post-incident investigators asked for, and what they were given.
 | `scope_requested_vs_granted[].investigator` | yes | public | Who investigated. | `str` |
 | `scope_requested_vs_granted[].requested` | yes | public | The period the investigator asked to examine. | `dict` |
 | `scope_requested_vs_granted[].requested.start` | yes | public | First day of the window. | `date` |
-| `scope_requested_vs_granted[].requested.end` | no | public | null means open-ended: a rolling training run, or a system that stays deployed. Closeouts are then due every 30 days. | `date \| None` |
+| `scope_requested_vs_granted[].requested.end` | no | public | null means open-ended: a rolling training run. Closeouts are then due every 30 days. | `date \| None` |
 | `scope_requested_vs_granted[].granted` | yes | public | The period the investigator was allowed to examine. A grant narrower than the request needs a logged refusal. | `dict` |
 | `scope_requested_vs_granted[].granted.start` | yes | public | First day of the window. | `date` |
-| `scope_requested_vs_granted[].granted.end` | no | public | null means open-ended: a rolling training run, or a system that stays deployed. Closeouts are then due every 30 days. | `date \| None` |
+| `scope_requested_vs_granted[].granted.end` | no | public | null means open-ended: a rolling training run. Closeouts are then due every 30 days. | `date \| None` |
 | `scope_requested_vs_granted[].model_access_granted` | no | public | Whether the investigator was given access to the model. | `bool` |
 | `scope_requested_vs_granted[].refusals` | yes | public | Each request that was refused. | `list[dict]` |
 | `scope_requested_vs_granted[].refusals[].at` | yes | public | When it was refused. | `datetime` |
@@ -197,7 +191,7 @@ Which evaluations ran, what risk remains, and whether the model may be deployed.
 |---|---|---|---|---|
 | `evals_planned_vs_run` | no | restricted | The Intent's eval_plan set against the evaluations actually run. | `list[dict]` |
 | `residual_risk` | no | restricted | Risk that remains after the run. | `str` |
-| `cleared_for_system_integration` | no | public | Whether the model is cleared to be built into a deployed system. Deploying a system on a run whose latest Closeout does not say true is a conduct finding. | `bool` |
+| `cleared_for_system_integration` | no | public | Whether the model this run produced is cleared to be built on downstream. | `bool` |
 <!-- fields:end -->
 
 ## Checks on this filing
@@ -245,13 +239,12 @@ These run when the Closeout is filed. An error stops it being lodged.
 
 ### Reconciliation with the Intent
 
-Each Closeout is checked against the Intent version in force when it was filed, or for a deployed
-system, the SystemRuntimeRecord in force. This checks that the filings agree with each other; an
-auditor then checks them against the retained evidence.
+Each Closeout is checked against the Intent version in force when it was filed. This checks that the
+filings agree with each other; an auditor then checks them against the retained evidence.
 
 | Code | Severity | Fires when | Why |
 |---|---|---|---|
-| `run_mismatch` | error | The Closeout's `run_id` (or `system_id`) differs from the record it is checked against. | |
+| `run_mismatch` | error | The Closeout's `run_id` differs from the Intent it is checked against. | |
 | `criterion_matched_no_pause_event` | conduct | An event matches a declared pause criterion but no pause event cites it. | The run did not do what its Intent committed to. |
 | `evidence_not_retained` | warning | An event cites an evidence class the Intent did not declare retained. | |
 | `unknown_criterion` | error | A pause event cites a criterion that is not in the Intent. | |
@@ -263,12 +256,11 @@ auditor then checks them against the retained evidence.
 | `retention_below_floor` | conduct | `logs_preserved_pct` is below the Intent's `minimum_preserved_pct`. | |
 | `absence_unsupported` | error | Absence of events is attested, but no declared monitor could observe one of the core kinds. | Attested absence is only as strong as the monitoring behind it. [T19; R1 S2-E6] |
 | `preservation_incomplete` | error | An evidence class the Intent retains has no `preservation` entry. | |
-| `rolling_not_training` | error | `status` is `rolling` but the run is not a training run. A deployed system may be rolling. | [R1 S3-E2] |
+| `rolling_not_training` | error | `status` is `rolling` but the run is not a training run. | [R1 S3-E2] |
 
 ### Cadence
 
-Run over every Closeout of a run (or system), against the Intent (or SystemRuntimeRecord) version
-in force for each. For a system, the window is its `deployment_window`.
+Run over every Closeout of a run, against the Intent version in force for each.
 
 | Code | Severity | Fires when | Why |
 |---|---|---|---|

@@ -1,4 +1,4 @@
-"""Every version of a run's Intent (or a system's SystemRuntimeRecord), and the Closeouts filed against them."""
+"""Every version of a run's Intent, and the Closeouts filed against them."""
 
 from __future__ import annotations
 
@@ -29,11 +29,6 @@ def version_rules(run_id: str, versions: list[dict], closeouts: list[dict]) -> l
                                f"versions of this Intent together cover {span.days} days; "
                                f"an evaluation may cover at most {MAX_EVAL_DAYS}"))
     return out + cadence(run_id, versions, closeouts, "start_window", "the run", "Intent")
-
-
-def system_rules(system_id: str, versions: list[dict], closeouts: list[dict]) -> list[Finding]:
-    """Closeout cadence for a deployed system, against its SystemRuntimeRecord."""
-    return cadence(system_id, versions, closeouts, "deployment_window", "the system", "SystemRuntimeRecord")
 
 
 def cadence(owner_id: str, versions: list[dict], closeouts: list[dict], window: str, subject: str,

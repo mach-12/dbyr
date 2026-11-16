@@ -57,7 +57,7 @@ synthetic safeguards-off evaluation at "Lab X", plus a system deployed on it) an
 [README](template/README.md) describing every file.
 
 **2. Replace the example filings** — `intent_A.json`, `notice_N1.json`, `closeout_A.json`, and
-`runtime_S1.json` only if a system was deployed. Use public sources only and record where every
+Use public sources only and record where every
 value came from in `sources.json`. Check each with `dbyr validate` as you write it; the
 [record docs](../../docs/records/README.md) list every field and check.
 

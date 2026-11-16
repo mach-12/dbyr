@@ -6,7 +6,7 @@ from datetime import timedelta
 
 from ..findings import Finding
 from ..params import NOTICE_HOURS, REPORTABLE
-from .common import owner, ts
+from .common import ts
 
 
 def check_notice(notice: dict) -> list[Finding]:
@@ -21,7 +21,7 @@ def check_notices(intent: dict, closeout: dict, notices: list[dict]) -> list[Fin
     out: list[Finding] = []
     # The duty follows a fixed list of reportable kinds, not the criteria the filer chose, so declaring
     # criteria no likely event would match does not remove it. [R1 S2-E2, S3-E3]
-    mine = [n for n in notices if owner(n) == owner(closeout)]
+    mine = [n for n in notices if n.get("run_id") == closeout.get("run_id")]
     for e in closeout["security_events"] + closeout.get("integrity_events", []):
         if "detected_at" not in e:
             continue

@@ -5,8 +5,7 @@
   "records": {
     "intent:A": "intent_A.json",
     "closeout:A": "closeout_A.json",
-    "notice:N1": "notice_N1.json",
-    "runtime:S1": "runtime_S1.json"
+    "notice:N1": "notice_N1.json"
   },
   "closes": {
     "closeout:A": "intent:A"

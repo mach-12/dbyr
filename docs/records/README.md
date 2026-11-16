@@ -1,6 +1,6 @@
 # DBYR records
 
-DBYR has four records. A developer files them; the protocol checks each one when it is filed and
+DBYR has three records. A developer files them; the protocol checks each one when it is filed and
 checks them against each other as the set grows.
 
 | Record | Filed | What it says | Doc |
@@ -8,16 +8,12 @@ checks them against each other as the set grows.
 | RunIntent | before the run starts, at least 3 days ahead; again as an amendment when a declared fact changes | what the run will do, what it can reach, how it is watched, and what will pause it | [intent.md](intent.md) |
 | ExceptionNotice | within 72 hours of detecting a reportable event | what was detected, when, and what was done | [notice.md](notice.md) |
 | RunCloseout | when the run ends or is aborted, and at least every 30 days while it runs | what actually happened in the period: events, pauses, containment failures, evidence kept | [closeout.md](closeout.md) |
-| SystemRuntimeRecord | before a system built on the run's model is deployed at scale or exposed externally | which runs the system is built on, and the deployment's own commitments: how it is watched, what pauses it, who decides, what evidence is kept | [runtime.md](runtime.md) |
 
 The deadlines are the defaults in [`dbyr/params.py`](../../dbyr/params.py) (see [Parameters](#parameters)).
 
 ## How the records link
 
 - **`run_id`** ties an Intent to its notices and Closeouts.
-- **`system_id`** does the same after deployment: it ties a SystemRuntimeRecord to the notices and
-  Closeouts filed for the deployed system. Each Notice and Closeout names either a `run_id` or a
-  `system_id`, never both. The record's `base_run_ids` name the runs the system is built on.
 - **Amendments:** an amendment is another Intent with the same `run_id`, an `amends` field and a
   `changes` list. The protocol keeps every version. Each Closeout is checked against the version in
   force when the Closeout was filed.
@@ -37,7 +33,6 @@ The deadlines are the defaults in [`dbyr/params.py`](../../dbyr/params.py) (see 
 | reconcile | each Closeout against the Intent version in force | [closeout.md](closeout.md#checks-across-filings) |
 | notices | the notices each Closeout's events require | [notice.md](notice.md#checks-across-filings) |
 | lineage | runs that share a persistent surface | [intent.md](intent.md#checks-across-filings) |
-| deployment | each deployed system against what was on record about its base runs | [runtime.md](runtime.md#checks-across-filings) |
 
 The checks test what a filing commits to, not whether it is true. A false filing that is specific
 enough passes. Catching it needs a later check against the retained evidence, which is why the
@@ -56,9 +51,8 @@ Intent must say what evidence is kept.
 | Code | Severity | Fires when | Why |
 |---|---|---|---|
 | `schema` | error | The filing does not match its record's schema. The message names the field. No other check runs on a filing that fails the schema. | The other checks assume a well-formed record. |
-| `unknown_record_type` | error | `record_type` is not one of the four records. | |
+| `unknown_record_type` | error | `record_type` is not one of the three records. | |
 | `intent_missing` | error | A Closeout's `run_id` has no Intent in the set. | A Closeout can only be reconciled against an Intent. |
-| `runtime_record_missing` | error | A Closeout's `system_id` has no SystemRuntimeRecord in the set. | A deployed system's Closeout is reconciled against its SystemRuntimeRecord. |
 | `unreconcilable` | error | A cross-filing stage could not run because a filing it needs is malformed. The filing's own errors say why. | |
 
 ### Citations

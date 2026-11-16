@@ -20,7 +20,6 @@ replace its contents with your own.
 | `intent_A.json` | you | RunIntent: the run's commitments, filed before it starts |
 | `notice_N1.json` | you | ExceptionNotice: filed within 72 hours of detecting an event |
 | `closeout_A.json` | you | RunCloseout: what happened, filed at the end (and every 30 days) |
-| `runtime_S1.json` | you, optional | SystemRuntimeRecord: filed before a system built on the run is deployed. If no system was deployed, delete it and its `runtime:S1` entry in `decision_points.json` |
 | `decision_points.json` | you (`init` copies an example and fills in `case` and `schema_hash`) | the scoring plan: which decisions to score, and what each is tested against |
 | `sources.json` | you, optional | where each value in the filings came from |
 | `annotations.json` | you, optional | context for the results tables, added after scoring; never read by the scoring |
@@ -45,7 +44,7 @@ it. If the schema changes later, the case is void: `check` reports an error and 
 
 Write one Intent per run, one Notice per reportable event, one Closeout per run (and per 30-day
 period), and a runtime record if a system was deployed. Records are linked by `run_id` (or
-`system_id` for a deployed system). An amendment is another Intent with the same `run_id`, plus
+). An amendment is another Intent with the same `run_id`, plus
 `amends` and `changes`.
 
 The filings may live in this folder or anywhere else (see `records` and `filings` below).

@@ -1,5 +1,5 @@
 """Helpers shared by the rules: timestamps, durations, surfaces and monitor coverage, and the checks an
-Intent and a SystemRuntimeRecord share: monitors, pause criteria, retention and restarts."""
+an Intent declares: monitors, pause criteria, retention and restarts."""
 
 from __future__ import annotations
 
@@ -58,12 +58,7 @@ def observable(kind: str, monitors: set[str]) -> bool:
     return bool(obs & monitors)
 
 
-def owner(record: dict) -> tuple[str, str | None]:
-    """What a Notice or Closeout reports on: ("run", run_id), or after deployment ("system", system_id)."""
-    return ("run", record["run_id"]) if "run_id" in record else ("system", record.get("system_id"))
-
-
-# Checks an Intent and a SystemRuntimeRecord share. Each takes the record and returns its findings.
+# Checks on an Intent's commitments. Each takes the record and returns its findings.
 
 def criterion_findings(record: dict) -> list[Finding]:
     """A1: dead criteria. A criterion none of whose event kinds any declared monitor can observe

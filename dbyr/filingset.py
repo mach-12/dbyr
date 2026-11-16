@@ -1,7 +1,7 @@
 """Load a filing set: the unit the protocol runs on.
 
 A filing set is a folder (or a list of files and folders) holding DBYR records:
-Intents and their amendments, ExceptionNotices, Closeouts, SystemRuntimeRecords.
+Intents and their amendments, ExceptionNotices and Closeouts.
 Which files belong to it is decided, in order, by:
 
   manifest.json   {"description": "...", "records": {"intent:A": "intent_A.json", ...}}

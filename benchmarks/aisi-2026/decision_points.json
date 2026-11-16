@@ -33,7 +33,7 @@
     "open_question": "Whether a scorer may narrow an evidence list after seeing that it failed is unresolved. The argument for it is that the list should name what is strictly necessary to verify the material fact. The argument against is that every such narrowing so far has raised the score and none has lowered it. A pre-registered rule applied to all three cases, written by someone who has not seen these numbers, is the only clean way to settle it."
   },
   "freeze": {
-    "schema_hash": "sha256:5d7ed0105e75a8cea3729adc4af8b78f45f9a6cee212e31b1ffe3bd567c348f8",
+    "schema_hash": "sha256:453f10b8ef886aa23b5a9b54d743c422b6bca098dba060169a34ee8274b8f0cc",
     "revisions": [
       {
         "on": "2026-11-16",
@@ -49,6 +49,11 @@
         "on": "2026-11-16",
         "pre_registered": false,
         "reason": "DP7 (a) re-pointed from /third_party_notification_commitment to the notices' /affected_parties, matching the convention anthropic-2026 DP16 already uses for a notification decision point. Made after scoring and it RAISES this case's score, from 4/7 to 5/7 diligent and 2/7 to 3/7 as-believed. The justification does not rest on the score: the previous pointer named a field that does not exist and was withdrawn from the v0.4 proposal as redundant, since RunCloseout already carries third_party_notifications and rules/closeout.py already enforces NOTIFY_HOURS against it. Condition (a) is not restricted to the Intent; the notices are the earlier filing that records the fact."
+      },
+      {
+        "on": "2026-11-16",
+        "pre_registered": false,
+        "reason": "SystemRuntimeRecord removed from the protocol, to match the paper's three records. Its schema, rules module and protocol stage are gone, and system_id is no longer an alternative owner on ExceptionNotice or RunCloseout, so run_id is now required on both. No case in this repository filed one, so no record changed. Frozen hash updated from sha256:5d7ed0105e75a8cea3729adc4af8b78f45f9a6cee212e31b1ffe3bd567c348f8 to sha256:453f10b8ef886aa23b5a9b54d743c422b6bca098dba060169a34ee8274b8f0cc; scores re-run and unchanged."
       }
     ]
   },

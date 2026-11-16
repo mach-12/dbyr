@@ -202,24 +202,6 @@ def investigation(case: Case) -> dict | None:
             "share": round(overlap / days(a0, a1), 3), "note": inv.get("note", "")}
 
 
-def deployment(case: Case) -> dict | None:
-    """The hand-off from runs to deployed systems, from the protocol's deployment checks. None when the
-    case has no SystemRuntimeRecord."""
-    systems = [r for r in case.records.values() if r["record_type"] == "SystemRuntimeRecord"]
-    if not systems:
-        return None
-    found = [f for at, f in check_set(case.records) if at == "deployment"]
-    count = lambda code: sum(f.code == code for f in found)  # noqa: E731
-    return {"systems": len(systems), "base_runs": sum(len(s["base_run_ids"]) for s in systems),
-            "unknown_runs": count("base_run_unknown"), "uncleared": count("deployed_uncleared"),
-            "open_incidents": count("deployed_over_open_incident"), "untested_tools": count("untested_tools")}
-
-
-# ------------------------------------------------------------------ per case
-
-
-# ------------------------------------------------------------------ the two design tables
-
 def design_table_1(case: Case, scored: dict) -> dict:
     """Attributable decision points, per filer, for section 6.
 
@@ -268,7 +250,6 @@ def compute(case: Case, scored: dict) -> dict:
     kinds = case.annotations.get("decision_kinds", {})
     overrides = case.annotations.get("escape_reasons", {})
 
-    filed_deployment = any(r["record_type"] == "SystemRuntimeRecord" for r in case.records.values())
     per_dp = []
     for dp in case.decision_points:
         row = rows[dp["id"]]
@@ -276,9 +257,7 @@ def compute(case: Case, scored: dict) -> dict:
             outcome, escape = "attributable", None
         elif row["recorded_before"] == "No":
             outcome = "unrecorded"
-            if kinds.get(dp["id"]) == "deploy" and not filed_deployment:
-                escape = "not_filed"
-            elif _missing_fields(case, dp["recorded_before"]):
+            if _missing_fields(case, dp["recorded_before"]):
                 escape = "no_field"
             elif any(o[dp["id"]]["recorded_before"] == "Yes" for o in others.values()):
                 escape = "filer_unaware"
@@ -339,13 +318,11 @@ def compute(case: Case, scored: dict) -> dict:
         "timeliness": timeliness(case),
         "affected_parties": affected_parties(case),
         "investigation": investigation(case),
-        "deployment": deployment(case),
         "today": case.annotations.get("today", {}),
         "available": {
             "decision_kinds": by_kind is not None,
             "sources": bool(case.sources),
             "outside_account": bool(case.annotations.get("first_outside_account")),
             "investigation": "investigation" in case.annotations,
-            "deployment": filed_deployment,
         },
     }

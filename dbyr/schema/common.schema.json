@@ -30,7 +30,7 @@
       "properties": {
         "role_id": {
           "$ref": "#/$defs/role_ref",
-          "description": "The signing role, declared in the roles of the Intent, or of the SystemRuntimeRecord for a deployed system."
+          "description": "The signing role, declared in the roles of the Intent."
         },
         "organisation": {
           "type": "string",
@@ -51,7 +51,7 @@
           "description": "First day of the window."
         },
         "end": {
-          "description": "null means open-ended: a rolling training run, or a system that stays deployed. Closeouts are then due every 30 days.",
+          "description": "null means open-ended: a rolling training run. Closeouts are then due every 30 days.",
           "oneOf": [
             {
               "$ref": "#/$defs/date"

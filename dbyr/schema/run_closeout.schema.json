@@ -2,12 +2,13 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://dbyr.example/schema/0.1.0/run_closeout.schema.json",
   "title": "RunCloseout",
-  "description": "Filed on completion, abort, or every 30 days for a rolling run or a deployed system.",
+  "description": "Filed on completion, abort, or every 30 days for a rolling run.",
   "type": "object",
   "additionalProperties": false,
   "required": [
     "schema_version",
     "record_type",
+    "run_id",
     "filed_at",
     "period_start",
     "period_end",
@@ -32,12 +33,7 @@
     "run_id": {
       "$ref": "common.schema.json#/$defs/id",
       "x-tier": "public",
-      "description": "The run this Closeout closes. It must match the Intent's run_id. Give run_id or system_id, not both."
-    },
-    "system_id": {
-      "$ref": "common.schema.json#/$defs/id",
-      "x-tier": "public",
-      "description": "The deployed system this Closeout reports on. It is checked against the system's SystemRuntimeRecord. Give run_id or system_id, not both."
+      "description": "The run this Closeout closes. It must match the Intent's run_id."
     },
     "filed_at": {
       "$ref": "common.schema.json#/$defs/timestamp",
@@ -62,7 +58,7 @@
         "rolling"
       ],
       "x-tier": "public",
-      "description": "The run's or system's state at the end of the period. Only training runs and deployed systems may be rolling."
+      "description": "The run's state at the end of the period. Only training runs may be rolling."
     },
     "attested_absence": {
       "description": "Required by the adequacy profile. True asserts that no reportable event was detected; then absence_basis is required.",
@@ -498,7 +494,7 @@
     "cleared_for_system_integration": {
       "type": "boolean",
       "x-tier": "public",
-      "description": "Whether the model is cleared to be built into a deployed system. Deploying a system on a run whose latest Closeout does not say true is a conduct finding."
+      "description": "Whether the model this run produced is cleared to be built on downstream."
     },
     "signer": {
       "$ref": "common.schema.json#/$defs/signer",
@@ -660,17 +656,5 @@
       },
       "description": "Every reset of a writable surface during the period."
     }
-  },
-  "oneOf": [
-    {
-      "required": [
-        "run_id"
-      ]
-    },
-    {
-      "required": [
-        "system_id"
-      ]
-    }
-  ]
+  }
 }

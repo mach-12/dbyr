@@ -7,7 +7,6 @@ Stages, in the order an evaluator meets them (paper Section 4):
   reconcile   each Closeout against the Intent version in force when it was filed
   notices     ExceptionNotice timeliness and coverage, per Closeout
   lineage     runs reaching the same persistent shared surface cite each other
-  deployment  each deployed system against what was on record about its base runs
   disclosure  public / restricted / sealed views of every lodged filing
   record      optional: sign and append lodged filings to a hash-chained ledger
 
@@ -27,11 +26,10 @@ from .filingset import FilingSet
 from .findings import Finding
 from .integrity import schema_hash
 from .ledger import Ledger
-from .rules import (check_deployment, check_lineage, check_notices, in_force, reconcile, system_rules,
-                    validate_record, version_rules)
-from .rules.common import owner, ts
+from .rules import check_lineage, check_notices, in_force, reconcile, validate_record, version_rules
+from .rules.common import ts
 
-STAGES = ("records", "versions", "reconcile", "notices", "lineage", "deployment")
+STAGES = ("records", "versions", "reconcile", "notices", "lineage")
 SEVERITIES = ("error", "conduct", "warning")
 
 
@@ -41,15 +39,11 @@ def check_set(filings: dict[str, dict]) -> list[tuple[str, Finding]]:
         out += [(key, f) for f in validate_record(rec)]
     good = {k: r for k, r in filings.items() if isinstance(r, dict) and "record_type" in r}
     # Every version of a run's Intent is kept, so amendments stay visible. [R1 judge item 9]
-    # A deployed system's SystemRuntimeRecords are kept the same way, by system_id.
     versions: dict[str, list[dict]] = {}
-    systems: dict[str, list[dict]] = {}
     for r in good.values():
         if r["record_type"] == "RunIntent":
             versions.setdefault(r["run_id"], []).append(r)
-        elif r["record_type"] == "SystemRuntimeRecord":
-            systems.setdefault(r["system_id"], []).append(r)
-    for v in [*versions.values(), *systems.values()]:
+    for v in versions.values():
         v.sort(key=lambda r: ts(r["filed_at"]))
     intents = {run: v[-1] for run, v in versions.items()}
     closeouts = [r for r in good.values() if r["record_type"] == "RunCloseout"]
@@ -60,23 +54,11 @@ def check_set(filings: dict[str, dict]) -> list[tuple[str, Finding]]:
             out += [("versions", f) for f in version_rules(run, v, [c for c in run_closeouts if c["run_id"] == run])]
         except (KeyError, TypeError, ValueError) as exc:
             out.append(("versions", Finding("error", "unreconcilable", run, f"{type(exc).__name__}: {exc}")))
-    for system, v in systems.items():
-        try:
-            out += [("versions", f) for f in system_rules(system, v, [c for c in closeouts if c.get("system_id") == system])]
-        except (KeyError, TypeError, ValueError) as exc:
-            out.append(("versions", Finding("error", "unreconcilable", system, f"{type(exc).__name__}: {exc}")))
-    for c in closeouts:
-        kind, oid = owner(c)
-        if oid is None:
-            continue  # neither run_id nor system_id: the schema error is reported above
-        filed = versions if kind == "run" else systems
-        declared = in_force(filed[oid], c["filed_at"]) if oid in filed else None
-        if declared is None and kind == "run":
-            out.append(("reconcile", Finding("error", "intent_missing", oid, "closeout has no matching Intent in this set")))
-            continue
+    for c in run_closeouts:
+        oid = c["run_id"]
+        declared = in_force(versions[oid], c["filed_at"]) if oid in versions else None
         if declared is None:
-            out.append(("reconcile", Finding("error", "runtime_record_missing", oid,
-                                             "closeout has no matching SystemRuntimeRecord in this set")))
+            out.append(("reconcile", Finding("error", "intent_missing", oid, "closeout has no matching Intent in this set")))
             continue
         try:
             out += [("reconcile", f) for f in reconcile(declared, c)]
@@ -87,11 +69,6 @@ def check_set(filings: dict[str, dict]) -> list[tuple[str, Finding]]:
         out += [("lineage", f) for f in check_lineage(list(intents.values()), run_closeouts)]
     except (KeyError, TypeError, ValueError) as exc:
         out.append(("lineage", Finding("error", "unreconcilable", "lineage", f"{type(exc).__name__}: {exc}")))
-    try:
-        out += [("deployment", f) for f in check_deployment([v[-1] for v in systems.values()], intents,
-                                                             run_closeouts, notices)]
-    except (KeyError, TypeError, ValueError) as exc:
-        out.append(("deployment", Finding("error", "unreconcilable", "deployment", f"{type(exc).__name__}: {exc}")))
     return out
 
 

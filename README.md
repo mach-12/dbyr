@@ -2,47 +2,29 @@
 
 # Declare Before You Run
 
-### An Open Filing Standard for Frontier Training and Evaluation Runs
-
-[![🏅 4th Place · Apart Research AI Incident Response Sprint](https://img.shields.io/badge/%F0%9F%8F%85%204th%20Place-Apart%20Research%20AI%20Incident%20Response%20Sprint-gold?style=for-the-badge)](https://apartresearch.com/sprints/ai-incident-response-sprint-2026-09-11-to-2026-09-13#overview)
-
-**🏅 Placed 4th globally out of 231 projects (971 sign-ups) at the [Apart Research AI Incident Response Sprint](https://apartresearch.com/sprints/ai-incident-response-sprint-2026-09-11-to-2026-09-13#entries), September 2026.**
-
-**Mann Acharya** · **Archit Ojha** · **Gautam Sankara Raman** · **Karm Rajput**
-
-*with [Apart Research](https://apartresearch.com)*
-
-[Paper](website/assets/declare_before_you_run_frontier_training_evaluation_filing_standard.pdf) · [Site](https://mach-12.github.io/dbyr/) · [Timeline](https://mach-12.github.io/dbyr/#timeline)
-
-</div>
-
-
-Research conducted at the [AI Incident Response Sprint](https://apartresearch.com/sprints/ai-incident-response-sprint-2026-09-11-to-2026-09-13), with Apart Research, September 2026, where it placed 4th of 231 submitted projects.
-
+###  A Disclosure Protocol for Frontier AI Training and Evaluation
 
 ## The `dbyr` package
 
-This repository is the executable form of the paper: the JSON Schemas for the four DBYR records, the checks an evaluator runs on them, the public / restricted / sealed disclosure views, and a signed hash-chained ledger.
+This repository is the executable form of the paper: the JSON Schemas for the three DBYR records, the checks an evaluator runs on them, the public / restricted / sealed disclosure views, and a signed hash-chained ledger.
 
 This page is for **labs** that file the records and the **regulators or evaluators** that check them. Researchers testing whether DBYR would have helped in a past incident should read **[Backtesting DBYR](dbyr/backtest/README.md)** instead; that is how the paper measured DBYR, and labs never need it.
 
 ### Install
 
 ```bash
-pip install git+https://github.com/mach-12/dbyr      # the package and the dbyr command
-pip install -e .                                     # or, from a clone
+pip install -e .
 ```
 
 ### File and check the records
 
-The lab files four kinds of record over a run's life; the evaluator checks them as a set. Examples of all four, each passing every check, are in [`dbyr/backtest/template/`](dbyr/backtest/template/): `intent_A.json`, `notice_N1.json`, `closeout_A.json` and `runtime_S1.json`. The [record docs](docs/records/README.md) list every field and every check.
+The lab files three kinds of record over a run's life; the evaluator checks them as a set. Examples of all three, each passing every check, are in [`dbyr/backtest/template/`](dbyr/backtest/template/): `intent_A.json`, `notice_N1.json` and `closeout_A.json`. The [record docs](docs/records/README.md) list every field and every check.
 
 | When | The lab files | Doc |
 |---|---|---|
 | at least 3 days before the run starts | a RunIntent: what the run will do, what agents can reach, how it is watched, what pauses it, what evidence is kept | [intent.md](docs/records/intent.md) |
 | within 72 hours of detecting a reportable event | an ExceptionNotice | [notice.md](docs/records/notice.md) |
 | when the run ends, and at least every 30 days | a RunCloseout: what actually happened | [closeout.md](docs/records/closeout.md) |
-| before a system built on the run is deployed | a SystemRuntimeRecord | [runtime.md](docs/records/runtime.md) |
 
 **Step 1. Check each record as you write it.**
 
@@ -105,7 +87,7 @@ for stage, at, finding in report.findings:
 
 ### Filing sets
 
-A filing set is the unit the protocol runs on: Intents (and amendments), ExceptionNotices, Closeouts and SystemRuntimeRecords.
+A filing set is the unit the protocol runs on: Intents (and amendments), ExceptionNotices and Closeouts.
 
 **`load_filing_set(*paths) -> FilingSet`**
 Load from a `manifest.json` (`{"records": {"intent:A": "intent_A.json", ...}}`), a folder, or files. Without a manifest, every `*.json` with a `record_type` is a filing; other JSON is listed in `skipped`.

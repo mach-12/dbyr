@@ -1,5 +1,5 @@
 """A Closeout checked against the Intent it closes, or a deployed system's Closeout against its
-SystemRuntimeRecord: both declare the same criteria, roles, restart protocol and retention.
+its Intent: the criteria, roles, restart protocol and retention it declared.
 
 This is the V0 half of a V1 reconciliation: it checks the filings agree with each
 other; a V1 auditor then checks them against retained logs.
@@ -9,16 +9,15 @@ from __future__ import annotations
 
 from ..findings import Finding
 from ..params import CORE_KINDS_T4
-from .common import effective_monitors, observable, owner
+from .common import effective_monitors, observable
 
 
 def reconcile(intent: dict, closeout: dict) -> list[Finding]:
     """Check a Closeout against the Intent it closes. This is the V0 half of a V1 reconciliation:
     it checks the filings agree with each other; a V1 auditor then checks them against retained logs."""
     out: list[Finding] = []
-    kind, oid = owner(closeout)
-    if intent.get(f"{kind}_id") != oid:
-        return [Finding("error", "run_mismatch", f"/{kind}_id", "closeout does not close this intent")]
+    if intent.get("run_id") != closeout.get("run_id"):
+        return [Finding("error", "run_mismatch", "/run_id", "closeout does not close this intent")]
 
     role_ids = {r["role_id"] for r in intent["roles"]}
     criteria = {c["criterion_id"]: c for c in intent["pause_criteria"]}

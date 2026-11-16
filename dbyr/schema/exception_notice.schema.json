@@ -8,6 +8,7 @@
   "required": [
     "schema_version",
     "record_type",
+    "run_id",
     "notice_id",
     "filed_at",
     "detected_at",
@@ -33,12 +34,7 @@
     "run_id": {
       "$ref": "common.schema.json#/$defs/id",
       "x-tier": "public",
-      "description": "The run the events happened in. Give run_id or system_id, not both."
-    },
-    "system_id": {
-      "$ref": "common.schema.json#/$defs/id",
-      "x-tier": "public",
-      "description": "The deployed system the events happened in, for an incident after deployment. Give run_id or system_id, not both."
+      "description": "The run the events happened in."
     },
     "filed_at": {
       "$ref": "common.schema.json#/$defs/timestamp",
@@ -105,17 +101,5 @@
       "x-tier": "public",
       "description": "Who signs the filing."
     }
-  },
-  "oneOf": [
-    {
-      "required": [
-        "run_id"
-      ]
-    },
-    {
-      "required": [
-        "system_id"
-      ]
-    }
-  ]
+  }
 }

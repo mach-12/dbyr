@@ -5,8 +5,6 @@
   check_notices     the ExceptionNotices a Closeout's events require
   version_rules     every version of a run's Intent, and Closeout cadence
   check_lineage     runs that share a persistent surface
-  check_runtime     one SystemRuntimeRecord: the same commitments as an Intent, for a deployment
-  check_deployment  a deployment against what was on record about its base runs
 """
 
 from __future__ import annotations
@@ -18,14 +16,12 @@ from .intent import check_intent
 from .lineage import check_lineage, linked_groups
 from .notice import check_notice, check_notices
 from .reconcile import reconcile
-from .runtime import check_deployment, check_runtime
-from .versions import in_force, system_rules, version_rules
+from .versions import in_force, version_rules
 
 CHECKS = {
     "RunIntent": check_intent,
     "RunCloseout": check_closeout,
     "ExceptionNotice": check_notice,
-    "SystemRuntimeRecord": check_runtime,
 }
 
 
@@ -50,6 +46,6 @@ def validate_record(record: dict) -> list[Finding]:
     return findings + CHECKS[record["record_type"]](record)
 
 
-__all__ = ["check_closeout", "check_deployment", "check_intent", "check_lineage", "check_notice", "check_notices",
-           "check_runtime", "in_force", "linked_groups", "reconcile", "schema_findings", "system_rules",
+__all__ = ["check_closeout", "check_intent", "check_lineage", "check_notice", "check_notices",
+           "in_force", "linked_groups", "reconcile", "schema_findings",
            "validate_record", "version_rules"]
