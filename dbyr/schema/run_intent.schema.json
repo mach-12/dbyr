@@ -1,0 +1,883 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dbyr.example/schema/0.1.0/run_intent.schema.json",
+  "title": "RunIntent",
+  "description": "Filed before the first optimisation step or the first safeguards-off evaluation of a covered model. x-route gives each field's derivation route (R1 traced to a documented failure; R2 has a counterpart in an existing regime, per the authors' mapping; R3 from a published standard).",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "record_type",
+    "run_id",
+    "developer",
+    "filed_at",
+    "trigger_basis",
+    "start_window",
+    "compute_band",
+    "predicted_capability_band",
+    "monitoring_instruments",
+    "agent_surface",
+    "safeguards_disabled",
+    "pause_criteria",
+    "restart_protocol",
+    "roles",
+    "log_retention",
+    "investigator_scope_expansion",
+    "signer"
+  ],
+  "properties": {
+    "schema_version": {
+      "$ref": "common.schema.json#/$defs/schema_version",
+      "description": "The schema version the filing is written against."
+    },
+    "record_type": {
+      "const": "RunIntent",
+      "description": "The record type. It fixes which schema and which checks apply."
+    },
+    "run_id": {
+      "$ref": "common.schema.json#/$defs/id",
+      "x-tier": "public",
+      "x-route": [
+        "R2"
+      ],
+      "description": "Identifier of the run. Every later filing for the run (amendments, notices, closeouts) uses it."
+    },
+    "developer": {
+      "type": "string",
+      "minLength": 1,
+      "x-tier": "public",
+      "x-route": [
+        "R2"
+      ],
+      "description": "The organisation running the training or evaluation."
+    },
+    "filed_at": {
+      "$ref": "common.schema.json#/$defs/timestamp",
+      "x-tier": "public",
+      "description": "When the Intent was filed. A first Intent must be filed at least the intake period (default 3 days) before the start."
+    },
+    "amends": {
+      "description": "Ledger sequence number of the Intent this filing amends, if any.",
+      "type": "integer",
+      "minimum": 0,
+      "x-tier": "public"
+    },
+    "trigger_basis": {
+      "description": "T1 compute threshold; T2 covered-developer status; T3 predicted high/critical capability crossing; T4 safeguards-off evaluation.",
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "enum": [
+          "T1",
+          "T2",
+          "T3",
+          "T4"
+        ]
+      },
+      "x-tier": "public",
+      "x-route": [
+        "R2"
+      ]
+    },
+    "start_window": {
+      "$ref": "common.schema.json#/$defs/window",
+      "x-tier": "public",
+      "x-route": [
+        "R2",
+        "R3"
+      ],
+      "description": "When the run may operate. A Closeout period outside the window is a conduct finding."
+    },
+    "compute_band": {
+      "description": "A band, never a value. Band edges are a schema parameter set by the operator. null means the filer withheld or did not know the band.",
+      "enum": [
+        "<1e24",
+        "1e24-1e25",
+        "1e25-1e26",
+        "1e26-1e27",
+        ">=1e27",
+        null
+      ],
+      "x-tier": "public",
+      "x-route": [
+        "R2"
+      ]
+    },
+    "data_classes": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "x-tier": "restricted",
+      "x-route": [
+        "R2"
+      ],
+      "description": "Classes of training or evaluation data the run uses."
+    },
+    "predicted_capability_band": {
+      "type": "object",
+      "x-tier": "public",
+      "additionalProperties": false,
+      "required": [
+        "cyber",
+        "cbrn",
+        "autonomy",
+        "persuasion"
+      ],
+      "properties": {
+        "cyber": {
+          "$ref": "#/$defs/band",
+          "description": "Forecast band for offensive cyber capability."
+        },
+        "cbrn": {
+          "$ref": "#/$defs/band",
+          "description": "Forecast band for chemical, biological, radiological and nuclear uplift."
+        },
+        "autonomy": {
+          "$ref": "#/$defs/band",
+          "description": "Forecast band for autonomous operation."
+        },
+        "persuasion": {
+          "$ref": "#/$defs/band",
+          "description": "Forecast band for persuasion and manipulation."
+        }
+      },
+      "x-route": [
+        "R2",
+        "R3"
+      ],
+      "description": "The filer's forecast, per risk domain, of the capability the run will reach. A high or critical forecast requires T3; any forecast above low requires an eval_plan."
+    },
+    "monitoring_instruments": {
+      "description": "An empty array is a declared absence of monitoring, not an omission.",
+      "type": "array",
+      "x-tier": "restricted",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "kind",
+          "coverage"
+        ],
+        "properties": {
+          "kind": {
+            "enum": [
+              "cot_monitor",
+              "reward_seeking_monitor",
+              "trajectory_review",
+              "environment_integrity_check",
+              "access_log_review",
+              "network_alerting",
+              "inter_agent_message_monitor",
+              "write_audit",
+              "aggregate_report"
+            ],
+            "description": "aggregate_report: counts or volume summaries; observes no individual event."
+          },
+          "coverage": {
+            "enum": [
+              "all",
+              "sampled",
+              "on_alert"
+            ],
+            "description": "How much the monitor sees: everything, a sample, or only what an alert raises."
+          },
+          "review_cadence": {
+            "type": "string",
+            "description": "How often the monitor's output is reviewed, required when coverage is sampled."
+          },
+          "sample_rate": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1,
+            "description": "Share of episodes or records reviewed, required when coverage is sampled."
+          },
+          "alert_source": {
+            "type": "string",
+            "description": "What raises the alert, required when coverage is on_alert."
+          },
+          "data_source": {
+            "type": "string",
+            "description": "The log or stream the monitor reads."
+          }
+        }
+      },
+      "x-route": [
+        "R1",
+        "R3"
+      ]
+    },
+    "agent_surface": {
+      "type": "object",
+      "x-tier": "restricted",
+      "additionalProperties": false,
+      "required": [
+        "environment",
+        "permitted_paths",
+        "credential_scope",
+        "inter_agent_comms_permitted",
+        "writable_surfaces",
+        "shared_surface_lineage"
+      ],
+      "properties": {
+        "environment": {
+          "enum": [
+            "digital_twin",
+            "live",
+            "mixed"
+          ],
+          "description": "Whether agents act on a replica (digital_twin), on real systems (live), or both (mixed)."
+        },
+        "permitted_paths": {
+          "description": "Network paths agents may use. An empty array means no network access at all.",
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "path_id",
+              "via",
+              "enforcement"
+            ],
+            "properties": {
+              "path_id": {
+                "$ref": "common.schema.json#/$defs/id",
+                "description": "Identifier of the path. A writable surface names it in via_path."
+              },
+              "via": {
+                "type": "string",
+                "description": "What the path goes through, such as a proxy or gateway."
+              },
+              "enforcement": {
+                "enum": [
+                  "physical_separation",
+                  "packet_filter",
+                  "proxy_allowlist",
+                  "none"
+                ],
+                "description": "How the path's limits are enforced. none is not allowed in a safeguards-off (T4) run."
+              },
+              "agent_writable": {
+                "description": "Whether agents can write through this path. Required by the adequacy profile; a writable path must be backed by a declared writable surface.",
+                "type": "boolean"
+              }
+            }
+          }
+        },
+        "credential_scope": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "held_by_agents",
+            "admin_credentials_reachable"
+          ],
+          "properties": {
+            "held_by_agents": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Credentials agents are given."
+            },
+            "admin_credentials_reachable": {
+              "type": "boolean",
+              "description": "Whether agents can reach administrator credentials."
+            }
+          },
+          "description": "Credentials agents hold or can reach."
+        },
+        "inter_agent_comms_permitted": {
+          "type": "boolean",
+          "description": "True if any surface lets one agent read what another wrote, whether or not that is intended. A factual statement about the environment, not a policy choice."
+        },
+        "writable_surfaces": {
+          "description": "Surfaces agents can write to, characterised rather than exhaustively enumerated.",
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/surface"
+          }
+        },
+        "shared_surface_lineage": {
+          "description": "Other runs that can reach the same persistent surface. Reconciliation runs over linked runs.",
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "surface_id",
+              "run_id"
+            ],
+            "properties": {
+              "surface_id": {
+                "$ref": "common.schema.json#/$defs/id",
+                "description": "A surface listed in writable_surfaces."
+              },
+              "run_id": {
+                "$ref": "common.schema.json#/$defs/id",
+                "description": "Another run that reaches the same surface."
+              }
+            }
+          }
+        },
+        "inherited_exceptions": {
+          "description": "Open containment exceptions on a shared surface that this run inherits. Must be cited.",
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "run_id",
+              "exception_id"
+            ],
+            "properties": {
+              "run_id": {
+                "$ref": "common.schema.json#/$defs/id",
+                "description": "The run whose Closeout recorded the exception."
+              },
+              "exception_id": {
+                "$ref": "common.schema.json#/$defs/id",
+                "description": "The exception's identifier in that Closeout."
+              }
+            }
+          }
+        }
+      },
+      "x-route": [
+        "R1"
+      ],
+      "description": "What agents can reach and write to: the environment, network paths, credentials, writable surfaces and other runs that share them."
+    },
+    "safeguards_disabled": {
+      "type": "object",
+      "x-tier": "public",
+      "additionalProperties": false,
+      "required": [
+        "disabled"
+      ],
+      "properties": {
+        "disabled": {
+          "type": "boolean",
+          "description": "True if any checklist item is relaxed or off. 'Relaxed' counts."
+        },
+        "relaxed": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "x-tier": "restricted",
+          "description": "The safeguards relaxed or off, required when disabled is true."
+        },
+        "signer_role": {
+          "$ref": "common.schema.json#/$defs/role_ref",
+          "description": "The role that authorised disabling them, required when disabled is true."
+        },
+        "checklist": {
+          "type": "array",
+          "items": {
+            "$ref": "common.schema.json#/$defs/safeguard_item"
+          },
+          "x-tier": "public",
+          "description": "State of every production safeguard (adequacy profile: all six, each once)."
+        }
+      },
+      "if": {
+        "properties": {
+          "disabled": {
+            "const": true
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "relaxed",
+          "signer_role"
+        ]
+      },
+      "x-route": [
+        "R1"
+      ],
+      "description": "The state of the production safeguards for this run. Any safeguard relaxed or off makes it a safeguards-off run, which must list T4."
+    },
+    "pause_criteria": {
+      "description": "Records an allocation the developer has already made under its own framework. Confers no authority.",
+      "type": "array",
+      "minItems": 1,
+      "x-tier": "restricted",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "criterion_id",
+          "matches",
+          "adjudication",
+          "authority_role",
+          "required_action"
+        ],
+        "properties": {
+          "criterion_id": {
+            "$ref": "common.schema.json#/$defs/id",
+            "description": "Identifier that pause events and notices cite."
+          },
+          "description": {
+            "type": "string",
+            "description": "The criterion in words."
+          },
+          "matches": {
+            "description": "Event kinds (see Closeout security_events[].kind) that trigger this criterion.",
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "$ref": "common.schema.json#/$defs/event_kind"
+            }
+          },
+          "adjudication": {
+            "enum": [
+              "human",
+              "machine"
+            ],
+            "description": "Whether a person or an automated check decides that the criterion has fired."
+          },
+          "authority_role": {
+            "$ref": "common.schema.json#/$defs/role_ref",
+            "description": "The role that decides a pause. It may not also approve restarts."
+          },
+          "required_action": {
+            "enum": [
+              "pause",
+              "pause_and_review",
+              "halt_and_amend_intent",
+              "notify_only"
+            ],
+            "description": "What the filer commits to do when the criterion fires. pause, pause_and_review and halt_and_amend_intent count as pausing; notify_only does not."
+          }
+        }
+      },
+      "x-route": [
+        "R1",
+        "R2"
+      ]
+    },
+    "restart_protocol": {
+      "type": "object",
+      "x-tier": "restricted",
+      "additionalProperties": false,
+      "required": [
+        "approver_role",
+        "evidence_required",
+        "intent_amendment_required"
+      ],
+      "properties": {
+        "approver_role": {
+          "$ref": "common.schema.json#/$defs/role_ref",
+          "description": "The role that approves a restart. It must differ from every pause authority_role."
+        },
+        "evidence_required": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string"
+          },
+          "description": "What must be shown before a restart is approved."
+        },
+        "intent_amendment_required": {
+          "type": "boolean",
+          "description": "Whether a restart requires amending the Intent first."
+        }
+      },
+      "x-route": [
+        "R1"
+      ],
+      "description": "How a paused run is restarted."
+    },
+    "containment_plan": {
+      "type": "object",
+      "x-tier": "restricted",
+      "additionalProperties": false,
+      "properties": {
+        "on_detected_subversion": {
+          "type": "string",
+          "description": "The response when an agent is found subverting controls."
+        },
+        "full_offline_conditions": {
+          "type": "string",
+          "description": "When the run is taken fully offline."
+        }
+      },
+      "x-route": [
+        "R3"
+      ],
+      "description": "What the filer will do if containment fails."
+    },
+    "eval_plan": {
+      "type": "array",
+      "x-tier": "restricted",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "eval_id",
+          "evaluator"
+        ],
+        "properties": {
+          "eval_id": {
+            "$ref": "common.schema.json#/$defs/id",
+            "description": "Identifier of the evaluation."
+          },
+          "evaluator": {
+            "enum": [
+              "internal",
+              "external"
+            ],
+            "description": "Whether the developer or an outside party runs it."
+          },
+          "domain": {
+            "type": "string",
+            "description": "The risk domain it tests."
+          }
+        }
+      },
+      "x-route": [
+        "R2",
+        "R3"
+      ],
+      "description": "Evaluations that test the capability forecast, required when any band is above low."
+    },
+    "roles": {
+      "description": "Titles are public; contacts restricted; identities sealed and recoverable only under legal hold.",
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "role_id",
+          "title",
+          "organisation"
+        ],
+        "properties": {
+          "role_id": {
+            "$ref": "common.schema.json#/$defs/id",
+            "x-tier": "public",
+            "description": "Identifier other fields use to name the role."
+          },
+          "title": {
+            "type": "string",
+            "x-tier": "public",
+            "description": "The role's title."
+          },
+          "organisation": {
+            "type": "string",
+            "x-tier": "public",
+            "description": "The organisation the role belongs to."
+          },
+          "contact_channel": {
+            "type": "string",
+            "x-tier": "restricted",
+            "description": "How to reach the role holder."
+          },
+          "id_hash": {
+            "type": "string",
+            "x-tier": "sealed",
+            "description": "Hash of the role holder's identity, recoverable only under legal hold."
+          }
+        }
+      },
+      "x-route": [
+        "R3"
+      ]
+    },
+    "log_retention": {
+      "type": "object",
+      "x-tier": "public",
+      "additionalProperties": false,
+      "required": [
+        "retained",
+        "retain_until",
+        "review_method"
+      ],
+      "properties": {
+        "retained": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "common.schema.json#/$defs/evidence_class"
+          },
+          "description": "Evidence classes kept for the run."
+        },
+        "retain_until": {
+          "description": "Default closeout+P24M (ISO 8601 duration after closeout).",
+          "type": "string",
+          "pattern": "^closeout\\+P[0-9]+[YM]$"
+        },
+        "review_method": {
+          "type": "string",
+          "minLength": 1,
+          "description": "How retained evidence is reviewed."
+        },
+        "minimum_preserved_pct": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100,
+          "description": "The least share of generated evidence the filer commits to keep. A Closeout reporting less is a conduct finding."
+        },
+        "detail": {
+          "type": "array",
+          "description": "One entry per retained evidence class.",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "evidence_class",
+              "coverage",
+              "retention"
+            ],
+            "properties": {
+              "evidence_class": {
+                "$ref": "common.schema.json#/$defs/evidence_class",
+                "description": "The class this entry describes."
+              },
+              "coverage": {
+                "enum": [
+                  "complete",
+                  "sampled"
+                ],
+                "description": "Whether every record of the class is kept, or a sample."
+              },
+              "sample_rate": {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 1,
+                "description": "Share of records kept, required when coverage is sampled."
+              },
+              "retention": {
+                "type": "string",
+                "pattern": "^(P[0-9]+[DMY]|indefinite)$",
+                "description": "How long this class is actually kept after it is written."
+              }
+            }
+          }
+        }
+      },
+      "x-route": [
+        "R1"
+      ],
+      "description": "What evidence is kept, for how long, and how it is reviewed."
+    },
+    "investigator_scope_expansion": {
+      "description": "Standing right for a post-incident investigator to extend scope on stated grounds; extensions and refusals are logged.",
+      "type": "object",
+      "x-tier": "public",
+      "additionalProperties": false,
+      "required": [
+        "committed",
+        "refusals_logged"
+      ],
+      "properties": {
+        "committed": {
+          "const": true,
+          "description": "Always true: the filer grants the standing right."
+        },
+        "refusals_logged": {
+          "const": true,
+          "description": "Always true: every refusal is logged in the Closeout."
+        },
+        "model_access_committed": {
+          "type": "boolean",
+          "description": "Whether an investigator may also access the model."
+        }
+      },
+      "x-route": [
+        "R1"
+      ]
+    },
+    "amendments_allowed": {
+      "type": "boolean",
+      "x-tier": "public",
+      "x-route": [
+        "R2"
+      ],
+      "description": "Whether the filer may amend this Intent during the run."
+    },
+    "signer": {
+      "$ref": "common.schema.json#/$defs/signer",
+      "x-tier": "public",
+      "description": "Who signs the filing."
+    },
+    "run_kind": {
+      "description": "What the run is. training: a run that trains a model; evaluation: a run that tests a model already trained, one Intent per evaluation of at most 31 days; training_with_evaluation: one run that trains and evaluates within the same job; internal_deployment: a model used inside the developer. Required by the adequacy profile. A rolling, open-ended window is allowed only for training.",
+      "enum": [
+        "training",
+        "evaluation",
+        "training_with_evaluation",
+        "internal_deployment"
+      ],
+      "x-tier": "public",
+      "x-route": [
+        "R3"
+      ]
+    },
+    "agent_capabilities": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "x-tier": "restricted",
+      "description": "Every tool or action agents can take (code execution, database queries, posting, editing)."
+    },
+    "readable_sources": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "x-tier": "restricted",
+      "description": "Every data source agents can read."
+    },
+    "run_scale": {
+      "type": "object",
+      "x-tier": "restricted",
+      "additionalProperties": false,
+      "required": [
+        "concurrent_agents"
+      ],
+      "properties": {
+        "concurrent_agents": {
+          "oneOf": [
+            {
+              "type": "integer",
+              "minimum": 1
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "The most agents running at once, at least 1. null means the filer withheld or did not know the count."
+        },
+        "human_users": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "How many people interact with the agents."
+        }
+      },
+      "description": "How large the run is."
+    },
+    "reward_design": {
+      "type": "string",
+      "x-tier": "restricted",
+      "description": "How rewards or grades are computed and where graders run. Required by the adequacy profile when run_kind is training or training_with_evaluation."
+    },
+    "forecast_basis": {
+      "type": "string",
+      "x-tier": "restricted",
+      "description": "Evidence for predicted_capability_band."
+    },
+    "changes": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "x-tier": "public",
+      "description": "For an amendment: what changed and why."
+    }
+  },
+  "$defs": {
+    "band": {
+      "enum": [
+        "low",
+        "medium",
+        "high",
+        "critical"
+      ]
+    },
+    "surface": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "surface_id",
+        "kind",
+        "direction",
+        "persistence",
+        "tenancy"
+      ],
+      "properties": {
+        "surface_id": {
+          "$ref": "common.schema.json#/$defs/id",
+          "description": "Identifier of the surface. Keep it the same across runs for the same physical surface: lineage checks match on it."
+        },
+        "kind": {
+          "enum": [
+            "package_proxy",
+            "artifact_store",
+            "shared_filesystem",
+            "cache",
+            "database",
+            "web_endpoint",
+            "other"
+          ],
+          "description": "What sort of surface it is."
+        },
+        "direction": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "writers",
+            "readers"
+          ],
+          "properties": {
+            "writers": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Who can write to it: agents, runs or other parties."
+            },
+            "readers": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Who can read from it: agents, runs or other parties."
+            }
+          },
+          "description": "Who writes to the surface and who reads from it."
+        },
+        "persistence": {
+          "enum": [
+            "ephemeral",
+            "run",
+            "cross_run",
+            "permanent"
+          ],
+          "description": "How long writes survive: one episode (ephemeral), the run, across runs (cross_run), or permanently."
+        },
+        "tenancy": {
+          "enum": [
+            "run_only",
+            "shared_runs",
+            "shared_agents",
+            "external"
+          ],
+          "description": "run_only: nothing outside this run reads it AND agents within the run cannot read each other's writes; shared_agents: agents in this run can read each other's writes; shared_runs: other runs can read it; external: parties outside the developer can read it."
+        },
+        "detail": {
+          "description": "Host names, paths and versions. Sealed: maps the attack surface.",
+          "type": "string",
+          "x-tier": "sealed"
+        },
+        "via_path": {
+          "description": "path_id of the permitted path through which agents reach this surface, if any.",
+          "$ref": "common.schema.json#/$defs/id"
+        },
+        "isolation": {
+          "enum": [
+            "per_episode",
+            "shared"
+          ],
+          "description": "shared: an agent can read what another agent (in this or any run) wrote."
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,32 @@
+{
+  "_about": "Optional. Information added after scoring, for the results tables only; the pre-registered scoring never reads this file. Every entry is synthetic in this template (Lab X). Keys: label (column heading), primary_variant (variant the tables report), decision_kinds (setup | deploy | respond | tell | investigate per decision point), first_outside_account (dated public or third-party accounts, each with a source), investigation (incident and review windows), today (what the organisations' own accounts show, per question), escape_reasons and provenance (per-decision overrides of the automatic classification, each needing a reason in _notes).",
+  "label": "Lab X (template)",
+  "primary_variant": "as_believed",
+  "decision_kinds": {
+    "DP1": "respond",
+    "DP2": "tell"
+  },
+  "first_outside_account": [
+    {
+      "date": "2026-09-09",
+      "what": "Lab X blog post describing the escape",
+      "source": "<source file in sources/, date>"
+    }
+  ],
+  "investigation": {
+    "incident_window": ["2026-09-05", "2026-09-05"],
+    "review_window": ["2026-09-01", "2026-09-14"],
+    "note": "synthetic: the review covered the whole run"
+  },
+  "today": {
+    "commitments": "no pause rules published before the run",
+    "who_knew": "stated in the lab's post four days later",
+    "outside": "blog post four days after detection",
+    "affected": "the hosting provider was told the same day, per the post",
+    "investigation": "internal review only",
+    "checkable": "only by trusting the post"
+  },
+  "escape_reasons": {},
+  "provenance": {},
+  "_notes": {}
+}

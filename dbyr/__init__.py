@@ -1,32 +1,48 @@
-"""DBYR v0.1 — reference implementation of the Declare Before You Run filing standard.
+"""Declare Before You Run (DBYR)
 
-Modules
--------
-validate   JSON Schema validation plus the semantic checks a schema cannot express
-redact     public / restricted / sealed views derived from one authored document
-envelope   signed envelopes and an append-only, hash-chained register
-predicates declarative match rules for machine-checkable pause criteria
-replay     backtest harness: replay an Intent against an incident event stream
-interop    emitters to SB 53, EU Code of Practice and FRONTIER Act artefacts
+    filingset   load a filing set (a folder, a manifest.json, or record files)
+    protocol    run every stage over a filing set: check_set, run_protocol
+    rules/      every check, by what is checked (intent, closeout, notice, reconcile, versions, lineage)
+    params      the deadlines, floors and fixed lists the checks apply
+    schema/     the JSON Schemas and their validators
+    disclosure  public / restricted / sealed views with salted commitments
+    ledger      the signed, hash-chained record
+    integrity   canonical JSON, digests and the schema hash
+    findings    Finding and its three severities
+    backtest/   score DBYR against incident cases and build the results tables
+    api         DBYR, one object for the common tasks
 """
 
-__version__ = "0.1.0"
-
-# Convenience aliases are deliberately not named after their modules, so that
-# `dbyr.validate` and `dbyr.replay` remain the modules rather than functions.
-from . import envelope, interop, predicates, redact, replay, validate  # noqa: F401
-from .envelope import Register, sign, verify
-from .interop import coverage_report, emit_eu_cop_incident, emit_frontier_audit_index, emit_sb53_incident
-from .predicates import evaluate
-from .redact import commitments_for, merkle_root, project, verify_disclosure
-from .replay import counterfactual, load_events, to_markdown
-from .replay import replay as replay_events
-from .validate import validate as validate_record
+from .disclosure import all_views, check_opening, project
+from .filingset import FilingSet, FilingSetError, load_filing_set
+from .findings import Finding, conduct, errors
+from .integrity import schema_hash
+from .ledger import Ledger
+from .protocol import Report, check_set, run_protocol
+from .rules import check_lineage, check_notices, linked_groups, reconcile, validate_record
+from .schema import SCHEMA_VERSION
+from .api import DBYR  # noqa: E402  (imported last: it builds on everything above)
 
 __all__ = [
-    "validate_record", "project", "commitments_for", "merkle_root", "verify_disclosure",
-    "sign", "verify", "Register", "evaluate", "replay_events", "load_events",
-    "counterfactual", "to_markdown", "coverage_report", "emit_sb53_incident",
-    "emit_eu_cop_incident", "emit_frontier_audit_index",
-    "validate", "replay", "redact", "envelope", "interop", "predicates",
+    "DBYR",
+    "SCHEMA_VERSION",
+    "FilingSet",
+    "FilingSetError",
+    "Finding",
+    "Ledger",
+    "Report",
+    "all_views",
+    "check_lineage",
+    "check_notices",
+    "check_opening",
+    "check_set",
+    "conduct",
+    "errors",
+    "linked_groups",
+    "load_filing_set",
+    "project",
+    "reconcile",
+    "run_protocol",
+    "schema_hash",
+    "validate_record",
 ]

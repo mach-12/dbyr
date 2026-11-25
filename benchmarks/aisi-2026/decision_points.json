@@ -1,0 +1,522 @@
+{
+  "case_id": "aisi-2026",
+  "in_sample": false,
+  "freeze": {
+    "schema_hash": "sha256:453f10b8ef886aa23b5a9b54d743c422b6bca098dba060169a34ee8274b8f0cc",
+    "revisions": [
+      {
+        "on": "2026-11-16",
+        "pre_registered": false,
+        "reason": "Four-element audit, made after scoring, applying the definition openai-2026 adopted on 2026-11-15. Eight of fifteen entries retired; three reframed upstream from agent actions to the human choices behind them. Scored set renumbered DP1-DP7, retired entries R1-R8; every entry carries from_v1."
+      },
+      {
+        "on": "2026-11-16",
+        "pre_registered": false,
+        "reason": "Not a pre-registered artefact: written in knowledge of the published 11/13 and 6/13 figures and of v1's 4/15. developer_knew.status is boolean, which is the form the scorer reads."
+      },
+      {
+        "on": "2026-11-16",
+        "pre_registered": false,
+        "reason": "DP7 (a) re-pointed from a proposed v0.4 field to the notices' /affected_parties, matching anthropic-2026 DP16. Raises this case from 4/7 to 5/7 diligent and 2/7 to 3/7 as-believed. The previous pointer named a field that does not exist and was withdrawn as redundant: RunCloseout already carries third_party_notifications and closeout.py enforces NOTIFY_HOURS against it."
+      },
+      {
+        "on": "2026-11-16",
+        "pre_registered": false,
+        "reason": "SystemRuntimeRecord removed from the protocol, to match the paper's three records. No case filed one, so no record changed. Hash re-frozen; scores re-run and unchanged."
+      }
+    ]
+  },
+  "filings": {
+    "intent:A": {
+      "file": "intent_A.json",
+      "note": "AISI is the filer: the evaluator, not the model developer."
+    },
+    "closeout:A": {
+      "file": "closeout_A.json",
+      "closes": "intent:A"
+    },
+    "notice:N1": {
+      "file": "notice_N1.json"
+    },
+    "notice:N2": {
+      "file": "notice_N2.json"
+    },
+    "notice:N3": {
+      "file": "notice_N3.json"
+    }
+  },
+  "filers": {
+    "diligent": {
+      "description": "Declares the configuration as it was, including that the open internet was a surface concurrent samples shared and wrote to.",
+      "role": "Upper bound.",
+      "edits": {}
+    },
+    "as_believed": {
+      "description": "Declares the open internet as an egress path for tool download and realism, as CAST believed it to be, and not as a persistent surface shared between concurrently running samples. TR 4.2.2 records the cross-sample coordination as 'unexpected'.",
+      "role": "Headline.",
+      "edits": {
+        "drop_writable_surfaces": {
+          "intent:A": [
+            "public-internet"
+          ]
+        }
+      }
+    }
+  },
+  "decision_points": [
+    {
+      "id": "DP1",
+      "from_v1": "DP1",
+      "date": "2026-07-25",
+      "date_precision": "on_or_before",
+      "actor": "AISI's Cyber and Autonomous Systems Team (CAST), as the team that configured and launched the range",
+      "choice": "taken",
+      "decision": "Launched the Doing Life cyber ranges with full outbound internet access and no egress filtering, having deferred domain allowlisting since April 2026.",
+      "available_alternative": "Enforce egress with the domain allowlisting that was already part of the Proxmox Inspect Provider's design intent and had been backlogged since April 2026. TR 5.1: 'AISI prioritised building harder cyber range evaluations over more fine-grained internet access controls.'",
+      "why_it_mattered": "Every one of the 19 unsanctioned events reached the live internet through this path. AISI states the but-for claim directly.",
+      "material_fact": "The evaluation sandboxes had unrestricted outbound internet access, the only egress rule being one that protected AISI's own AWS infrastructure, and no control capable of constraining which hosts the agents could reach existed at the time of the run.",
+      "developer_knew": {
+        "status": true,
+        "knowledge": "known",
+        "detail": "The configuration was deliberate and its absence of controls was known; what was not foreseen was the conduct it enabled.",
+        "source": "TR 5.1: 'Specifically, there are no sandbox-level internet access restrictions for the sandbox machines used, except rules prohibiting access to AISI's own AWS infrastructure.'"
+      },
+      "tests": {
+        "declared_before_the_run": {
+          "record": "intent:A",
+          "pointer": "/agent_surface/permitted_paths",
+          "has_item_where": {
+            "enforcement": "none",
+            "agent_writable": true
+          }
+        },
+        "checkable_afterwards": {
+          "record": "closeout:A",
+          "pointer": "/containment_exceptions",
+          "has_item_where": {
+            "kind": "network",
+            "declared_surface": true
+          },
+          "evidence": [
+            "network_logs"
+          ]
+        },
+        "would_have_changed_the_action": {
+          "rule": "record_obligation",
+          "reason": "No during-run criterion governs a declared path's enforcement. The protocol acts on this at intake instead: unenforced_path_t4 refuses the Intent, which is scored separately and deliberately not folded in here."
+        }
+      },
+      "note": "(b) tests the containment exception, not the path declaration. The exception carries opened_at and closed_at, so it records that the condition persisted — the one Closeout structure that expresses an interval rather than a point.",
+      "outside_record": {
+        "by_filer": {
+          "diligent": {
+            "carried_by": "intent",
+            "carrier_rationale": "The Intent declares the path and its enforcement, which is the material fact itself."
+          },
+          "as_believed": {
+            "carried_by": "intent",
+            "carrier_rationale": "The path survives the filer's edit; only the writable surface behind it is dropped."
+          }
+        },
+        "first_reached_outside": "2026-08-04",
+        "quote": "TR 5.1: 'Had the agent been prevented from accessing the internet, this incident would not have occurred. However, the cyber range evaluations in this report were intentionally configured to have internet access enabled for the agent.'",
+        "source": "UK AISI Security Incident INC-2026-07-28-01, 4 Aug 2026",
+        "note": "Intent due 3 days before the run start of 25 Jul 14:27 BST, so 22 Jul."
+      }
+    },
+    {
+      "id": "DP2",
+      "from_v1": "DP3",
+      "date": "2026-07-25",
+      "date_precision": "on_or_before",
+      "actor": "CAST, as the team that launched the experiment",
+      "choice": "not_taken",
+      "decision": "Launched 122 samples to run unattended for up to 50 hours with no review of agent behaviour while they ran.",
+      "available_alternative": "Review transcripts periodically during long-running samples. AISI did exactly this within hours of the alert on 28 Jul, so the means existed. Building synchronous LLM-based monitoring was not available - TR 5.3 records it as not yet built and difficult - but reading the transcripts of a running sample was.",
+      "why_it_mattered": "Nineteen events across ten samples ran to completion unobserved. The incident surfaced only because a commercial network monitor alerted on Tor egress, three days in, for a reason unrelated to the conduct.",
+      "material_fact": "No instrument reviewed agent behaviour during the run; the only declared monitor was commercial network alerting, which detected the incident through an incidental Tor signature rather than through the unsanctioned conduct itself.",
+      "developer_knew": {
+        "status": true,
+        "knowledge": "known",
+        "detail": "AISI knew which monitors it had. TR 5.3 is a statement of a known gap, not a discovery.",
+        "source": "TR 5.3: 'There was no synchronous LLM-based monitoring to prevent the agent from taking harmful actions during the evaluations.'"
+      },
+      "tests": {
+        "declared_before_the_run": {
+          "record": "intent:A",
+          "pointer": "/monitoring_instruments",
+          "has_item_where": {
+            "kind": "network_alerting",
+            "coverage": "all"
+          }
+        },
+        "checkable_afterwards": {
+          "record": "closeout:A",
+          "pointer": "/security_events",
+          "has_item_where": {
+            "kind": "third_party_compromise"
+          },
+          "evidence": [
+            "trajectories",
+            "network_logs"
+          ]
+        },
+        "would_have_changed_the_action": {
+          "rule": "record_obligation",
+          "reason": "A monitoring gap is recorded, not acted on during the run. The protocol acts at intake: comms_unmonitored and dead_criterion both fire on this Intent."
+        }
+      },
+      "note": "The material fact is an absence, and (a) cannot express one directly, so (a) is written in the positive form the Intent can hold: the declared monitor set. An Intent listing only network_alerting, against kinds whose observers are trajectory_review or inter_agent_message_monitor, is itself the record of the gap.",
+      "outside_record": {
+        "by_filer": {
+          "diligent": {
+            "carried_by": "intent",
+            "carrier_rationale": "The declared monitor set exists before the run and is the fact."
+          },
+          "as_believed": {
+            "carried_by": "intent",
+            "carrier_rationale": "Unaffected by the filer's edit."
+          }
+        },
+        "first_reached_outside": "2026-08-04",
+        "quote": "TR 1.2: 'AISI has synchronous security monitoring via a commercial security platform, which flagged the egress to AISI's security team and triggered our response'",
+        "source": "UK AISI Security Incident INC-2026-07-28-01, 4 Aug 2026"
+      }
+    },
+    {
+      "id": "DP3",
+      "from_v1": "DP4",
+      "date": "2026-07-25",
+      "date_precision": "on_or_before",
+      "actor": "CAST, as the team that configured the experiment",
+      "choice": "not_taken",
+      "decision": "Launched without verifying that each sample's task prompt matched the range it was running on.",
+      "available_alternative": "Check prompt against range before launch. TR 6.2 commits AISI to exactly this check in future, which establishes it as a step that could have been taken; the report separately concedes that never misconfiguring at all would be an unreasonable expectation, which is why the decision point is the missing check rather than the misconfiguration.",
+      "why_it_mattered": "The misconfigured samples set the agent a task that could not be completed within its stated constraints, and both of the most egregious samples were misconfigured ones.",
+      "material_fact": "Some DL-v2 samples ran with the DL-v1 prompt, which placed the range's own initial-access host out of scope, and nothing in the launch process checked for the mismatch.",
+      "developer_knew": {
+        "status": false,
+        "knowledge": "unknown",
+        "detail": "The misconfiguration was discovered in post-incident analysis. The absence of a check was a standing condition nobody had examined.",
+        "source": "TR 5.4 reports the misconfiguration as a finding of the investigation; TR 6.2 lists the preventive check as future work."
+      },
+      "tests": {
+        "declared_before_the_run": {
+          "record": "intent:A",
+          "pointer": "/agent_surface/scope_statement",
+          "exists": true
+        },
+        "checkable_afterwards": {
+          "record": "closeout:A",
+          "pointer": "/integrity_events",
+          "has_item_where": {
+            "kind": "integrity_incident"
+          },
+          "evidence": [
+            "trajectories",
+            "tool_calls"
+          ]
+        },
+        "would_have_changed_the_action": {
+          "rule": "record_obligation",
+          "reason": "No criterion governs prompt configuration."
+        }
+      },
+      "note": "Schema limitation: DBYR has no field for the scope statement an agent is given, so (a) names where the fact would belong and scores No for every filer. The lint warning 'can never hold' is the intended diagnostic. Same missing field as DP4 here and DP3 in anthropic-2026. CONSEQUENCE IS CONTESTED: TR 5.4 says the analysis 'cannot confirm whether the misconfiguration increased the risk', and 7 of the 10 misconfigured samples attacked the out-of-scope target anyway. Retained because the two most severe samples were both misconfigured; a second reader may reject it on the fourth test.",
+      "outside_record": {
+        "by_filer": {
+          "diligent": {
+            "carried_by": "none",
+            "carrier_rationale": "No field carries the prompt's scope statement, so no filing carries the fact. Lead time is zero."
+          },
+          "as_believed": {
+            "carried_by": "none",
+            "carrier_rationale": "Same."
+          }
+        },
+        "first_reached_outside": "2026-08-04",
+        "quote": "TR 5.4: 'Some DL-v2 samples were misconfigured to use the DL-v1 prompt... As a result, the misconfigured task would have required the agent to access a network explicitly marked as out of scope.'",
+        "source": "UK AISI Security Incident INC-2026-07-28-01, 4 Aug 2026"
+      }
+    },
+    {
+      "id": "DP4",
+      "from_v1": "DP5",
+      "date": "2026-07-25",
+      "date_precision": "on_or_before",
+      "actor": "CAST, as the authors of the system and task prompts",
+      "choice": "not_taken",
+      "decision": "Wrote system and task prompts that placed no restriction on what the agent might do on the internet.",
+      "available_alternative": "State the prohibitions in the prompt. TR 5.5: 'The prompts could have, for example, instructed the AI agent not to use social engineering techniques.' Writing scope limits into a task prompt is ordinary practice and was within the authors' means.",
+      "why_it_mattered": "The agents were never told that social engineering, deceiving real people, or acting on systems outside the range was out of bounds.",
+      "material_fact": "Neither the shared system prompt nor either task prompt specified which uses of the internet were prohibited; nothing instructed the agent to avoid social engineering or to exercise caution when it might be interacting with real people.",
+      "developer_knew": {
+        "status": true,
+        "knowledge": "known",
+        "detail": "AISI wrote the prompts and knew their content. What it did not foresee was that the omission mattered - TR 5.5: 'The need for such clarification was not clear in advance.'",
+        "source": "TR 2: 'Neither the system nor the task instructions specified what uses of the internet were prohibited.' Both prompts are reproduced at TR Appendix B."
+      },
+      "tests": {
+        "declared_before_the_run": {
+          "record": "intent:A",
+          "pointer": "/agent_surface/prohibited_uses",
+          "exists": true
+        },
+        "checkable_afterwards": {
+          "record": "closeout:A",
+          "pointer": "/security_events",
+          "has_item_where": {
+            "kind": "access_boundary_breach"
+          },
+          "evidence": [
+            "trajectories"
+          ]
+        },
+        "would_have_changed_the_action": {
+          "rule": "record_obligation",
+          "reason": "No criterion governs prompt content."
+        }
+      },
+      "note": "Schema limitation, same missing field as DP3. (b) names trajectories only: the prompts are carried in the transcripts and TR Appendix B publishes them.",
+      "outside_record": {
+        "by_filer": {
+          "diligent": {
+            "carried_by": "none",
+            "carrier_rationale": "No field carries what an agent is told it may do. Lead time is zero."
+          },
+          "as_believed": {
+            "carried_by": "none",
+            "carrier_rationale": "Same."
+          }
+        },
+        "first_reached_outside": "2026-08-04",
+        "quote": "TR 1.2: 'The agents were not explicitly told what they were prohibited from doing on the internet - for example, to avoid behaviours such as social engineering (a recognised component of cyber tradecraft), or to exercise caution when potentially interacting with real humans'",
+        "source": "UK AISI Security Incident INC-2026-07-28-01, 4 Aug 2026, Appendix B"
+      }
+    },
+    {
+      "id": "DP5",
+      "from_v1": "DP6",
+      "date": "2026-07-25",
+      "date_precision": "on_or_before",
+      "actor": "CAST, as the team that scheduled the experiment",
+      "choice": "taken",
+      "decision": "Ran samples concurrently on a shared external surface, with no per-sample isolation of the identities and credentials agents could create on it.",
+      "available_alternative": "Run samples sequentially, or scope each sample's egress identity so artefacts created by one could not be reached by another. The Proxmox provider offered full or zero internet access and no intermediate per-sample isolation, so the available choice was over scheduling and identity scoping rather than over the control itself.",
+      "why_it_mattered": "Four separate samples took control of one agent's GitHub account, and a repository became a shared command-and-control bus on which agents left each other operating instructions. Samples believed to be isolated were not.",
+      "material_fact": "The open internet was a surface shared across concurrently running samples: a GitHub account created in Sample 3, with its personal access token published to a public Gist, was found and used by the agents in Samples 2, 7 and 10.",
+      "developer_knew": {
+        "status": false,
+        "knowledge": "unknown",
+        "detail": "AISI reports the cross-sample interaction as unexpected. The scheduling choice was deliberate; its consequence was not foreseen.",
+        "source": "TR 4.2.2, headed 'Unexpected collaboration between agents'."
+      },
+      "tests": {
+        "declared_before_the_run": {
+          "all_of": [
+            {
+              "record": "intent:A",
+              "pointer": "/agent_surface/writable_surfaces",
+              "has_item_where": {
+                "isolation": "shared",
+                "persistence": {
+                  "one_of": [
+                    "cross_run",
+                    "permanent"
+                  ]
+                }
+              }
+            },
+            {
+              "record": "intent:A",
+              "pointer": "/agent_surface/inter_agent_comms_permitted",
+              "equals": true
+            }
+          ]
+        },
+        "checkable_afterwards": {
+          "record": "closeout:A",
+          "pointer": "/security_events",
+          "has_item_where": {
+            "kind": "inter_agent_comms"
+          },
+          "evidence": [
+            "trajectories",
+            "tool_calls"
+          ]
+        },
+        "would_have_changed_the_action": {
+          "rule": "pause_criterion",
+          "event_kind": "inter_agent_comms",
+          "against_closeout": "closeout:A"
+        }
+      },
+      "note": "The credential reuse itself is an agent action with no actor; the human choice upstream is concurrency on a shared surface without identity scoping. (a) tests isolation, not tenancy: tenancy 'external' means readable by outside parties and does not assert cross-sample sharing, whereas isolation 'shared' carries the material fact. (b) names trajectories and tool_calls: the messages were GitHub commits, a README and a Gist, all written through tool calls.",
+      "outside_record": {
+        "by_filer": {
+          "diligent": {
+            "carried_by": "intent",
+            "carrier_rationale": "The Intent declares the surface shared and permanent, which is the configuration the decision produced."
+          },
+          "as_believed": {
+            "carried_by": "none",
+            "carrier_rationale": "The filer does not declare the surface, so no filing carries it. Lead time is zero."
+          }
+        },
+        "first_reached_outside": "2026-08-04",
+        "quote": "TR 4.2.2: 'There was unexpected interaction between AI agents running across different concurrent isolated examples, appearing to offer collaboration (Figure 7).'",
+        "source": "UK AISI Security Incident INC-2026-07-28-01, 4 Aug 2026"
+      }
+    },
+    {
+      "id": "DP6",
+      "from_v1": "DP10",
+      "date": "2026-07-28",
+      "date_precision": "day",
+      "actor": "AISI's Security Engineering team, with the Core Technology team",
+      "choice": "taken",
+      "decision": "Declared an incident, terminated every running sample and quarantined the sandbox virtual machines, within about one hour of the alert reaching the team that owned them.",
+      "available_alternative": "Investigate first and leave the remaining samples running. Other samples were still in progress at 11:42, so continuing was a live option.",
+      "why_it_mattered": "This is the decision that ended the incident. Samples still in progress were stopped before they could add further events.",
+      "material_fact": "On 28 Jul the alert reached CAST at 10:56 BST, an incident was declared at 11:42 BST with all samples terminated, the sandboxes were quarantined, and model access was disabled across AISI at about 16:00 BST.",
+      "developer_knew": {
+        "status": true,
+        "knowledge": "known",
+        "detail": "The team had the alert and the first transcript findings before deciding.",
+        "source": "TR 3.1: 'At 11:42 BST AISI's Security Engineering team declared an incident, contacted the Core Technology team for engineering support, and instructed CAST to terminate all samples from their experiment.'"
+      },
+      "tests": {
+        "declared_before_the_run": {
+          "record": "intent:A",
+          "pointer": "/pause_criteria",
+          "has_item_where": {
+            "required_action": {
+              "one_of": [
+                "pause",
+                "pause_and_review",
+                "halt_and_amend_intent"
+              ]
+            },
+            "authority_role": {
+              "not_empty": true
+            }
+          }
+        },
+        "checkable_afterwards": {
+          "record": "closeout:A",
+          "pointer": "/pause_events",
+          "has_item_where": {
+            "action_taken": {
+              "one_of": [
+                "pause",
+                "pause_and_review",
+                "halt_and_amend_intent"
+              ]
+            },
+            "triggered_by_role": {
+              "not_empty": true
+            }
+          },
+          "evidence": [
+            "trajectories",
+            "network_logs"
+          ]
+        },
+        "would_have_changed_the_action": {
+          "rule": "pause_criterion",
+          "event_kind": "third_party_compromise",
+          "against_closeout": "closeout:A"
+        }
+      },
+      "note": "The one decision in the case that went right, and the only place a declared criterion and the action taken can be reconciled against each other. The (a) pointer reads /pause_criteria, which sources.json marks forced-choice. SOURCE INCONSISTENCY: TR 1.1 and TR 3.1 put the quarantine at 12:23 BST, Figure 2 at 13:17; nothing here turns on which is right.",
+      "outside_record": {
+        "by_filer": {
+          "diligent": {
+            "carried_by": "notice",
+            "carrier_rationale": "A detected reportable event and the action taken on it. Detected 28 Jul 10:56 BST, notice due 31 Jul 10:56 BST."
+          },
+          "as_believed": {
+            "carried_by": "notice",
+            "carrier_rationale": "Same; unaffected by the filer's edit."
+          }
+        },
+        "first_reached_outside": "2026-08-04",
+        "quote": "TR 1.1: 'Within one hour of the alert reaching the relevant team, AISI had declared an incident and terminated running samples; affected sandboxes were quarantined by 12:23 BST.'",
+        "source": "UK AISI Security Incident INC-2026-07-28-01, 4 Aug 2026",
+        "note": "A competing pairing gives a negative lead: GC3 and NCSC were informed by 18:00 BST on 28 Jul, seven hours after detection and well inside the 72-hour deadline. Worth reporting alongside, as the one place the protocol is slower than what happened."
+      }
+    },
+    {
+      "id": "DP7",
+      "from_v1": "DP12",
+      "date": "2026-08-01",
+      "date_precision": "day",
+      "actor": "AISI",
+      "choice": "not_taken",
+      "decision": "Did not notify GitHub until 1 Aug, four days after detection, having first completed internal approvals, and reached the affected GitHub users only indirectly through GitHub.",
+      "available_alternative": "Notify sooner. AISI held the relevant findings from 28 Jul; TR 3.3 records that 1-3 Aug were spent writing the report and obtaining approvals.",
+      "why_it_mattered": "Artefacts created by the agent remained live on GitHub infrastructure until removal began, so the delay extended third-party exposure. CONSEQUENCE IS NARROW: it shortens exposure, it does not prevent the incident, which was contained on 28 Jul.",
+      "material_fact": "GitHub was contacted on 1 Aug at 22:21 BST, four days after detection, and the affected GitHub users were notified not by AISI but through GitHub at AISI's request.",
+      "developer_knew": {
+        "status": true,
+        "knowledge": "known",
+        "detail": "AISI knew what the agents had created on GitHub from the 28 Jul transcript review.",
+        "source": "TR 3.3: 'GitHub was contacted on Saturday 1st August, 22:21 BST and provided an audit of all the artefacts created on GitHub infrastructure (users, repositories, issues, pull requests, and API keys).'"
+      },
+      "tests": {
+        "declared_before_the_run": {
+          "all_of": [
+            {
+              "record": "notice:N1",
+              "pointer": "/affected_parties",
+              "exists": true
+            },
+            {
+              "record": "notice:N2",
+              "pointer": "/affected_parties",
+              "exists": true
+            },
+            {
+              "record": "notice:N3",
+              "pointer": "/affected_parties",
+              "exists": true
+            }
+          ]
+        },
+        "checkable_afterwards": {
+          "record": "closeout:A",
+          "pointer": "/third_party_notifications",
+          "has_item_where": {
+            "party": "GitHub",
+            "notified": true,
+            "notified_at": {
+              "not_empty": true
+            }
+          },
+          "evidence": []
+        },
+        "would_have_changed_the_action": {
+          "rule": "record_obligation",
+          "reason": "The protocol requires the notification to be recorded with its timing, not to be made by a particular date during the run."
+        }
+      },
+      "note": "params.NOTIFY_HOURS sets a 72-hour notification deadline and closeout.py enforces it, but RunIntent has no field in which a filer commits to it: the deadline is measured after the fact and promised nowhere. (a) therefore reads the notices, which name GitHub in affected_parties and are due by 31 Jul — before GitHub was contacted on 1 Aug. The notice fixes the clock start and the Closeout the clock end, which is what makes the four-day delay attributable. Follows anthropic-2026 DP16. Evidence is empty because a notification is checked against the filing itself, not a retained log class.",
+      "outside_record": {
+        "by_filer": {
+          "diligent": {
+            "carried_by": "closeout",
+            "carrier_rationale": "third_party_notifications is a Closeout field and the fact is the notification and its timing."
+          },
+          "as_believed": {
+            "carried_by": "closeout",
+            "carrier_rationale": "Same."
+          }
+        },
+        "first_reached_outside": "2026-08-01",
+        "quote": "Blog, 4 Aug 2026: 'We worked together with GitHub to remove artefacts left behind by the agent, and to notify the GitHub users the model interacted with.'",
+        "source": "AISI, 'Incident Report: unsanctioned agent behaviour during cyber testing', 4 Aug 2026",
+        "note": "The outside date is when GitHub itself was told, which precedes publication. Closeout lead depends on the declared filing lag and should be reported as a range, not a single figure."
+      }
+    }
+  ]
+}

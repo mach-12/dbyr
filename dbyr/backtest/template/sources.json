@@ -1,0 +1,20 @@
+{
+  "_about": "Provenance of every reconstructed value, keyed by file and then by JSON pointer. 'first-party' = stated in a file in sources/ (cite it). 'forced-choice' = the sources record no value or decision, but a filing would have had to state one; give the value a cautious filer would declare and say why. 'placeholder' = not public; the value exists only so the record validates and must never be used in a predicate. Unlisted pointers are structural (ids, record types, schema version, labels). In this template every value is invented (Lab X), so the entries below only show the format.",
+  "_case_wide": {
+    "filer": "placeholder: synthetic lab",
+    "unit_of_filing": "forced-choice: one Intent and one Closeout for the single evaluation run"
+  },
+  "intent_A.json": {
+    "/run_kind": "first-party: <source file, date>: '<quoted sentence that states it>'",
+    "/filed_at": "forced-choice: 5 days before the start (the minimum for intake review is 3)",
+    "/compute_band": "placeholder: not public",
+    "/agent_surface/permitted_paths/0": "first-party: <source>: the allowlist proxy and its GET-only rule"
+  },
+  "closeout_A.json": {
+    "/security_events/0": "first-party: <source>: the escape, when it happened and when it was detected",
+    "/third_party_notifications/0": "first-party: <source>: who was told, when and how"
+  },
+  "notice_N1.json": {
+    "/filed_at": "forced-choice: within the 72-hour notice window; the sources do not date the notice"
+  }
+}

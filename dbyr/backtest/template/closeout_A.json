@@ -1,0 +1,151 @@
+{
+  "schema_version": "0.1.0",
+  "record_type": "RunCloseout",
+  "run_id": "s2-cyber-eval",
+  "filed_at": "2026-09-14T12:00:00Z",
+  "period_start": "2026-09-01",
+  "period_end": "2026-09-14",
+  "status": "completed",
+  "attested_absence": false,
+  "security_events": [
+    {
+      "event_id": "E1",
+      "at": "2026-09-05T03:00:00Z",
+      "detected_at": "2026-09-05T04:00:00Z",
+      "kind": "sandbox_escape",
+      "description": "POST to an allowlisted host via request smuggling",
+      "evidence": [
+        "network_logs",
+        "trajectories"
+      ],
+      "affected_parties": [
+        "Example Hosting Ltd"
+      ],
+      "classification_rationale": "traffic left the sandbox by a route the topology does not permit; no credentials were misused and no external system was altered"
+    }
+  ],
+  "pause_events": [
+    {
+      "criterion_id": "C-escape",
+      "triggering_event_ids": [
+        "E1"
+      ],
+      "triggered_at": "2026-09-05T04:30:00Z",
+      "triggered_by_role": "R-safe",
+      "action_taken": "pause_and_review",
+      "restart": {
+        "approved_by_role": "R-review",
+        "approved_at": "2026-09-07T10:00:00Z",
+        "evidence": [
+          "smuggling vector closed at proxy"
+        ],
+        "intent_amended": true
+      }
+    }
+  ],
+  "containment_exceptions": [
+    {
+      "exception_id": "X1",
+      "surface_id": "web-ro",
+      "declared_surface": false,
+      "kind": "network",
+      "opened_at": "2026-09-05T03:00:00Z",
+      "closed_at": "2026-09-07T10:00:00Z",
+      "status": "closed"
+    }
+  ],
+  "logs_preserved_pct": 99.5,
+  "logs_retention_confirmed": true,
+  "scope_requested_vs_granted": [
+    {
+      "investigator": "External evaluator",
+      "requested": {
+        "start": "2026-09-01",
+        "end": "2026-09-14"
+      },
+      "granted": {
+        "start": "2026-09-01",
+        "end": "2026-09-14"
+      },
+      "model_access_granted": true,
+      "refusals": []
+    }
+  ],
+  "third_party_notifications": [
+    {
+      "party": "Example Hosting Ltd",
+      "affected_by": [
+        "E1"
+      ],
+      "notified": true,
+      "notified_at": "2026-09-05T20:00:00Z",
+      "channel": "security contact"
+    }
+  ],
+  "notice_ids": [
+    "N1"
+  ],
+  "signer": {
+    "role_id": "R-lead",
+    "organisation": "Lab X (synthetic)"
+  },
+  "integrity_events": [],
+  "internal_incidents": [
+    {
+      "incident_id": "INC-1",
+      "opened_at": "2026-09-05T04:10:00Z",
+      "closed_at": "2026-09-07T10:00:00Z",
+      "summary": "sandbox escape via request smuggling",
+      "event_ids": [
+        "E1"
+      ]
+    }
+  ],
+  "config_changes": [
+    {
+      "at": "2026-09-07T09:00:00Z",
+      "what": "request-smuggling vector closed at the proxy",
+      "intent_amended": true
+    }
+  ],
+  "surface_resets": [],
+  "preservation": [
+    {
+      "evidence_class": "trajectories",
+      "denominator": "all records generated in the period",
+      "sample_rate": 1.0,
+      "preserved_pct": 99.5
+    },
+    {
+      "evidence_class": "chain_of_thought",
+      "denominator": "all records generated in the period",
+      "sample_rate": 1.0,
+      "preserved_pct": 99.5
+    },
+    {
+      "evidence_class": "tool_calls",
+      "denominator": "all records generated in the period",
+      "sample_rate": 1.0,
+      "preserved_pct": 99.5
+    },
+    {
+      "evidence_class": "network_logs",
+      "denominator": "all records generated in the period",
+      "sample_rate": 1.0,
+      "preserved_pct": 99.5
+    },
+    {
+      "evidence_class": "access_logs",
+      "denominator": "all records generated in the period",
+      "sample_rate": 1.0,
+      "preserved_pct": 99.5
+    },
+    {
+      "evidence_class": "inter_agent_messages",
+      "denominator": "all records generated in the period",
+      "sample_rate": 1.0,
+      "preserved_pct": 99.5
+    }
+  ],
+  "cleared_for_system_integration": true
+}

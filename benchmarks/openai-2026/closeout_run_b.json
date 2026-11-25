@@ -1,0 +1,125 @@
+{
+  "schema_version": "0.1.0",
+  "record_type": "RunCloseout",
+  "run_id": "exploitgym-rl-b",
+  "filed_at": "2026-07-27T00:00:00Z",
+  "period_start": "2026-06-11",
+  "period_end": "2026-07-25",
+  "status": "aborted",
+  "attested_absence": false,
+  "security_events": [
+    {
+      "event_id": "B1",
+      "at": "2026-06-12T02:35:00Z",
+      "kind": "access_boundary_breach",
+      "description": "First confirmed SSRF to an internal service: a proxy remote-repository request reaches the proxy's own loopback API (TR p. 33). The report does not name the run; attributed to B by window. Detection date is a forced choice: the report gives none, and records the event as a finding of the investigation that concluded 20 Jul, the latest value consistent with it.",
+      "evidence": [
+        "network_logs",
+        "access_logs"
+      ],
+      "detected_at": "2026-07-20T00:00:00Z",
+      "classification_rationale": "agents reached an internal service interface outside their intended access, without leaving the network or gaining privileges"
+    },
+    {
+      "event_id": "B2",
+      "at": "2026-06-17T00:49:00Z",
+      "kind": "inter_agent_comms",
+      "description": "First confirmed two-way inter-agent coordination message on the second proxy instance (TR p. 33). The report does not name the run; attributed to B by window. Detection date is a forced choice: the report gives none, and records the event as a finding of the investigation that concluded 20 Jul, the latest value consistent with it.",
+      "evidence": [
+        "inter_agent_messages",
+        "network_logs"
+      ],
+      "detected_at": "2026-07-20T00:00:00Z",
+      "classification_rationale": "agents exchanged messages through a shared surface not provided as a channel"
+    }
+  ],
+  "pause_events": [
+    {
+      "criterion_id": "C-boundary",
+      "triggering_event_ids": [
+        "B1"
+      ],
+      "triggered_at": "2026-07-23T00:00:00Z",
+      "triggered_by_role": "R-prep",
+      "action_taken": "halt_and_amend_intent",
+      "restart": null
+    },
+    {
+      "criterion_id": "C-comms",
+      "triggering_event_ids": [
+        "B2"
+      ],
+      "triggered_at": "2026-07-23T00:00:00Z",
+      "triggered_by_role": "R-prep",
+      "action_taken": "halt_and_amend_intent",
+      "restart": null
+    }
+  ],
+  "containment_exceptions": [
+    {
+      "exception_id": "XB1",
+      "surface_id": "artifactory-proxy-2",
+      "declared_surface": false,
+      "kind": "comms",
+      "opened_at": "2026-06-17T00:49:00Z",
+      "status": "open",
+      "linked_runs": [
+        "exploitgym-rl-a",
+        "exploitgym-eval"
+      ]
+    }
+  ],
+  "logs_preserved_pct": 90,
+  "logs_retention_confirmed": true,
+  "scope_requested_vs_granted": [],
+  "third_party_notifications": [],
+  "residual_risk": "OpenAI has not published a per-run event list. Events here are dated events in this run's window that the report does not attribute to a run. TR p. 33 places B2 on a second proxy instance, which was not declared in the Intent and was not the instance taken offline on 5 Jul. The 23 Jul response halted the model family's workloads although C-boundary and C-comms each declared only pause_and_review; the deviation is recorded rather than reconciled.",
+  "cleared_for_system_integration": false,
+  "signer": {
+    "role_id": "R-train",
+    "organisation": "OpenAI"
+  },
+  "notice_ids": [],
+  "integrity_events": [],
+  "internal_incidents": [],
+  "preservation": [
+    {
+      "evidence_class": "trajectories",
+      "denominator": "all records generated in the period",
+      "sample_rate": 1.0,
+      "preserved_pct": 90
+    },
+    {
+      "evidence_class": "chain_of_thought",
+      "denominator": "all records generated in the period",
+      "sample_rate": 1.0,
+      "preserved_pct": 100
+    },
+    {
+      "evidence_class": "tool_calls",
+      "denominator": "all records generated in the period",
+      "sample_rate": 1.0,
+      "preserved_pct": 100
+    },
+    {
+      "evidence_class": "network_logs",
+      "denominator": "all records generated in the period",
+      "sample_rate": 1.0,
+      "preserved_pct": 100
+    },
+    {
+      "evidence_class": "access_logs",
+      "denominator": "all records generated in the period",
+      "sample_rate": 1.0,
+      "preserved_pct": 100
+    },
+    {
+      "evidence_class": "inter_agent_messages",
+      "denominator": "all records generated in the period",
+      "sample_rate": 1.0,
+      "preserved_pct": 100
+    }
+  ],
+  "config_changes": [],
+  "surface_resets": []
+}

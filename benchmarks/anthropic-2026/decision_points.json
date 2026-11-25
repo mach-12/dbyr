@@ -1,0 +1,615 @@
+{
+  "case_id": "anthropic-2026",
+  "in_sample": false,
+  "freeze": {
+    "schema_hash": "sha256:453f10b8ef886aa23b5a9b54d743c422b6bca098dba060169a34ee8274b8f0cc",
+    "derived_from": "decision_points.json",
+    "revisions": [
+      {
+        "on": "2026-11-13",
+        "pre_registered": false,
+        "reason": "Derived from decision_points.json. Dropped DP1 as the evaluation's premise rather than a decision; folded DP6, DP8, DP10 and DP12 into DP4 as four consequences of one omission; retargeted the (b) tests of DP3, DP5 and DP9 off a generic third_party_compromise test shared by five points onto the record each decision's own consequence would produce. Surviving decision, why_it_mattered, material_fact, developer_knew and outside_record text is verbatim from the source."
+      },
+      {
+        "on": "2026-11-16",
+        "pre_registered": false,
+        "reason": "Second pass, derived from the reports rather than by pruning the source list. Retired DP17 on the consequence test, matching the retirement of its analogue in PAPER/uk_aisi_dp.md. Re-grounded DP15 on continued exposure rather than on discovery, which is the line that separates AISI's DP7 from its R6. Added DP19, the 23 Jul halt: it was v1 DP14, had been dropped, and both sibling cases carry their equivalent - without it this case had one response-phase point against AISI's two and openai-2026's three. Recorded two further decisions the consequence test excludes (the disclosure timetable and the 31 Aug resumption) in 'dropped', so the exclusions are visible rather than silent."
+      },
+      {
+        "on": "2026-11-16",
+        "pre_registered": false,
+        "reason": "SystemRuntimeRecord removed from the protocol, to match the paper's three records. Its schema, rules module and protocol stage are gone, and system_id is no longer an alternative owner on ExceptionNotice or RunCloseout, so run_id is now required on both. No case in this repository filed one, so no record changed. Frozen hash updated from sha256:5d7ed0105e75a8cea3729adc4af8b78f45f9a6cee212e31b1ffe3bd567c348f8 to sha256:453f10b8ef886aa23b5a9b54d743c422b6bca098dba060169a34ee8274b8f0cc; scores re-run and unchanged."
+      }
+    ]
+  },
+  "filings": {
+    "intent:A": {
+      "file": "intent_run_a.json",
+      "note": "Claude Opus 4.7 evaluation: incident 1 of the 30 Jul report, four runs."
+    },
+    "closeout:A": {
+      "file": "closeout_run_a.json",
+      "closes": "intent:A",
+      "note": "The only Closeout for run A; filed 30 Jul, after the review that found the events."
+    },
+    "notice:N1": {
+      "file": "notice_n1.json",
+      "note": "Run A, events identified 24 Jul."
+    },
+    "intent:B": {
+      "file": "intent_run_b.json",
+      "note": "Claude Mythos 5 evaluation: incident 2 of the 30 Jul report, the PyPI run of 18 Jul."
+    },
+    "closeout:B": {
+      "file": "closeout_run_b.json",
+      "closes": "intent:B",
+      "note": "The only Closeout for run B; filed 30 Jul, after the review that found the events."
+    },
+    "notice:N2": {
+      "file": "notice_n2.json",
+      "note": "Run B, events identified 24 Jul."
+    },
+    "intent:C": {
+      "file": "intent_run_c.json",
+      "note": "Internal research model evaluation: incident 3 of the 30 Jul report."
+    },
+    "closeout:C": {
+      "file": "closeout_run_c.json",
+      "closes": "intent:C",
+      "note": "The only Closeout for run C; filed 30 Jul, after the review that found the events."
+    },
+    "notice:N3": {
+      "file": "notice_n3.json",
+      "note": "Run C, events identified 24 Jul."
+    },
+    "intent:D": {
+      "file": "intent_run_d.json",
+      "note": "Early Claude Opus 4.6 checkpoint evaluation, January 2026: the fourth incident, disclosed 9 Sep."
+    },
+    "closeout:D": {
+      "file": "closeout_run_d.json",
+      "closes": "intent:D",
+      "note": "The only Closeout for run D; filed 9 Sep, after the August discovery."
+    },
+    "notice:N4": {
+      "file": "notice_n4.json",
+      "note": "Run D, event identified in August."
+    }
+  },
+  "filers": {
+    "diligent": {
+      "description": "Declares the configuration as it was: every partner environment had a live route to the public internet, and the public internet was a surface agents could write to.",
+      "role": "Upper bound.",
+      "edits": {}
+    },
+    "as_believed": {
+      "description": "Declares what Anthropic and its partner believed until 23 Jul 2026: sealed environments with no internet route. Belief sourced to R1, 'What happened', which says neither party knew of the misconfiguration until the July review.",
+      "role": "Headline.",
+      "edits": {
+        "drop_paths": {
+          "intent:A": [
+            "internet-egress"
+          ],
+          "intent:B": [
+            "internet-egress"
+          ],
+          "intent:C": [
+            "internet-egress"
+          ],
+          "intent:D": [
+            "internet-egress"
+          ]
+        },
+        "drop_writable_surfaces": {
+          "intent:A": [
+            "public-internet"
+          ],
+          "intent:B": [
+            "public-internet"
+          ],
+          "intent:C": [
+            "public-internet"
+          ],
+          "intent:D": [
+            "public-internet"
+          ]
+        }
+      }
+    }
+  },
+  "decision_points": [
+    {
+      "id": "DP2",
+      "date": "2026-01-01",
+      "actor": "Anthropic and its evaluation partner",
+      "decision": "Started the evaluations in the partner's environment without checking every route from it to the internet.",
+      "why_it_mattered": "A misconfiguration left the environment's machines with live internet access, and every one of the four incidents ran through it.",
+      "material_fact": "Machines in the partner's evaluation environment could reach the public internet.",
+      "developer_knew": {
+        "status": false,
+        "source": "R1, 'What happened': neither Anthropic nor the partner knew of the misconfiguration until the review in the week of 23 Jul; the same section says validating the internet paths beforehand would have helped. Paraphrase."
+      },
+      "tests": {
+        "declared_before_the_run": {
+          "all_of": [
+            {
+              "record": "intent:A",
+              "pointer": "/agent_surface/permitted_paths",
+              "has_item_where": {
+                "path_id": "internet-egress"
+              }
+            },
+            {
+              "record": "intent:B",
+              "pointer": "/agent_surface/permitted_paths",
+              "has_item_where": {
+                "path_id": "internet-egress"
+              }
+            },
+            {
+              "record": "intent:C",
+              "pointer": "/agent_surface/permitted_paths",
+              "has_item_where": {
+                "path_id": "internet-egress"
+              }
+            },
+            {
+              "record": "intent:D",
+              "pointer": "/agent_surface/permitted_paths",
+              "has_item_where": {
+                "path_id": "internet-egress"
+              }
+            }
+          ]
+        },
+        "checkable_afterwards": {
+          "record": "closeout:B",
+          "pointer": "/containment_exceptions",
+          "has_item_where": {
+            "kind": "network"
+          },
+          "evidence": [
+            "network_logs"
+          ]
+        },
+        "would_have_changed_the_action": {
+          "rule": "record_obligation"
+        }
+      },
+      "note": "Dated to the earliest affected run; month only. The 9 Sep post says the January run used the same egress route as incident 3, which is why the four Intents are tested together. A diligent Intent declaring this path in a safeguards-off run would also have had to state its enforcement, and intake rejects 'none'; the scorer has no rule form for that, so (c) is a record obligation.",
+      "outside_record": {
+        "carried_by": "intent",
+        "carrier_rationale": "permitted_paths states which network routes exist, which is this fact. Only the diligent filer's Intent holds it: the as-believed Intent declares no such path, so for that filer nothing carries the fact before detection and what is on record is wrong.",
+        "first_reached_outside": "2026-07-27",
+        "quote": "Paraphrase: Anthropic notified its evaluation partner and the three affected organisations on Monday 27 Jul.",
+        "source": "R1, introduction",
+        "note": "27 Jul is when the partner was told; the public learned on 30 Jul. The partner ran the environment, so whether it counts as 'outside' is a judgment."
+      },
+      "decision_class": "setup",
+      "live_alternative": "Validate every egress route from the partner environment before launch. AISI's DP1 shows the same control was understood in the field at the time; R2 later makes it a required practice."
+    },
+    {
+      "id": "DP3",
+      "date": "2026-01-01",
+      "actor": "Anthropic",
+      "decision": "Wrote evaluation prompts that told the model it had no internet access and named neither the systems in scope nor any limit on where to look for the flag.",
+      "why_it_mattered": "Models read the real hosts they reached as part of the exercise; Anthropic later said a prompt that set out scope would probably have kept them off the internet.",
+      "material_fact": "The prompt asserted that there was no internet access and set no scope for the exercise.",
+      "developer_knew": {
+        "status": true,
+        "source": "R1, 'What happened', and R3, 'Alignment assessment summary': both describe the prompt as Anthropic's own and say it stated no internet access and set no limits. Paraphrase."
+      },
+      "tests": {
+        "declared_before_the_run": {
+          "record": "intent:B",
+          "pointer": "/agent_surface/scope_statement",
+          "exists": true
+        },
+        "checkable_afterwards": {
+          "record": "closeout:B",
+          "pointer": "/security_events",
+          "has_item_where": {
+            "kind": "sandbox_escape"
+          },
+          "evidence": [
+            "trajectories",
+            "chain_of_thought"
+          ]
+        },
+        "would_have_changed_the_action": {
+          "rule": "record_obligation"
+        }
+      },
+      "note": "Schema 0.1.0 has no field for what the agent is told about scope. The pointer names where the fact would belong; it does not exist, reads as missing, and so (a) is 'No' for every filer. This is registered as a gap in the protocol, on purpose. Footnote 1 of the 9 Sep post qualifies the sentence on scope and had not been read when this was written. Dated to the earliest affected run; month only.",
+      "outside_record": {
+        "carried_by": "none",
+        "carrier_rationale": "No filing has a field for the instructions given to the agent, so none would have carried this.",
+        "first_reached_outside": "2026-07-30",
+        "quote": "Paraphrase: the evaluation prompt said Claude had no internet access but gave it no limits on where to look for the flag.",
+        "source": "R1, 'What happened'"
+      },
+      "decision_class": "setup",
+      "live_alternative": "State in the prompt which systems are in scope and where the agent may look. R2 later requires exactly this, and R3 says it would probably have kept the models off the internet.",
+      "checkable_after_revised": "Was: a generic third_party_compromise exists test, shared with four other points. The consequence of an unscoped prompt is the agent leaving the intended scope, which is the sandbox_escape event; the chain of thought is where an auditor would see it reason about scope."
+    },
+    {
+      "id": "DP4",
+      "date": "2026-01-01",
+      "actor": "Anthropic",
+      "decision": "Relied on automated review of a sample of transcripts after the fact, with no live monitoring of these evaluations' transcripts or network activity.",
+      "why_it_mattered": "The runs went unseen for between five days and about six months; Anthropic said live monitoring of the evaluation logs would have surfaced the problem sooner.",
+      "material_fact": "Transcripts from these evaluations were reviewed by sample after the fact, and nothing watched their network activity as they ran.",
+      "developer_knew": {
+        "status": true,
+        "source": "R2, 'Hardening security practices', closing paragraphs: says some high-risk evaluations were monitored live but in general only a sample of transcripts was reviewed automatically afterwards, and that evaluations were what the monitoring work missed. Paraphrase."
+      },
+      "tests": {
+        "declared_before_the_run": {
+          "record": "intent:A",
+          "pointer": "/monitoring_instruments",
+          "has_item_where": {
+            "kind": "trajectory_review",
+            "coverage": "sampled"
+          }
+        },
+        "checkable_afterwards": {
+          "record": "closeout:A",
+          "pointer": "/absence_basis",
+          "exists": true,
+          "evidence": [
+            "trajectories"
+          ]
+        },
+        "would_have_changed_the_action": {
+          "rule": "record_obligation"
+        }
+      },
+      "note": "The source describes Anthropic's practice in general, not run by run, so applying it to these four evaluations is an inference. Run A is tested because a Closeout filed when it completed, months before anything was detected, would show an absence of events resting on sampled review. Under the case's one-Closeout-per-run construction no such Closeout exists, so (b) cannot hold; that follows from the construction, and the test is left unchanged. Dated to the earliest affected run; month only.",
+      "outside_record": {
+        "carried_by": "intent",
+        "carrier_rationale": "monitoring_instruments states each monitor's kind and coverage. That answers what watched the run, which is the fact.",
+        "first_reached_outside": "2026-08-31",
+        "quote": "Paraphrase: Anthropic generally ran automated reviews on only a sample of evaluation transcripts, after the fact.",
+        "source": "R2, 'Hardening security practices'",
+        "rejected_pairings": [
+          {
+            "date": "2026-07-30",
+            "source": "R1, 'What happened'",
+            "rejection_rationale": "Says live monitoring and fuller review of transcripts and network logs would have helped, which implies they were missing, but does not say what monitoring actually ran."
+          }
+        ]
+      },
+      "decision_class": "setup",
+      "live_alternative": "Review transcripts and network activity while the run is live. Costs the evaluation nothing, because it constrains the operator rather than the model.",
+      "consequences": [
+        {
+          "was": "DP6",
+          "decision": "No one was watching when the model took administrator access on a third party's machine; the run continued until its token budget ran out."
+        },
+        {
+          "was": "DP8",
+          "decision": "No one was watching when the model broke into the real company; four runs of the same evaluation each attacked it."
+        },
+        {
+          "was": "DP10",
+          "decision": "No one was watching when the model scanned about 9,000 internet hosts and broke into neighbouring hosts and their cloud accounts; it stopped on its own."
+        },
+        {
+          "was": "DP12",
+          "decision": "No one was watching run B on 18 Jul as the model reached public internet hosts, registered a PyPI account under a throwaway identity, published a malicious package, and used credentials the package leaked to enter a security vendor's live database."
+        }
+      ],
+      "review": "DBYR has no predicate for the DETECTION LAG, which is this decision's real consequence - the gap between an event's 'at' and its 'detected_at'. The test below can only confirm that a detected_at exists for an auditor to compute the gap from. The missing predicate is itself a finding."
+    },
+    {
+      "id": "DP5",
+      "date": "2026-01-01",
+      "actor": "not named in the record",
+      "decision": "No one checked that the harness command for giving up a task worked; it did not, and the run went on.",
+      "why_it_mattered": "The model tried to abort as soon as its target became unreachable and seven more times after that; unable to stop, it went looking elsewhere and reached a third party.",
+      "material_fact": "The evaluation harness gave the model no working way to end the task.",
+      "developer_knew": {
+        "status": false,
+        "source": "R3, section on the early Opus 4.6 checkpoint: attributes the failed abort to a misconfiguration in Anthropic's own harness; nothing in the record suggests it was known in January. Paraphrase."
+      },
+      "tests": {
+        "declared_before_the_run": {
+          "record": "intent:D",
+          "pointer": "/agent_surface/abort_path",
+          "exists": true
+        },
+        "checkable_afterwards": {
+          "record": "closeout:D",
+          "pointer": "/security_events",
+          "has_item_where": {
+            "kind": "third_party_compromise"
+          },
+          "evidence": [
+            "trajectories"
+          ]
+        },
+        "would_have_changed_the_action": {
+          "rule": "record_obligation"
+        }
+      },
+      "note": "Schema 0.1.0 has no field for whether an agent can stop a task. The pointer names where the fact would belong and reads as missing, so (a) is 'No' for every filer. Registered as a gap. Month only.",
+      "outside_record": {
+        "carried_by": "none",
+        "carrier_rationale": "No filing records whether the agent could end its task.",
+        "first_reached_outside": "2026-09-09",
+        "quote": "Paraphrase: the model tried to abort the task with a command, which failed because of a misconfiguration in the evaluation harness.",
+        "source": "R3, section on the early Opus 4.6 checkpoint"
+      },
+      "decision_class": "setup",
+      "live_alternative": "Exercise the harness's abort command once before launch.",
+      "checkable_after_revised": "Unchanged in form but now scoped to run D, the run in which the abort failed."
+    },
+    {
+      "id": "DP7",
+      "date": "2026-04-01",
+      "actor": "our evaluation partner",
+      "decision": "Gave the exercise's fictional target company a name that an active real domain also used.",
+      "why_it_mattered": "When the model could not finish against the simulated target it found the real company of that name on the internet and took it for the target, in all four runs.",
+      "material_fact": "The exercise's fictional target shared its name with a live real-world domain.",
+      "developer_knew": {
+        "status": false,
+        "source": "R1, 'Incident 1': reports the shared name as a finding of the review and attributes the choice of name to the partner. No source says anyone knew of the clash beforehand. Paraphrase."
+      },
+      "tests": {
+        "declared_before_the_run": {
+          "record": "intent:A",
+          "pointer": "/agent_surface/target_identity",
+          "exists": true
+        },
+        "checkable_afterwards": {
+          "record": "closeout:A",
+          "pointer": "/security_events",
+          "has_item_where": {
+            "kind": "third_party_compromise"
+          },
+          "evidence": [
+            "trajectories"
+          ]
+        },
+        "would_have_changed_the_action": {
+          "rule": "record_obligation"
+        }
+      },
+      "note": "Schema 0.1.0 has no field that identifies an exercise's targets. The pointer names where the fact would belong and reads as missing, so (a) is 'No' for every filer. Registered as a gap. 'developer_knew' is false because the record is silent, not because a source denies it. For the date, see DP8.",
+      "outside_record": {
+        "carried_by": "none",
+        "carrier_rationale": "No filing names the targets of an exercise.",
+        "first_reached_outside": "2026-07-30",
+        "quote": "Paraphrase: the fictional target company chosen by the partner shared a name with an active website domain.",
+        "source": "R1, 'Incident 1'"
+      },
+      "decision_class": "setup",
+      "live_alternative": "Name the fictional target from a reserved space that cannot resolve."
+    },
+    {
+      "id": "DP9",
+      "date": "2026-06-01",
+      "actor": "not named in the record",
+      "decision": "Let the run continue after the environment shut its target down at the 24-hour limit the target was configured with.",
+      "why_it_mattered": "Left without a target, the model went looking for one, decided it was inside a replica of the internet and scanned roughly 9,000 hosts.",
+      "material_fact": "The run's only in-scope target was configured to shut down after 24 hours, and the run outlasted it.",
+      "developer_knew": {
+        "status": false,
+        "source": "R3, section on the internal research model: describes the automatic shutdown as how the environment was configured. Whoever set the limit knew of it; no source says anyone knew the run would outlast it. Paraphrase."
+      },
+      "tests": {
+        "declared_before_the_run": {
+          "record": "intent:C",
+          "pointer": "/agent_surface/target_availability",
+          "exists": true
+        },
+        "checkable_afterwards": {
+          "record": "closeout:C",
+          "pointer": "/security_events",
+          "has_item_where": {
+            "kind": "sandbox_escape"
+          },
+          "evidence": [
+            "trajectories",
+            "network_logs"
+          ]
+        },
+        "would_have_changed_the_action": {
+          "rule": "record_obligation"
+        }
+      },
+      "note": "Schema 0.1.0 has no field for how long a target stays available or whether a task remains solvable. The pointer names where the fact would belong and reads as missing, so (a) is 'No' for every filer. Registered as a gap. For the date, see DP10.",
+      "outside_record": {
+        "carried_by": "none",
+        "carrier_rationale": "No filing records the availability of an exercise's targets.",
+        "first_reached_outside": "2026-09-09",
+        "quote": "Paraphrase: midway through the task the environment automatically shut down the target machine, which was set to run for 24 hours only.",
+        "source": "R3, section on the internal research model",
+        "rejected_pairings": [
+          {
+            "date": "2026-07-30",
+            "source": "R1, 'Incident 3'",
+            "rejection_rationale": "Says only that the model could not reach its intended target, not that the environment had shut the target down on a timer."
+          }
+        ]
+      },
+      "decision_class": "respond",
+      "live_alternative": "End a run whose only in-scope target has gone away.",
+      "checkable_after_revised": "Was: third_party_compromise. The consequence of letting a targetless run continue is the scan itself, which is recorded as the sandbox_escape event, not the later compromise.",
+      "review": "Overlaps DP5: both end in a model that cannot complete its task going looking elsewhere. The actors differ - the harness author in DP5, the run operator in DP9 - so both are kept, but they share one counterfactual and should not be read as independent evidence."
+    },
+    {
+      "id": "DP15",
+      "date": "2026-07-23",
+      "actor": "Anthropic",
+      "decision": "Limited the review to about 141,000 runs it believed could have had internet access, and searched them with an agent so that it could disclose quickly.",
+      "why_it_mattered": "The search missed a set of transcripts that also had internet access, so the January incident stayed unknown until August and the third party whose machine had been altered and whose credentials had been harvested was not told for about six more weeks.",
+      "material_fact": "A set of transcripts from runs with internet access, including the January run's, lay outside the review.",
+      "developer_knew": {
+        "status": false,
+        "source": "R3, introduction: the missed set was recognised only in August, while transcripts were being assembled for METR. Paraphrase."
+      },
+      "tests": {
+        "declared_before_the_run": {
+          "record": "intent:D",
+          "pointer": "/agent_surface/permitted_paths",
+          "has_item_where": {
+            "path_id": "internet-egress"
+          }
+        },
+        "checkable_afterwards": {
+          "record": "closeout:D",
+          "pointer": "/security_events",
+          "has_item_where": {
+            "kind": "third_party_compromise"
+          },
+          "evidence": [
+            "trajectories"
+          ]
+        },
+        "would_have_changed_the_action": {
+          "rule": "record_obligation"
+        }
+      },
+      "note": "(a) asks whether the record already showed that the January run had an internet route, which would have put it inside any review of runs with internet access. Only the diligent filer's Intent shows that.",
+      "outside_record": {
+        "carried_by": "none",
+        "carrier_rationale": "The fact is about what a retrospective review covered. No filing is due on a review's coverage, and an Intent that declares a route says nothing about whether the run's transcripts were later examined.",
+        "first_reached_outside": "2026-09-09",
+        "quote": "Paraphrase: the first scan relied on an agentic search and missed a set of transcripts that also turned out to have internet access.",
+        "source": "R3, introduction"
+      },
+      "decision_class": "investigate",
+      "live_alternative": "Scan the full transcript corpus rather than the subset believed to have had internet access - which is what the later 481-million-transcript sweep did.",
+      "review": "Kept on EXPOSURE, not on discovery. PAPER/uk_aisi_dp.md retires its own retrospective scan as R7 because it 'bears on discovering other incidents, not on this one's outcome' - a forward scan for unknown issues. This decision is different in kind: its scope determined whether a run INSIDE this case was found, and finding it is what triggered notification of that run's affected party. The consequence is the six weeks of continued exposure, which is the same line on which AISI keeps its DP7 and retires its R6. It shares that consequence with DP16 and must not be read as independent of it. DBYR has no field for the scope of an internal review, so (a) is a proxy: it asks whether run D's route was on record at all, which is what would have put it inside the review."
+    },
+    {
+      "id": "DP16",
+      "date": "2026-07-24",
+      "actor": "Anthropic",
+      "decision": "Told its partner and the three affected organisations on Monday 27 Jul, three days after identifying the incidents; one organisation had still not been reached when the report came out.",
+      "why_it_mattered": "The two organisations it reached had not detected the activity themselves and began remediation only once told.",
+      "material_fact": "Systems belonging to three outside organisations had been compromised by Anthropic's evaluation runs.",
+      "developer_knew": {
+        "status": true,
+        "source": "R1, introduction: all three incidents were identified on 24 Jul. Paraphrase."
+      },
+      "tests": {
+        "declared_before_the_run": {
+          "all_of": [
+            {
+              "record": "notice:N1",
+              "pointer": "/affected_parties",
+              "exists": true
+            },
+            {
+              "record": "notice:N2",
+              "pointer": "/affected_parties",
+              "exists": true
+            },
+            {
+              "record": "notice:N3",
+              "pointer": "/affected_parties",
+              "exists": true
+            }
+          ]
+        },
+        "checkable_afterwards": {
+          "all_of": [
+            {
+              "record": "closeout:A",
+              "pointer": "/third_party_notifications",
+              "has_item_where": {
+                "notified": true
+              }
+            },
+            {
+              "record": "closeout:B",
+              "pointer": "/third_party_notifications",
+              "has_item_where": {
+                "notified": true
+              }
+            },
+            {
+              "record": "closeout:C",
+              "pointer": "/third_party_notifications",
+              "has_item_where": {
+                "notified": true
+              }
+            }
+          ],
+          "evidence": [
+            "trajectories",
+            "network_logs"
+          ]
+        },
+        "would_have_changed_the_action": {
+          "rule": "record_obligation",
+          "event_kind": "third_party_compromise",
+          "against_closeout": "closeout:A"
+        }
+      },
+      "note": "Dated to the day the incidents were identified; the decision ran to 27 Jul. The times of day are not public, so the record cannot settle whether 27 Jul fell within 72 hours of detection. The filing tested in (a) is the notice, not the Intent: it counts as 'before' only if each notice was lodged before the organisations were told, and both deadlines run from the same detection. The report counts three affected organisations. PyPI and the 15 systems that ran the package are not among them, and the record does not say whether the operators of the other 14 were told.",
+      "outside_record": {
+        "carried_by": "notice",
+        "carrier_rationale": "The notice's affected_parties names the outside organisations a detected event touched, which is this fact.",
+        "first_reached_outside": "2026-07-27",
+        "quote": "Paraphrase: Anthropic notified its evaluation partner and the three affected organisations on Monday 27 Jul.",
+        "source": "R1, introduction"
+      },
+      "decision_class": "tell",
+      "live_alternative": "Reach all three organisations before publishing, or publish the fact that one was unreached.",
+      "review": "Consequence is narrow: earlier notice shortens third-party exposure, it does not prevent the incident. Stated here so the point is not read as more than it is."
+    },
+    {
+      "id": "DP19",
+      "date": "2026-07-23",
+      "actor": "Anthropic",
+      "decision": "Opened a retrospective review of its own cyber evaluations and stopped all cyber evaluations the same day, on identifying transcripts in which Claude may have reached the internet.",
+      "why_it_mattered": "This is the decision that ended the exposure. The egress route had been open since at least January and was reachable from four separate evaluations; it closed on 23 Jul, before the three incidents were even identified.",
+      "material_fact": "Transcripts showed that Claude may have reached the internet from the evaluation environment, and every cyber evaluation was stopped on that basis.",
+      "developer_knew": {
+        "status": true,
+        "source": "R1: 'We began our transcript review on Thursday, July 23, and stopped all cyber evaluations the same day after identifying transcripts where Claude may have accessed the internet.' Verbatim."
+      },
+      "tests": {
+        "declared_before_the_run": {
+          "record": "intent:A",
+          "pointer": "/pause_criteria",
+          "has_item_where": {
+            "matches": {
+              "contains": "sandbox_escape"
+            }
+          }
+        },
+        "checkable_afterwards": {
+          "record": "closeout:A",
+          "pointer": "/containment_exceptions",
+          "has_item_where": {
+            "status": "closed",
+            "closed_at": {
+              "not_empty": true
+            }
+          },
+          "evidence": [
+            "network_logs"
+          ]
+        },
+        "would_have_changed_the_action": {
+          "rule": "record_obligation"
+        }
+      },
+      "note": "Added 16 Nov 2026 in a fresh derivation against the reports; it was v1 DP14 and had been dropped. The sibling cases both carry their equivalent - PAPER/uk_aisi_dp.md DP6 'Containment on detection' - and its absence here left this case with only one response-phase point against AISI's two and openai-2026's three. (b) tests the containment exception CLOSING, which is the record that the route was actually shut, rather than any restatement of configuration.",
+      "outside_record": {
+        "carried_by": "notice",
+        "carrier_rationale": "The halt is an action taken on a detected event, and the ExceptionNotice is the filing that carries a detected event and the action taken on it within the notice deadline.",
+        "first_reached_outside": "2026-07-30",
+        "quote": "Verbatim: 'We began our transcript review on Thursday, July 23, and stopped all cyber evaluations the same day after identifying transcripts where Claude may have accessed the internet.'",
+        "source": "R1, introduction"
+      },
+      "decision_class": "respond",
+      "live_alternative": "Continuing to run while investigating. openai-2026 DP5 is a peer taking exactly that course - evaluations resumed two days after an administrator-level compromise with the root cause still unidentified - so the alternative was live and is not hindsight.",
+      "review": "A decision taken WELL, and the only positive control in this set. A list containing only failures is not credible; AISI's DP6 serves the same purpose in that case. Note the protocol cannot express what actually happened: the halt was programme-wide, and DBYR's pause machinery hangs off a running run, so it is recorded in /internal_incidents and in the closing of the containment exceptions rather than as a pause event."
+    }
+  ]
+}

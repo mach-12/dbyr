@@ -1,0 +1,25 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "dbyr"
+version = "0.1.0"
+description = "Declare Before You Run: a run-indexed disclosure protocol for frontier training and evaluation"
+readme = "README.md"
+license = { file = "LICENSE" }
+requires-python = ">=3.11"
+dependencies = [
+    "jsonschema>=4.18",
+    "cryptography>=42",
+]
+
+[project.scripts]
+dbyr = "dbyr.cli:main"
+
+[tool.setuptools]
+packages = ["dbyr", "dbyr.backtest", "dbyr.rules", "dbyr.schema"]
+
+[tool.setuptools.package-data]
+"dbyr.schema" = ["*.schema.json"]
+"dbyr.backtest" = ["template/*.json", "template/*.md"]

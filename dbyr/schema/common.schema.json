@@ -1,0 +1,137 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dbyr.example/schema/0.1.0/common.schema.json",
+  "title": "DBYR shared definitions",
+  "description": "Shared types. The non-standard keyword x-tier marks the disclosure tier of a field (public | restricted | sealed). It is an annotation: validators ignore it, and dbyr.redact uses it to project views. A field with no x-tier is a public container whose children carry their own tiers.",
+  "$defs": {
+    "timestamp": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "date": {
+      "type": "string",
+      "format": "date"
+    },
+    "id": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$"
+    },
+    "role_ref": {
+      "description": "Reference to a role_id declared in the Intent's roles[].",
+      "$ref": "#/$defs/id"
+    },
+    "signer": {
+      "type": "object",
+      "required": [
+        "role_id",
+        "organisation"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "role_id": {
+          "$ref": "#/$defs/role_ref",
+          "description": "The signing role, declared in the roles of the Intent."
+        },
+        "organisation": {
+          "type": "string",
+          "minLength": 1,
+          "description": "The organisation the signer acts for."
+        }
+      }
+    },
+    "window": {
+      "type": "object",
+      "required": [
+        "start"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "start": {
+          "$ref": "#/$defs/date",
+          "description": "First day of the window."
+        },
+        "end": {
+          "description": "null means open-ended: a rolling training run. Closeouts are then due every 30 days.",
+          "oneOf": [
+            {
+              "$ref": "#/$defs/date"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      }
+    },
+    "evidence_class": {
+      "description": "trajectories: full agent transcripts; chain_of_thought: reasoning traces; tool_calls: every tool invocation with arguments; network_logs: network flows leaving the sandbox; access_logs: authentication and authorisation records on reachable systems; inter_agent_messages: every write to a surface another agent can read, with author; config_snapshots: environment, permission and surface state at each change.",
+      "enum": [
+        "trajectories",
+        "chain_of_thought",
+        "tool_calls",
+        "network_logs",
+        "access_logs",
+        "inter_agent_messages",
+        "config_snapshots"
+      ]
+    },
+    "event_kind": {
+      "enum": [
+        "sandbox_escape",
+        "undeclared_surface_use",
+        "inter_agent_comms",
+        "credential_misuse",
+        "privilege_escalation",
+        "remote_code_execution",
+        "agent_induced_outage",
+        "third_party_compromise",
+        "monitor_alert",
+        "environment_tampering",
+        "access_boundary_breach",
+        "data_exposure",
+        "integrity_incident"
+      ],
+      "description": "environment_tampering: an agent alters its task, grader, reward or shared build/test inputs. access_boundary_breach: an agent reads or moves data outside the scope declared in readable_sources. data_exposure: restricted data reaches a wider audience than permitted. integrity_incident: unrequested bulk changes, propagated factual errors, or actions misattributed to a human."
+    },
+    "schema_version": {
+      "enum": [
+        "0.1.0"
+      ]
+    },
+    "safeguard_item": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "safeguard",
+        "state"
+      ],
+      "properties": {
+        "safeguard": {
+          "enum": [
+            "model_output_filters",
+            "refusal_behaviour",
+            "per_episode_reset",
+            "network_isolation",
+            "identity_separation",
+            "least_privilege_access",
+            "cot_monitoring"
+          ],
+          "description": "model_output_filters: production classifiers on outputs; refusal_behaviour: trained refusals; per_episode_reset: sandbox state wiped between episodes; network_isolation: no route to systems outside the declared paths; identity_separation: agents act under their own identity, never a human's; least_privilege_access: agents can read only what the task needs; cot_monitoring: the production chain-of-thought monitor runs on agent reasoning (optional item)."
+        },
+        "state": {
+          "enum": [
+            "on",
+            "relaxed",
+            "off"
+          ],
+          "description": "relaxed: weakened in any way from the production configuration."
+        },
+        "change": {
+          "type": "string",
+          "x-tier": "restricted",
+          "description": "What was changed, required unless state is on."
+        }
+      }
+    }
+  }
+}
