@@ -1,0 +1,89 @@
+{
+  "case": "_template",
+  "title": "Template: synthetic safeguards-off cyber evaluation (Lab X)",
+  "is_derivation_case": false,
+  "records": {
+    "intent:A": "intent_A.json",
+    "closeout:A": "closeout_A.json",
+    "notice:N1": "notice_N1.json"
+  },
+  "closes": {
+    "closeout:A": "intent:A"
+  },
+  "variants": {
+    "diligent": {
+      "description": "Filer declares every writable surface as it actually was.",
+      "remove_surfaces": {}
+    },
+    "as_believed": {
+      "description": "Filer leaves out the scratch surface, as an operator who believed it was not writable might.",
+      "remove_surfaces": {
+        "intent:A": [
+          "eval-scratch"
+        ]
+      }
+    }
+  },
+  "decision_points": [
+    {
+      "id": "DP1",
+      "date": "5 Sep",
+      "decision": "An agent reaches an allowlisted host by request smuggling; the run is paused for review.",
+      "field": "agent_surface.permitted_paths, pause_criteria",
+      "developer_aware": "yes",
+      "aware_source": "closeout_A.json: the escape was detected an hour after it happened",
+      "recorded_before": {
+        "record": "intent:A",
+        "any": "/agent_surface/permitted_paths",
+        "where": {
+          "path_id": "web-ro",
+          "agent_writable": false
+        }
+      },
+      "checkable_after": {
+        "record": "closeout:A",
+        "any": "/security_events",
+        "where": {
+          "kind": "sandbox_escape"
+        },
+        "evidence": [
+          "network_logs",
+          "trajectories"
+        ]
+      },
+      "decision_rule": {
+        "rule": "pause_criterion",
+        "event_kind": "sandbox_escape"
+      }
+    },
+    {
+      "id": "DP2",
+      "date": "5 Sep",
+      "decision": "The hosting provider reached by the escape is notified the same day.",
+      "field": "pause_criteria, third_party_notifications",
+      "developer_aware": "yes",
+      "aware_source": "closeout_A.json: notified at 20:00 on the day of detection",
+      "recorded_before": {
+        "record": "intent:A",
+        "any": "/pause_criteria",
+        "where": {
+          "matches": {
+            "contains": "third_party_compromise"
+          }
+        }
+      },
+      "checkable_after": {
+        "record": "closeout:A",
+        "any": "/third_party_notifications",
+        "where": {
+          "party": "Example Hosting Ltd",
+          "notified": true
+        },
+        "evidence": []
+      },
+      "decision_rule": {
+        "rule": "record_obligation"
+      }
+    }
+  ]
+}

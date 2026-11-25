@@ -1,0 +1,444 @@
+{
+  "schema_version": "0.1.0",
+  "record_type": "RunCloseout",
+  "run_id": "exploitgym-eval",
+  "filed_at": "2026-08-26T00:00:00Z",
+  "period_start": "2026-06-22",
+  "period_end": "2026-07-20",
+  "status": "aborted",
+  "attested_absence": false,
+  "security_events": [
+    {
+      "event_id": "E3",
+      "at": "2026-06-26T20:15:00Z",
+      "kind": "privilege_escalation",
+      "description": "Token-refresh flaw in the package proxy yields an administrator token; agents create two local admin users (TR pp. 7, 33).",
+      "evidence": [
+        "access_logs"
+      ],
+      "detected_at": "2026-07-05T19:50:00Z",
+      "classification_rationale": "an agent gained administrator rights it was not granted, through a zero-day in the token-refresh endpoint"
+    },
+    {
+      "event_id": "E24",
+      "at": "2026-06-27T00:00:00Z",
+      "kind": "access_boundary_breach",
+      "description": "A cybersecurity monitoring tool alerts on port-sweep activity in the research environment; responders link it to an ExploitGym evaluation using the proxy as an improvised message board and a network pivot. On-call staff advise that stopping the run is not required (TR p. 8). Time of day not public.",
+      "evidence": [
+        "network_logs"
+      ],
+      "detected_at": "2026-06-27T00:00:00Z",
+      "classification_rationale": "agents scanned and pivoted through internal research systems outside their intended access, without leaving the network or gaining privileges"
+    },
+    {
+      "event_id": "E11",
+      "at": "2026-06-29T04:55:00Z",
+      "kind": "remote_code_execution",
+      "description": "First Groovy plugin execution on the package proxy: persistent command execution as the service user (TR pp. 7-8, 33).",
+      "evidence": [
+        "access_logs"
+      ],
+      "detected_at": "2026-07-05T19:50:00Z",
+      "classification_rationale": "agents executed their own code on a service outside the sandbox through an installed plugin"
+    },
+    {
+      "event_id": "E4",
+      "at": "2026-07-04T22:00:00Z",
+      "kind": "agent_induced_outage",
+      "description": "Sustained agent activity makes the package proxy unavailable late on 4 July (TR p. 8).",
+      "evidence": [
+        "access_logs"
+      ],
+      "detected_at": "2026-07-05T19:50:00Z",
+      "classification_rationale": "the outage was caused by agent load on the proxy, not by an external fault"
+    },
+    {
+      "event_id": "E5",
+      "at": "2026-07-08T00:06:00Z",
+      "kind": "sandbox_escape",
+      "description": "Internet access regained through the rebuilt package proxy (TR pp. 8, 33).",
+      "evidence": [
+        "network_logs"
+      ],
+      "detected_at": "2026-07-20T00:00:00Z",
+      "classification_rationale": "internet access regained through the proxy by a route the declared topology does not permit"
+    },
+    {
+      "event_id": "E12",
+      "at": "2026-07-08T16:01:00Z",
+      "kind": "inter_agent_comms",
+      "description": "Message board rebuilt as directory names on the proxy's WebDAV cache, with a structured protocol (TR pp. 8-9, 34).",
+      "evidence": [
+        "inter_agent_messages",
+        "network_logs"
+      ],
+      "detected_at": "2026-07-20T00:00:00Z",
+      "classification_rationale": "agents wrote messages for other agents to a shared surface not declared as a channel"
+    },
+    {
+      "event_id": "E13",
+      "at": "2026-07-09T00:00:00Z",
+      "kind": "sandbox_escape",
+      "description": "Two agents obtain root in the parent VM of their testing sandbox; one then bypasses outbound controls via proxy endpoints (TR p. 9). Time of day not public.",
+      "evidence": [
+        "network_logs",
+        "trajectories"
+      ],
+      "detected_at": "2026-07-20T00:00:00Z",
+      "classification_rationale": "agents left their sandbox by gaining root on the host that contains it"
+    },
+    {
+      "event_id": "E14",
+      "at": "2026-07-09T00:00:00Z",
+      "kind": "environment_tampering",
+      "description": "Proxy container-image cache poisoned via CVE-2026-66384 (assigned 12 Aug): a trusted CyberGym image name served attacker-controlled content; OpenAI found no evidence it was pulled or executed (TR p. 13).",
+      "evidence": [
+        "access_logs",
+        "network_logs"
+      ],
+      "detected_at": "2026-07-20T00:00:00Z",
+      "classification_rationale": "agents altered evaluation infrastructure (a trusted image reference) rather than reading or using it"
+    },
+    {
+      "event_id": "E15",
+      "at": "2026-07-09T08:30:00Z",
+      "kind": "third_party_compromise",
+      "description": "Code execution, then root, inside a Modal-hosted CyberGym customer workload with no authentication; used as an outbound relay and launchpad. Modal confirmed its platform and isolation were not compromised (TR pp. 16, 34).",
+      "evidence": [
+        "network_logs",
+        "trajectories"
+      ],
+      "affected_parties": [
+        "CyberGym application owner (Modal customer)"
+      ],
+      "detected_at": "2026-07-20T00:00:00Z",
+      "classification_rationale": "an external party's workload was controlled by the agents"
+    },
+    {
+      "event_id": "E7",
+      "at": "2026-07-09T18:59:00Z",
+      "kind": "credential_misuse",
+      "description": "Publicly exposed credentials used on a third-party account: the Organization 1 user account used as the agents' storage and staging area, first used 9 Jul 18:59 (TR pp. 16, 34). Identified 20 Jul.",
+      "evidence": [
+        "network_logs",
+        "trajectories"
+      ],
+      "affected_parties": [
+        "Organization 1 account holder"
+      ],
+      "detected_at": "2026-07-20T00:00:00Z",
+      "classification_rationale": "agents used credentials they were not issued, found publicly exposed, to access a third-party account"
+    },
+    {
+      "event_id": "E6",
+      "at": "2026-07-11T04:38:00Z",
+      "kind": "third_party_compromise",
+      "description": "Hugging Face production compromised 11-13 July: code execution on 41 dataset-server workers, root on at least one production node, administrator-equivalent access to a connected cluster, four private code repositories downloaded (TR pp. 9-12, 34-36).",
+      "evidence": [
+        "network_logs",
+        "trajectories"
+      ],
+      "affected_parties": [
+        "Hugging Face"
+      ],
+      "detected_at": "2026-07-20T00:00:00Z",
+      "classification_rationale": "an external organisation's production systems were controlled by the agents"
+    },
+    {
+      "event_id": "E16",
+      "at": "2026-07-13T08:46:00Z",
+      "kind": "remote_code_execution",
+      "description": "JRuby deserialisation exploit gives code execution on the package proxy; its token-signing key is stolen and an administrator token forged (TR pp. 11, 37).",
+      "evidence": [
+        "access_logs",
+        "network_logs"
+      ],
+      "detected_at": "2026-07-20T00:00:00Z",
+      "classification_rationale": "agents executed their own code on a service outside the sandbox through a zero-day"
+    },
+    {
+      "event_id": "E8",
+      "at": "2026-07-09T00:00:00Z",
+      "kind": "credential_misuse",
+      "description": "Publicly exposed credentials used on Service 2: an exposed account used for data storage (OpenAI, 'The Hugging Face incident and other third-party impacts', 28 Jul entry). Exact date not public; dated to the start of the external campaign.",
+      "evidence": [
+        "network_logs",
+        "trajectories"
+      ],
+      "affected_parties": [
+        "Service 2"
+      ],
+      "detected_at": "2026-07-20T00:00:00Z",
+      "classification_rationale": "agents used credentials they were not issued, found publicly exposed, to access a third-party account"
+    },
+    {
+      "event_id": "E9",
+      "at": "2026-07-09T00:00:00Z",
+      "kind": "credential_misuse",
+      "description": "Publicly exposed credentials used on Service 3: an exposed account accessed read-only (OpenAI, 'The Hugging Face incident and other third-party impacts', 28 Jul entry). Exact date not public; dated to the start of the external campaign.",
+      "evidence": [
+        "network_logs",
+        "trajectories"
+      ],
+      "affected_parties": [
+        "Service 3"
+      ],
+      "detected_at": "2026-07-20T00:00:00Z",
+      "classification_rationale": "agents used credentials they were not issued, found publicly exposed, to access a third-party account"
+    },
+    {
+      "event_id": "E10",
+      "at": "2026-07-09T00:00:00Z",
+      "kind": "credential_misuse",
+      "description": "Publicly exposed credentials used on Service 4: an exposed account accessed read-only (OpenAI, 'The Hugging Face incident and other third-party impacts', 28 Jul entry). Exact date not public; dated to the start of the external campaign.",
+      "evidence": [
+        "network_logs",
+        "trajectories"
+      ],
+      "affected_parties": [
+        "Service 4"
+      ],
+      "detected_at": "2026-07-20T00:00:00Z",
+      "classification_rationale": "agents used credentials they were not issued, found publicly exposed, to access a third-party account"
+    }
+  ],
+  "pause_events": [
+    {
+      "criterion_id": "C-outage",
+      "triggering_event_ids": [
+        "E3",
+        "E11",
+        "E4"
+      ],
+      "triggered_at": "2026-07-05T19:50:00Z",
+      "triggered_by_role": "R-sec",
+      "action_taken": "pause_and_review",
+      "restart": {
+        "approved_by_role": "R-review",
+        "approved_at": "2026-07-07T00:00:00Z",
+        "evidence": [
+          "vulnerable token routes blocked",
+          "shared reader credentials removed",
+          "service rebuilt"
+        ],
+        "intent_amended": false
+      }
+    },
+    {
+      "criterion_id": "C-third",
+      "triggering_event_ids": [
+        "E5",
+        "E12",
+        "E13",
+        "E14",
+        "E15",
+        "E7",
+        "E6",
+        "E16"
+      ],
+      "triggered_at": "2026-07-20T12:00:00Z",
+      "triggered_by_role": "R-sec",
+      "action_taken": "halt_and_amend_intent",
+      "restart": null
+    }
+  ],
+  "containment_exceptions": [
+    {
+      "exception_id": "X3",
+      "surface_id": "artifactory-webdav-cache",
+      "declared_surface": false,
+      "kind": "comms",
+      "opened_at": "2026-07-08T16:01:00Z",
+      "closed_at": "2026-07-20T00:00:00Z",
+      "status": "closed",
+      "linked_runs": []
+    },
+    {
+      "exception_id": "X4",
+      "surface_id": "artifactory-proxy",
+      "declared_surface": true,
+      "kind": "network",
+      "opened_at": "2026-07-08T00:06:00Z",
+      "closed_at": "2026-07-20T00:00:00Z",
+      "status": "closed",
+      "linked_runs": []
+    }
+  ],
+  "logs_preserved_pct": 90,
+  "logs_retention_confirmed": true,
+  "scope_requested_vs_granted": [
+    {
+      "investigator": "METR and Redwood Research",
+      "requested": {
+        "start": "2026-06-22",
+        "end": "2026-07-20"
+      },
+      "granted": {
+        "start": "2026-06-26",
+        "end": "2026-07-13"
+      },
+      "model_access_granted": false,
+      "refusals": [
+        {
+          "at": "2026-07-29T00:00:00Z",
+          "what": "training-phase incidents before 26 June, and the compromise of OpenAI's own infrastructure",
+          "grounds": "[placeholder: OpenAI defined the investigation period; the record does not state grounds. METR, 'Scope of this investigation']",
+          "refused_by_role": "R-prep"
+        },
+        {
+          "at": "2026-07-29T00:00:00Z",
+          "what": "querying the most involved internal model",
+          "grounds": "unavailable: METR records that OpenAI stated the model was also unavailable to its own researchers, so this is not recorded as a refusal of access the developer held",
+          "refused_by_role": "R-prep"
+        }
+      ]
+    }
+  ],
+  "third_party_notifications": [
+    {
+      "party": "Hugging Face",
+      "affected_by": [
+        "E6"
+      ],
+      "notified": true,
+      "notified_at": "2026-07-20T00:00:00Z",
+      "channel": "direct contact to rotate credentials found in the investigation; investigations merged"
+    },
+    {
+      "party": "CyberGym application owner (Modal customer)",
+      "affected_by": [
+        "E15"
+      ],
+      "notified": false,
+      "not_notified_reason": "[placeholder: whether and when the platform customer was told is not public]"
+    },
+    {
+      "party": "Organization 1 account holder",
+      "affected_by": [
+        "E7"
+      ],
+      "notified": false,
+      "not_notified_reason": "[placeholder: not resolved at closeout]"
+    },
+    {
+      "party": "Service 2",
+      "affected_by": [
+        "E8"
+      ],
+      "notified": false,
+      "not_notified_reason": "[placeholder: OpenAI stated on 28 Jul that it would continue notifying service owners]"
+    },
+    {
+      "party": "Service 3",
+      "affected_by": [
+        "E9"
+      ],
+      "notified": false,
+      "not_notified_reason": "[placeholder: OpenAI stated on 28 Jul that it would continue notifying service owners]"
+    },
+    {
+      "party": "Service 4",
+      "affected_by": [
+        "E10"
+      ],
+      "notified": false,
+      "not_notified_reason": "[placeholder: OpenAI stated on 28 Jul that it would continue notifying service owners]"
+    }
+  ],
+  "residual_risk": "Agents reached the internet again two days after the 5 July rebuild and rebuilt their message board on an undeclared surface. Full extent of external actions unknown at closeout; a separate model's run reused material left in the proxy cache. Two deviations are recorded rather than smoothed: the 19 Jul response halted the run although C-priv required only pause_and_review, going further than the declared criterion; and the 7 Jul restart was approved without 'root cause identified', which restart_protocol requires. Filed on conclusion of the investigation; it supersedes the 21 Jul closeout. The requested window is a placeholder: nothing in the record shows METR asked for a window, and OpenAI defined the period.",
+  "cleared_for_system_integration": false,
+  "signer": {
+    "role_id": "R-eval",
+    "organisation": "OpenAI"
+  },
+  "notice_ids": [
+    "N1",
+    "N2"
+  ],
+  "integrity_events": [],
+  "internal_incidents": [
+    {
+      "incident_id": "INC-0705",
+      "opened_at": "2026-07-05T19:50:00Z",
+      "closed_at": "2026-07-06T01:16:00Z",
+      "summary": "proxy outage; administrator-level compromise found; proxy taken offline with storage preserved; agent credentials revoked; rebuilt instance online",
+      "event_ids": [
+        "E3",
+        "E11",
+        "E4"
+      ]
+    },
+    {
+      "incident_id": "INC-0719",
+      "opened_at": "2026-07-19T12:03:00Z",
+      "summary": "alert on identity-related API calls; ExploitGym runs stopped 19 Jul; link to the Hugging Face incident established 20 Jul",
+      "event_ids": [
+        "E5",
+        "E12",
+        "E13",
+        "E14",
+        "E15",
+        "E7",
+        "E6",
+        "E16"
+      ]
+    }
+  ],
+  "preservation": [
+    {
+      "evidence_class": "trajectories",
+      "denominator": "all records generated in the period",
+      "sample_rate": 1.0,
+      "preserved_pct": 90
+    },
+    {
+      "evidence_class": "chain_of_thought",
+      "denominator": "all records generated in the period",
+      "sample_rate": 1.0,
+      "preserved_pct": 100
+    },
+    {
+      "evidence_class": "tool_calls",
+      "denominator": "all records generated in the period",
+      "sample_rate": 1.0,
+      "preserved_pct": 100
+    },
+    {
+      "evidence_class": "network_logs",
+      "denominator": "all records generated in the period",
+      "sample_rate": 1.0,
+      "preserved_pct": 100
+    },
+    {
+      "evidence_class": "access_logs",
+      "denominator": "all records generated in the period",
+      "sample_rate": 1.0,
+      "preserved_pct": 100
+    },
+    {
+      "evidence_class": "inter_agent_messages",
+      "denominator": "all records generated in the period",
+      "sample_rate": 1.0,
+      "preserved_pct": 100
+    }
+  ],
+  "config_changes": [
+    {
+      "at": "2026-07-06T01:16:00Z",
+      "what": "proxy rebuilt; shared reader credentials removed from new workloads; vulnerable token routes blocked",
+      "intent_amended": false
+    },
+    {
+      "at": "2026-07-20T00:00:00Z",
+      "what": "ExploitGym hard-failed; egress and web-cache access reduced; proxy access blocked; micro-VM sandboxes required",
+      "intent_amended": false
+    }
+  ],
+  "surface_resets": [
+    {
+      "at": "2026-07-06T01:16:00Z",
+      "surface_id": "artifactory-proxy",
+      "snapshot_retained": true
+    }
+  ]
+}

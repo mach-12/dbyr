@@ -1,0 +1,313 @@
+{
+  "schema_version": "0.1.0",
+  "record_type": "RunIntent",
+  "run_id": "s2-cyber-eval",
+  "developer": "Lab X (synthetic)",
+  "run_kind": "evaluation",
+  "filed_at": "2026-08-27T00:00:00Z",
+  "trigger_basis": [
+    "T2",
+    "T3",
+    "T4"
+  ],
+  "start_window": {
+    "start": "2026-09-01",
+    "end": "2026-09-14"
+  },
+  "compute_band": "1e24-1e25",
+  "predicted_capability_band": {
+    "cyber": "high",
+    "cbrn": "low",
+    "autonomy": "medium",
+    "persuasion": "low"
+  },
+  "monitoring_instruments": [
+    {
+      "kind": "network_alerting",
+      "coverage": "all",
+      "data_source": "proxy and firewall logs"
+    },
+    {
+      "kind": "access_log_review",
+      "coverage": "all",
+      "review_cadence": "daily",
+      "data_source": "IAM and service access logs"
+    },
+    {
+      "kind": "inter_agent_message_monitor",
+      "coverage": "all",
+      "data_source": "shared-surface write log"
+    },
+    {
+      "kind": "write_audit",
+      "coverage": "all",
+      "data_source": "filesystem and object-store audit log"
+    },
+    {
+      "kind": "trajectory_review",
+      "coverage": "sampled",
+      "sample_rate": 0.2,
+      "review_cadence": "daily",
+      "data_source": "agent transcripts"
+    }
+  ],
+  "agent_surface": {
+    "environment": "live",
+    "permitted_paths": [
+      {
+        "path_id": "web-ro",
+        "via": "allowlist HTTP proxy, GET only",
+        "enforcement": "proxy_allowlist",
+        "agent_writable": false
+      }
+    ],
+    "credential_scope": {
+      "held_by_agents": [
+        "eval sandbox account"
+      ],
+      "admin_credentials_reachable": false
+    },
+    "inter_agent_comms_permitted": false,
+    "writable_surfaces": [
+      {
+        "surface_id": "eval-scratch",
+        "kind": "shared_filesystem",
+        "direction": {
+          "writers": [
+            "agent"
+          ],
+          "readers": [
+            "agent",
+            "graders"
+          ]
+        },
+        "persistence": "run",
+        "tenancy": "run_only",
+        "isolation": "per_episode",
+        "detail": "[sealed]"
+      }
+    ],
+    "shared_surface_lineage": []
+  },
+  "safeguards_disabled": {
+    "disabled": true,
+    "relaxed": [
+      "cyber refusals lowered"
+    ],
+    "signer_role": "R-eval",
+    "checklist": [
+      {
+        "safeguard": "model_output_filters",
+        "state": "on"
+      },
+      {
+        "safeguard": "refusal_behaviour",
+        "state": "relaxed",
+        "change": "cyber refusals lowered"
+      },
+      {
+        "safeguard": "per_episode_reset",
+        "state": "on"
+      },
+      {
+        "safeguard": "network_isolation",
+        "state": "on"
+      },
+      {
+        "safeguard": "identity_separation",
+        "state": "on"
+      },
+      {
+        "safeguard": "least_privilege_access",
+        "state": "on"
+      }
+    ]
+  },
+  "pause_criteria": [
+    {
+      "criterion_id": "C-escape",
+      "matches": [
+        "sandbox_escape",
+        "undeclared_surface_use"
+      ],
+      "adjudication": "human",
+      "authority_role": "R-safe",
+      "required_action": "pause_and_review"
+    },
+    {
+      "criterion_id": "C-comms",
+      "matches": [
+        "inter_agent_comms"
+      ],
+      "adjudication": "human",
+      "authority_role": "R-safe",
+      "required_action": "pause_and_review"
+    },
+    {
+      "criterion_id": "C-priv",
+      "matches": [
+        "credential_misuse",
+        "privilege_escalation",
+        "remote_code_execution"
+      ],
+      "adjudication": "human",
+      "authority_role": "R-safe",
+      "required_action": "pause_and_review"
+    },
+    {
+      "criterion_id": "C-outage",
+      "matches": [
+        "agent_induced_outage"
+      ],
+      "adjudication": "human",
+      "authority_role": "R-sec",
+      "required_action": "pause_and_review"
+    },
+    {
+      "criterion_id": "C-third",
+      "matches": [
+        "third_party_compromise"
+      ],
+      "adjudication": "human",
+      "authority_role": "R-safe",
+      "required_action": "halt_and_amend_intent"
+    },
+    {
+      "criterion_id": "C-tamper",
+      "matches": [
+        "environment_tampering"
+      ],
+      "adjudication": "human",
+      "authority_role": "R-safe",
+      "required_action": "pause_and_review"
+    },
+    {
+      "criterion_id": "C-boundary",
+      "matches": [
+        "access_boundary_breach",
+        "data_exposure"
+      ],
+      "adjudication": "human",
+      "authority_role": "R-safe",
+      "required_action": "pause_and_review"
+    },
+    {
+      "criterion_id": "C-integrity",
+      "matches": [
+        "integrity_incident"
+      ],
+      "adjudication": "human",
+      "authority_role": "R-safe",
+      "required_action": "notify_only"
+    }
+  ],
+  "restart_protocol": {
+    "approver_role": "R-review",
+    "evidence_required": [
+      "root cause",
+      "path closed"
+    ],
+    "intent_amendment_required": true
+  },
+  "roles": [
+    {
+      "role_id": "R-lead",
+      "title": "Run lead",
+      "organisation": "Lab X (synthetic)"
+    },
+    {
+      "role_id": "R-eval",
+      "title": "Evaluation owner",
+      "organisation": "Lab X (synthetic)"
+    },
+    {
+      "role_id": "R-sec",
+      "title": "Security lead",
+      "organisation": "Lab X (synthetic)"
+    },
+    {
+      "role_id": "R-safe",
+      "title": "Safety lead",
+      "organisation": "Lab X (synthetic)"
+    },
+    {
+      "role_id": "R-review",
+      "title": "Restart review lead (no pause authority)",
+      "organisation": "Lab X (synthetic)"
+    }
+  ],
+  "log_retention": {
+    "retained": [
+      "trajectories",
+      "chain_of_thought",
+      "tool_calls",
+      "network_logs",
+      "access_logs",
+      "inter_agent_messages"
+    ],
+    "retain_until": "closeout+P24M",
+    "review_method": "full trajectory review by monitor model, human review of flags",
+    "minimum_preserved_pct": 99,
+    "detail": [
+      {
+        "evidence_class": "trajectories",
+        "coverage": "complete",
+        "retention": "P24M"
+      },
+      {
+        "evidence_class": "chain_of_thought",
+        "coverage": "complete",
+        "retention": "P24M"
+      },
+      {
+        "evidence_class": "tool_calls",
+        "coverage": "complete",
+        "retention": "P24M"
+      },
+      {
+        "evidence_class": "network_logs",
+        "coverage": "complete",
+        "retention": "P24M"
+      },
+      {
+        "evidence_class": "access_logs",
+        "coverage": "complete",
+        "retention": "P24M"
+      },
+      {
+        "evidence_class": "inter_agent_messages",
+        "coverage": "complete",
+        "retention": "P24M"
+      }
+    ]
+  },
+  "investigator_scope_expansion": {
+    "committed": true,
+    "refusals_logged": true,
+    "model_access_committed": true
+  },
+  "amendments_allowed": true,
+  "signer": {
+    "role_id": "R-lead",
+    "organisation": "Lab X (synthetic)"
+  },
+  "agent_capabilities": [
+    "shell in sandbox",
+    "package install through declared paths"
+  ],
+  "readable_sources": [
+    "task repository",
+    "declared package mirror"
+  ],
+  "run_scale": {
+    "concurrent_agents": 64
+  },
+  "forecast_basis": "scaling trend from the previous checkpoint's dangerous-capability evaluations",
+  "eval_plan": [
+    {
+      "eval_id": "s2-cyber-eval-dc",
+      "evaluator": "external",
+      "domain": "cyber"
+    }
+  ]
+}

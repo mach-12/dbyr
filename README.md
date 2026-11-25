@@ -2,174 +2,174 @@
 
 # Declare Before You Run
 
-### An Open Filing Standard for Frontier Training and Evaluation Runs
+### A Disclosure Protocol for Frontier AI Training and Evaluation
+
+[![🏅 4th Place · Apart Research AI Incident Response Sprint](https://img.shields.io/badge/%F0%9F%8F%85%204th%20Place-Apart%20Research%20AI%20Incident%20Response%20Sprint-gold?style=for-the-badge)](https://apartresearch.com/sprints/ai-incident-response-sprint-2026-09-11-to-2026-09-13#overview)
+
 
 **Mann Acharya** · **Archit Ojha** · **Gautam Sankara Raman** · **Karm Rajput**
 
 *with [Apart Research](https://apartresearch.com)*
 
-[Paper](website/assets/declare_before_you_run_frontier_training_evaluation_filing_standard.pdf) · [Site](https://mach-12.github.io/dbyr/) · [Timeline](https://mach-12.github.io/dbyr/#timeline)
 
 </div>
 
-## Abstract
+Before a lab starts a covered run, it files a signed record of what the run will do, what its agents
+can reach, how it is watched and what will stop it. When something goes wrong it files what
+happened. An evaluator checks the two against each other.
 
-Between May and July 2026, reinforcement-learning agents in an OpenAI evaluation environment built a covert message board inside an internal package server, escaped their sandbox, obtained root on OpenAI clusters and took administrator control of Hugging Face production across four regions. The decisive failures were governance, not capability: the board was found and the run continued; the run restarted with no recorded criterion; affected third parties learned late or never; external review excluded the training-time events. We propose Declare Before You Run (DBYR), an open filing standard under which covered training and safeguards-off evaluation runs are declared before they start, closed out on completion and re-declared before internal deployment, backed by a claim-matched verification stack that checks filings without exposing model IP. A retrospective backtest converts five of six discretionary decision points into record-bound ones. DBYR is emittable from existing EU, California and US federal obligations and pilotable within nine months.
+This repository is the executable form of the paper: the JSON Schemas, the checks an evaluator runs,
+the public / restricted / sealed disclosure views, and a signed hash-chained ledger.
 
-## Interactive Demonstration
+## Results
 
-The [live site](https://mach-12.github.io/dbyr/) walks through the standard end to end: the DBYR lifecycle and record-schema diagrams, the [incident timeline](https://mach-12.github.io/dbyr/#timeline) as both a visual chart and a full event table, and the backtest results.
+Share of decision points attributable to DBYR under the as-believed and diligent filer assumptions
+across the three incident backtests. $N$ denotes the total number of decision points in each case.
 
-## Collaborators
+| **Case** | **DBYR (As-believed)** | **DBYR (Diligent)** |
+|---|:---:|:---:|
+| OpenAI / HF 2026 (N=7) | 0.71 | 1.00 |
+| Anthropic 2026 (N=9) | 0.22 | 0.44 |
+| UK AISI 2026 (N=7) | 0.43 | 0.71 |
 
-- **Mann Acharya** — The Millennium Project. Originated the idea; led the project and policy analysis.
-- **Archit Ojha** — Independent. Designed the record schema and verification stack.
-- **Gautam Sankara Raman** — Independent. Conducted the incident timeline reconstruction; collected and analyzed public responses.
-- **Karm Rajput** — Independent. Background research on the cybersecurity aspects of the project.
+## Setup
 
-Research conducted at the [AI Incident Response Sprint](https://apartresearch.com/sprints/ai-incident-response-sprint-2026-09-11-to-2026-09-13), with Apart Research, September 2026.
-
----
-
-## Reference implementation
-
-This repository is the executable form of the paper's argument: the v0.1 JSON Schema, a validator, the tier-projection engine, signed envelopes and an append-only register, the interop emitters, and a replay harness that regenerates Table 1 from a machine-readable event stream rather than asserting it by hand.
-
-Nothing here is a filing by any developer. The example Intent is a reconstruction of what the May 2026 run *would* have filed, built from public sources only.
-
-## Install
+Python 3.11 or newer. The only dependencies are `jsonschema` and `cryptography`.
 
 ```bash
-pip install jsonschema          # required
-pip install cryptography        # optional: Ed25519 signing
-export PYTHONPATH=.
+cd dbyr                 # the repo root — the one holding pyproject.toml, not dbyr/dbyr/
+python -m venv .venv && source .venv/bin/activate
+pip install -e .
 ```
 
-Python 3.11+. No other dependencies; `pytest` for the test suite.
+Every command in this README is run from the repo root. The name appears at two levels and only
+the outer one is a working directory:
 
-## Quickstart
+```
+dbyr/                   # repo root: pyproject.toml, benchmarks/, PAPER/  <- run commands here
+├── dbyr/               # the Python package: cli.py, backtest/, rules/, schema/
+└── benchmarks/         # the three scored cases
+```
 
-### Regenerate Table 1
+With [uv](https://docs.astral.sh/uv/) instead, `uv sync` and prefix each command below with
+`uv run`.
+
+Check the install:
 
 ```bash
-python -m dbyr.cli replay --intent examples/intent-exploitgym-2026-05.json
+dbyr freeze
+# sha256:453f10b8ef886aa23b5a9b54d743c422b6bca098dba060169a34ee8274b8f0cc
 ```
 
-```
-| Date       | Decision point                                      | DBYR field that binds                     | Bound?  |
-|------------|-----------------------------------------------------|-------------------------------------------|---------|
-| 2026-05-08 | Agent can write to Artifactory; board forms.        | containment_spec/shared_writable_surfaces;
-                                                              pause_criteria/PC-02                       | Yes     |
-| 2026-05-26 | First SSRF egress. No pause.                        | pause_criteria/PC-01                      | Yes     |
-| 2026-06-11 | Second model started with board access.             | trigger_basis/new Intent required         | Yes     |
-| 2026-06-26 | Admin access and code execution. Clean-up only.     | pause_criteria/PC-04                      | Yes     |
-| 2026-07-08 | Restart after rebuild, no recorded criterion.       | restart_protocol                          | Yes     |
-| 2026-07-29 | Selective notification; review scoped narrowly.     | third_party_access_commitment +
-                                                              log_retention                              | Partial |
+That hash is the schema version the three cases were frozen against. If it differs, the cases are
+void against your checkout and the numbers above will not reproduce — see
+[Freezing the schema](dbyr/backtest/README.md#freezing-the-schema).
 
-5 of 6 decision points bind fully, 1 partially. Pre-registered success criterion: 3.
-First binding on 2026-05-08 via pause_criteria/PC-02, 72 days before the developer's
-own alert fired on 2026-07-19.
-Criteria filed but not machine-checkable (never fire in replay): PC-07.
-```
+## Reproducing the table
 
-Circumstantially attributed threads (the wiki swarm, RubyGems) are excluded from scoring by default, matching the paper's rule; `--include-circumstantial` scores them, and the counts printed always state how many events were excluded.
-
-### Validate a filing
+The three scored cases are in [`benchmarks/`](benchmarks/), one folder per incident, each holding
+the reconstructed filings, the `sources.json` recording where every filed value came from, and the
+frozen `decision_points.json`.
 
 ```bash
-python -m dbyr.cli validate examples/closeout-noncompliant-2026-07.json \
-  --intent examples/intent-exploitgym-2026-05.json
+# 1. check each case is well-formed and frozen against the current schema
+dbyr backtest check benchmarks/openai-2026 benchmarks/anthropic-2026 benchmarks/aisi-2026
+
+# 2. score them and print Table 1
+dbyr backtest score benchmarks/openai-2026 benchmarks/anthropic-2026 benchmarks/aisi-2026 \
+    --design table1
 ```
 
-`closeout-noncompliant-2026-07.json` is the historical record written out honestly. The validator rejects it:
+Step 1 should report `ok` for all three (warnings are expected; errors are not). Step 2 prints the
+schema hash, an input-integrity line per case, and the table — the same shares as above, each with
+its underlying count beside it:
 
 ```
-ERROR   pause_events/PC-02: override with no named authority
-ERROR   pause_events/PC-99: restart with no approving role
-ERROR   containment_exceptions/2026-05-08: undeclared surface with no Intent amendment
-ERROR   pause_events: criterion PC-99 was never declared in the Intent
-ERROR   logs_retention_confirmed is false but the Intent committed to retention
-WARNING security_events/SE-03: affected but not notified: ['RubyGems', 'wiki operators']
-WARNING external_investigations/METR / Redwood Research: training-time events excluded from scope
-WARNING external_investigations/METR / Redwood Research: 2 of 10 transcript weeks granted
+| Framework              | openai-2026 (N = 7) | anthropic-2026 (N = 9) | aisi-2026 (N = 7) |
+| DBYR, as-believed filer| 0.71 (5)            | 0.22 (2)               | 0.43 (3)          |
+| DBYR, diligent filer   | 1.00 (7)            | 0.44 (4)               | 0.71 (5)          |
 ```
 
-Two things this shows. The record cannot be made compliant by silence: a criterion that fired and was overridden must name the overriding authority, and a criterion cited in a closeout must have existed in the Intent beforehand. And the one failure v0.1 does not close — notifying affected third parties — degrades to a warning rather than disappearing, which is why Section 5 lists a notification clock as future work.
+Every input is hashed before and after scoring; if a file changed mid-run, or a case is frozen
+against a different schema, scoring stops rather than reporting a number. Add `--out report/` to
+write `report.md`, `report.html` and `metrics.json`, `--json` for machine-readable output, or drop
+`--design table1` for all six designs, including the lead-time table.
 
-### Derive the disclosure tiers
+[Backtesting DBYR](dbyr/backtest/README.md) explains how to score a new incident.
+
+## The three records
+
+| When | What | Fields |
+|---|---|---|
+| at least 3 days before the run starts | **RunIntent** — what the run will do, what agents can reach, how it is watched, what pauses it | [intent.md](docs/records/intent.md) |
+| within 72 hours of detecting a reportable event | **ExceptionNotice** — what was detected, when, what was done | [notice.md](docs/records/notice.md) |
+| when the run ends, and at least every 30 days | **RunCloseout** — what actually happened | [closeout.md](docs/records/closeout.md) |
+
+Working examples of all three, each passing every check, are in
+[`dbyr/backtest/template/`](dbyr/backtest/template/).
+
+## Check a filing set
 
 ```bash
-python -m dbyr.cli view examples/intent-exploitgym-2026-05.json --tier public
+dbyr validate filings/lab-x/intent_A.json    # one record, as you write it
+dbyr run filings/lab-x --out report/         # the whole set
 ```
 
-One authored document, three views. The public tier shows that the run exists, its compute band, that pause criteria and a containment plan exist, roles by title, and the number of declared writable surfaces — not the surfaces themselves:
+Every finding is one of three things:
 
-```json
-"containment_spec": {
-  "egress_policy": "none",
-  "inter_agent_comms_permitted": false,
-  "shared_writable_surfaces": {"_dbyr_count": 1, "_dbyr_commitment": "5fc774e2…"},
-  "infrastructure_mode": "digital_twin",
-  "_dbyr_withheld": ["credential_scope", "egress_allowlist", "registry_isolation"]
-}
-```
+- **error** — the filing is defective and is not lodged
+- **conduct** — it lodges, but records a breach of the filer's own commitments (a late notice, a
+  criterion that fired with no pause). It goes to adjudication
+- **warning** — for the reviewer's attention
 
-Every withheld field carries a SHA-256 commitment, and the commitments fold into a Merkle root published with the public view. A sealed field can therefore be challenged later without being disclosed now: reveal the value, recompute the leaf, and the root either matches or it does not. `verify_disclosure()` implements the challenge; `tests/test_dbyr.py::test_later_disclosure_verifies_against_published_root` exercises both outcomes.
+`--out` writes `report.json`, `report.md`, and each lodged filing's three disclosure views, with the
+salts that let the filer later prove a hidden value.
 
-### File to a register
+To sign the lodged filings into a tamper-evident record:
 
 ```bash
-python -m dbyr.cli file examples/intent-exploitgym-2026-05.json --register register.jsonl --sign
+dbyr keygen lab.key
+dbyr run filings/lab-x --ledger record.jsonl --key lab.key
+dbyr verify record.jsonl        # any edit, deletion or reordering is detected
 ```
 
-Records are wrapped in a JWS-shaped envelope (payload digest, commitment roots, Ed25519 signature) and appended to a hash-chained log. Removing or back-dating an entry breaks every entry after it. Without `cryptography` the envelope degrades to a digest-only form explicitly marked `alg: none`, so a V0 self-attestation is never mistaken for a signed record — the same distinction the verification stack in Section 3.3 draws between maturity levels.
+## In Python
 
-### Emit to existing regimes
+```python
+from dbyr import DBYR
 
-```bash
-python -m dbyr.cli interop coverage
-python -m dbyr.cli interop sb53 --closeout examples/closeout-noncompliant-2026-07.json
-python -m dbyr.cli interop frontier --intent examples/intent-exploitgym-2026-05.json \
-                                    --closeout examples/closeout-noncompliant-2026-07.json
+report = DBYR().check("filings/lab-x")
+print(report.ok, report.counts())       # True {'error': 0, 'conduct': 0, 'warning': 1}
 ```
 
-The coverage report substantiates the Section 4 claim mechanically: 8 of 8 R2 fields map to at least one existing obligation, and 13 fields have no counterpart in any current instrument — which is the list of things the incident shows are missing.
+`DBYR()` wraps the common tasks; everything is also importable directly from `dbyr`.
 
-## Layout
+| | |
+|---|---|
+| `DBYR().check(*paths)` | run the whole protocol over a filing set |
+| `DBYR().validate(record)` | check one filing on its own |
+| `DBYR().load(*paths)` | load a filing set from a folder, manifest or file list |
+| `DBYR().project(record, tier)` | the `public`, `restricted` or `sealed` view of a filing |
+| `DBYR().schema_hash()` | the hash identifying the schema version a filing was checked against |
 
-```
-schema/       three JSON Schemas (2020-12); every property carries x-dbyr.route and x-dbyr.tier
-dbyr/
-  predicates  declarative match rules — evaluated, never executed as code
-  validate    schema validation plus the semantic checks a schema cannot express
-  redact      tier projection, hash commitments, Merkle root, challenge verification
-  envelope    signed envelopes; append-only hash-chained register
-  replay      backtest harness; counterfactual timing; Table 1 generation
-  interop     coverage report and emitters (SB 53, EU CoP, FRONTIER Act)
-  cli         command line entry point
-data/events/  Appendix A as a JSONL event stream, first-party events flagged
-data/interop/ field-level regime mappings
-examples/     reconstructed Intent, compliant Closeout, non-compliant Closeout
-tests/        26 tests
-```
+The underlying functions — `run_protocol`, `validate_record`, `reconcile`, `check_notices`,
+`check_lineage`, `project`, `all_views`, `Ledger` — take plain dicts and return `Finding` objects.
 
-The routes in the schema are load-bearing, not decorative. `x-dbyr.route` records why a field exists (R1 failure-derived, R2 regime-derived, R3 standard-derived) and the interop report reads those codes back out, so a field added without a derivation shows up as an unmapped R-code rather than passing unnoticed.
+## Command line
 
-## Design notes
+| | |
+|---|---|
+| `dbyr run PATH... [--out DIR] [--ledger FILE --key KEYFILE] [--json]` | run the protocol over a filing set; exit 1 on any error |
+| `dbyr validate FILE...` | check each filing on its own |
+| `dbyr project --view TIER FILE` | print one disclosure view |
+| `dbyr keygen KEYFILE` | write a new Ed25519 signing key |
+| `dbyr verify LEDGER` | recheck every hash link and signature |
+| `dbyr freeze` | print the schema hash |
+| `dbyr docs [DIR] [--check]` | rewrite the field tables in the record docs from the schemas |
 
-**Predicates are data, not code.** A pause criterion's `match` is a small declarative expression. A register must evaluate filed criteria without running developer-supplied code, and an auditor must be able to read the rule without a debugger. Criteria that are not machine-checkable are still filable — they are reported as inert in every replay, so a filing cannot quietly consist of rules that can never fire.
+## More
 
-**Binding is not preventing.** A criterion can fire and a named authority can still override it. What the record changes is that continuing past a triggered criterion becomes an attributable act. `test_restart_binds_only_when_unrecorded` makes the distinction concrete: the restart binds because no approval was recorded, not because a restart occurred.
-
-**Declaration is what does the work.** `test_declared_surface_does_not_bind` adds Artifactory to `shared_writable_surfaces` and the 8 May binding disappears — correctly, since a declared surface is a governed one. The 8 July bindings survive, because the WebDAV cache and the remote-repository service were improvised later and were declared nowhere.
-
-## Limits of this code
-
-The replay is only as good as the event stream, which is a hand-coded reading of public first-party reports; another segmentation of the same timeline could yield different counts, and the scoring of a decision point as bound is a judgement encoded in `_score_decision_point`, not a measurement. The harness demonstrates that the standard's fields attach to the incident's decision points; it does not show that a developer would have obeyed them. Compute-band, evaluation and runtime verification (classes (a)–(c) in Appendix C) are out of scope here — this repository covers the filing layer and the class (d)/(e) reconciliation an auditor performs against it. Signing keys generated by `--sign` are ephemeral and for pilot use only.
-
-## Tests
-
-```bash
-python -m pytest tests/ -q     # 26 passed
-```
+- [Record reference](docs/records/README.md) — every field, every check
+- [Backtesting DBYR](dbyr/backtest/README.md) — how the paper measured the protocol against past
+  incidents. Labs never need this
+- [Writing `decision_points.json`](docs/cases/decision_points.md) — for researchers scoring a case
