@@ -2,7 +2,15 @@
 
 # Declare Before You Run
 
-### A disclosure protocol for frontier AI training and evaluation
+### A Disclosure Protocol for Frontier AI Training and Evaluation
+
+[![🏅 4th Place · Apart Research AI Incident Response Sprint](https://img.shields.io/badge/%F0%9F%8F%85%204th%20Place-Apart%20Research%20AI%20Incident%20Response%20Sprint-gold?style=for-the-badge)](https://apartresearch.com/sprints/ai-incident-response-sprint-2026-09-11-to-2026-09-13#overview)
+
+
+**Mann Acharya** · **Archit Ojha** · **Gautam Sankara Raman** · **Karm Rajput**
+
+*with [Apart Research](https://apartresearch.com)*
+
 
 </div>
 
